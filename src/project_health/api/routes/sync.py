@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import func, select
 
+from project_health.aggregation.cache import cache
 from project_health.api.deps import get_config
 from project_health.config.loader import Config
 from project_health.db.models import IngestionRun
@@ -20,6 +21,8 @@ router = APIRouter()
 
 class SyncRunResponse(BaseModel):
     run_id: str
+    source: str
+    event_type: str
     status: str
 
 
@@ -41,47 +44,56 @@ async def sync_run(
     source: str | None = Query(None),
     event_type: str | None = Query(None),
     config: Config = Depends(get_config),
-) -> SyncRunResponse:
-    """Trigger an immediate ingestion run."""
+) -> list[SyncRunResponse]:
+    """Trigger an immediate ingestion run for all providers (or a specific one)."""
     registry = await build_registry(config)
 
-    targets = []
+    event_types = ["commit", "pull_request", "pull_request_review", "issue", "sprint"]
+    targets: list[tuple] = []
     if source:
         provider = registry.get(source)
         if provider is None:
             raise HTTPException(status_code=404, detail=f"Source '{source}' not found")
         targets.append((provider, event_type or "issue"))
     else:
-        for provider in registry.all():
-            targets.append((provider, event_type or "issue"))
+        for prov in registry.all():
+            for et in event_types:
+                targets.append((prov, et))
 
-    # For simplicity in v1, run the first target
-    provider, et = targets[0]
+    responses: list[SyncRunResponse] = []
     maker = get_session_maker()
-    async with maker() as session:
-        runner = IngestionRunner(session)
-        # Check if a run is already in flight for this source
-        inflight = await session.execute(
-            select(IngestionRun)
-            .where(
-                IngestionRun.source == provider.id,
-                IngestionRun.status == "running",
+
+    for prov, et in targets:
+        async with maker() as session:
+            inflight = await session.execute(
+                select(IngestionRun)
+                .where(
+                    IngestionRun.source == prov.id,
+                    IngestionRun.status == "running",
+                )
+                .limit(1)
             )
-            .order_by(IngestionRun.started_at.desc())
-            .limit(1)
-        )
-        existing = inflight.scalar_one_or_none()
-        if existing is not None:
-            raise HTTPException(
-                status_code=409,
-                detail={
-                    "message": "Provider is busy",
-                    "run_id": existing.id,
-                },
+            existing = inflight.scalar_one_or_none()
+            if existing is not None:
+                raise HTTPException(
+                    status_code=409,
+                    detail={
+                        "message": f"Provider {prov.id} is busy",
+                        "run_id": existing.id,
+                    },
+                )
+            runner = IngestionRunner(session)
+            result = await runner.run(prov, et, trigger="manual")
+            responses.append(
+                SyncRunResponse(
+                    run_id=result.id,
+                    source=prov.id,
+                    event_type=et,
+                    status=result.status,
+                )
             )
 
-        result = await runner.run(provider, et, trigger="manual")
-        return SyncRunResponse(run_id=result.id, status=result.status)
+    return responses
 
 
 @router.get("/status")
@@ -118,4 +130,9 @@ async def sync_status() -> SyncStatusResponse:
                     events_count=run.events_count,
                 )
             )
-    return SyncStatusResponse(sources=sources)
+    stats = cache.stats()
+    return SyncStatusResponse(
+        sources=sources,
+        cache_hits=stats["hits"],
+        cache_misses=stats["misses"],
+    )

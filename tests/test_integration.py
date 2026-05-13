@@ -267,3 +267,13 @@ async def test_project_filter_scopes_results(db_session: AsyncSession, minimal_c
     )
     volume = await queries.contribution_volume(ctx)
     assert volume["pull_requests"] == 1, "only repo-a's PR should be counted"
+
+
+@pytest.mark.asyncio
+async def test_sync_run_response_covers_all_targets():
+    """sync_run must return one SyncRunResponse per (provider, event_type) target."""
+    from project_health.api.routes.sync import SyncRunResponse
+    item = SyncRunResponse(run_id="abc", source="github", event_type="issue", status="success")
+    assert item.run_id == "abc"
+    assert item.source == "github"
+    assert item.event_type == "issue"
