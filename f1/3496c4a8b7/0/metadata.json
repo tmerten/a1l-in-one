@@ -1,0 +1,37 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "f13496c4a8b7",
+  "session_id": "ses_1df0722d6ffe5xS6HgzxrMexxB",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-13T13:07:49.153202303Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "openspec/changes/project-health-dashboard/tasks.md"
+  ],
+  "agent": "OpenCode",
+  "model": "moonshotai/kimi-k2.6",
+  "turn_id": "68de9634f7d5",
+  "token_usage": {
+    "input_tokens": 8799,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 113152,
+    "output_tokens": 1266,
+    "api_call_count": 12
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-13T13:07:49.143125286Z",
+    "agent_lines": 138,
+    "agent_removed": 138,
+    "human_added": 6674,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 6812,
+    "total_lines_changed": 6950,
+    "agent_percentage": 3.9712230215827335,
+    "metric_version": 2
+  }
+}
