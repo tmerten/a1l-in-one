@@ -18,6 +18,25 @@ from project_health.aggregation.core import (
 )
 from project_health.config.loader import Config
 
+UTC = timezone.utc
+
+
+def _parse_dt(value: object) -> datetime | None:
+    """Parse a datetime value from SQLite — returns UTC-aware datetime or None."""
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            return value.replace(tzinfo=UTC)
+        return value
+    try:
+        dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=UTC)
+        return dt
+    except (ValueError, TypeError):
+        return None
+
 
 class AggregationQueries:
     """Execute aggregation queries against raw_events."""
@@ -152,22 +171,6 @@ class AggregationQueries:
         cycle_result = await self._session.execute(
             text(cycle_sql), {"start": ctx.start, "end": ctx.end}
         )
-        def _parse_dt(value: object) -> datetime | None:
-            """Parse a datetime value that may be a datetime object or ISO string.
-
-            SQLite stores DateTime columns without timezone, so naive datetimes are
-            treated as UTC to match the stored timestamp semantics.
-            """
-            if value is None:
-                return None
-            if isinstance(value, datetime):
-                dt = value
-            else:
-                dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-            # Coerce naive datetimes (from SQLite timestamp column) to UTC
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=timezone.utc)
-            return dt
 
         cycle_times = []
         for row in cycle_result.mappings().all():
@@ -188,7 +191,7 @@ class AggregationQueries:
         # Review turnaround: PR created_at to first review
         review_sql = """
             SELECT
-                pr.data as pr_data,
+                pr.timestamp as pr_created_at,
                 MIN(r.timestamp) as first_review
             FROM raw_events pr
             JOIN raw_events r ON (
@@ -206,21 +209,16 @@ class AggregationQueries:
         )
         review_turnarounds = []
         for row in review_result.mappings().all():
-            pr_data = json.loads(row["pr_data"]) if isinstance(row["pr_data"], str) else row["pr_data"]
-            created_str = pr_data.get("created_at")
-            first_review = row["first_review"]
-            if created_str and first_review:
-                try:
-                    c_dt = datetime.fromisoformat(str(created_str).replace("Z", "+00:00"))
-                    if isinstance(first_review, datetime):
-                        r_dt = first_review
-                    else:
-                        r_dt = datetime.fromisoformat(str(first_review).replace("Z", "+00:00"))
-                    hours = (r_dt - c_dt).total_seconds() / 3600
-                    if hours > 0:
-                        review_turnarounds.append(hours)
-                except Exception:
-                    pass
+            c_dt = _parse_dt(row["pr_created_at"])
+            r_dt = _parse_dt(row["first_review"])
+            if c_dt is None or r_dt is None:
+                continue
+            try:
+                hours = (r_dt - c_dt).total_seconds() / 3600
+                if hours > 0:
+                    review_turnarounds.append(hours)
+            except Exception:
+                pass
 
         def _percentile(data: list[float], p: float) -> float | None:
             if not data:
