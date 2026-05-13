@@ -213,3 +213,29 @@ async def test_contribution_volume_ts_shape(db_session: AsyncSession, minimal_co
     assert "bucket" in row
     assert "value" in row, "each row must have a 'value' dict"
     assert "prs" in row["value"]
+
+
+@pytest.mark.asyncio
+async def test_sprint_timeframe_resolution(db_session: AsyncSession, minimal_config):
+    """When sprint_id is given, timeframe must use the sprint's dates."""
+    from project_health.db.models import Sprint
+
+    sprint_start = datetime(2025, 3, 1, tzinfo=timezone.utc)
+    sprint_end = datetime(2025, 3, 14, tzinfo=timezone.utc)
+    sprint = Sprint(
+        id="sprint-42",
+        name="Sprint 42",
+        project="PROJ",
+        start_date=sprint_start,
+        end_date=sprint_end,
+        state="closed",
+    )
+    db_session.add(sprint)
+    await db_session.commit()
+
+    from project_health.api.routes.metrics import _resolve_timeframe
+    ctx = await _resolve_timeframe(db_session, None, None, "sprint-42")
+    assert ctx.kind == "sprint"
+    assert ctx.start == sprint_start
+    assert ctx.end == sprint_end
+    assert ctx.sprint_id == "sprint-42"

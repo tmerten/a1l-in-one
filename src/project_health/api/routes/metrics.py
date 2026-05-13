@@ -7,14 +7,36 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from project_health.aggregation.core import Timeframe, build_timeframe
 from project_health.aggregation.queries import AggregationQueries
 from project_health.api.deps import get_config, get_session
 from project_health.config.loader import Config
+from project_health.db.models import Sprint
 
 router = APIRouter()
+
+
+async def _resolve_timeframe(
+    session: AsyncSession,
+    from_date: datetime | None,
+    to_date: datetime | None,
+    sprint_id: str | None,
+) -> Timeframe:
+    """Resolve sprint_id to date range if provided, else fall back to build_timeframe."""
+    if sprint_id:
+        result = await session.execute(select(Sprint).where(Sprint.id == sprint_id))
+        sprint = result.scalar_one_or_none()
+        if sprint:
+            return Timeframe(
+                kind="sprint",
+                start=sprint.start_date,
+                end=sprint.end_date,
+                sprint_id=sprint_id,
+            )
+    return build_timeframe(from_date, to_date)
 
 
 class ContributionVolumeResponse(BaseModel):
@@ -57,16 +79,6 @@ class SprintBurndownResponse(BaseModel):
     unit: str
 
 
-class TimeSeriesPoint(BaseModel):
-    bucket: str
-    value: dict[str, Any]
-
-
-class TimeSeriesResponse(BaseModel):
-    bucket_size: str
-    data: list[TimeSeriesPoint]
-
-
 @router.get("/contribution-volume")
 async def contribution_volume(
     from_date: datetime | None = Query(None, alias="from"),
@@ -75,7 +87,7 @@ async def contribution_volume(
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> ContributionVolumeResponse:
-    ctx = build_timeframe(from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
     queries = AggregationQueries(session, config)
     result = await queries.contribution_volume(ctx)
     return ContributionVolumeResponse(**result)
@@ -89,7 +101,7 @@ async def velocity(
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> VelocityResponse:
-    ctx = build_timeframe(from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
     queries = AggregationQueries(session, config)
     result = await queries.velocity(ctx)
     return VelocityResponse(**result)
@@ -103,7 +115,7 @@ async def composition(
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> CompositionResponse:
-    ctx = build_timeframe(from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
     queries = AggregationQueries(session, config)
     result = await queries.composition(ctx)
     return CompositionResponse(**result)
@@ -117,7 +129,7 @@ async def collaboration(
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> CollaborationResponse:
-    ctx = build_timeframe(from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
     queries = AggregationQueries(session, config)
     result = await queries.collaboration(ctx)
     return CollaborationResponse(**result)
@@ -134,6 +146,18 @@ async def sprint_burndown(
     return SprintBurndownResponse(**result)
 
 
+# Time-series variants
+
+class TimeSeriesPoint(BaseModel):
+    bucket: str
+    value: dict[str, Any]
+
+
+class TimeSeriesResponse(BaseModel):
+    bucket_size: str
+    data: list[TimeSeriesPoint]
+
+
 @router.get("/contribution-volume/ts")
 async def contribution_volume_ts(
     from_date: datetime | None = Query(None, alias="from"),
@@ -142,7 +166,7 @@ async def contribution_volume_ts(
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = build_timeframe(from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
     queries = AggregationQueries(session, config)
     result = await queries.contribution_volume_ts(ctx)
     return TimeSeriesResponse(**result)
@@ -156,7 +180,7 @@ async def velocity_ts(
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = build_timeframe(from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
     queries = AggregationQueries(session, config)
     result = await queries.velocity_ts(ctx)
     return TimeSeriesResponse(**result)
@@ -170,7 +194,7 @@ async def collaboration_ts(
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = build_timeframe(from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
     queries = AggregationQueries(session, config)
     result = await queries.collaboration_ts(ctx)
     return TimeSeriesResponse(**result)
