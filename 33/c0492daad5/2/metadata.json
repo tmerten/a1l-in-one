@@ -1,0 +1,36 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "33c0492daad5",
+  "session_id": "ses_1df1e4c4cffeBhF89eg7pItn6J",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-13T13:46:34.239711187Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [],
+  "agent": "OpenCode",
+  "model": "moonshotai/kimi-k2.6",
+  "turn_id": "9c2cc8f54042",
+  "token_usage": {
+    "input_tokens": 3492106,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 14576800,
+    "output_tokens": 73442,
+    "api_call_count": 194
+  },
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 1520,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 10,
+        "docs/superpowers/plans/2026-05-13-bug-fixes.md": 1510
+      }
+    }
+  ]
+}
