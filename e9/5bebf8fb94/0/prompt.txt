@@ -1,0 +1,8 @@
+I need to understand the `backfill` command in this project. Please:
+
+1. Search in `/project/openspec` for any documentation, specs, or markdown files related to "backfill"
+2. Search in `/project/src` for the backfill command implementation - look for files that contain "backfill" in their name or content
+3. Specifically look for how the backfill command handles database state, resumption, retries, and whether it needs database deletion to retry
+4. Look for any migration-related logic or state tracking that would allow continuing an import
+
+Return the relevant file paths and key findings about whether backfill is resumable/continuable without deleting the DB.
