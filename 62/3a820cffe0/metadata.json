@@ -1,0 +1,25 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "623a820cffe0",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/project_health/api/routes/metrics.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/62/3a820cffe0/0/metadata.json",
+      "transcript": "/62/3a820cffe0/0/full.jsonl",
+      "content_hash": "/62/3a820cffe0/0/content_hash.txt",
+      "prompt": "/62/3a820cffe0/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 20689,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 40304,
+    "output_tokens": 257,
+    "api_call_count": 5
+  }
+}
