@@ -9,13 +9,20 @@ sdks:
   - name: project-pi
   - name: project-entire
   - name: system
+    slots:
+      backend:
+        interface: tunnel
+        endpoint: localhost:8000 # service in the workshop
+      frontend:
+        interface: tunnel
+        endpoint: localhost:5173 # service in the workshop
     plugs:
       backend:
         interface: tunnel
-        endpoint: localhost:8000        # port on the host
+        endpoint: localhost:8000 # port on the host
       frontend:
         interface: tunnel
-        endpoint: localhost:5173        # port on the host
+        endpoint: localhost:5173 # port on the host
 actions:
   install: |
     pip install -r /project/requirements.txt "$@"
