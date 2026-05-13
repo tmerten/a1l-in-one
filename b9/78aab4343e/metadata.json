@@ -1,0 +1,26 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "b978aab4343e",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/project_health/aggregation/queries.py",
+    "tests/test_integration.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b9/78aab4343e/0/metadata.json",
+      "transcript": "/b9/78aab4343e/0/full.jsonl",
+      "content_hash": "/b9/78aab4343e/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}
