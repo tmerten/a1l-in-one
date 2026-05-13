@@ -1,7 +1,9 @@
 {
   "cli_version": "dev",
   "checkpoint_id": "3a4003ce6ee6",
+  "session_id": "ses_1df11e80effeAloDUIjZ7Bv2Pb",
   "strategy": "manual-commit",
+  "created_at": "2026-05-13T14:16:18.741011287Z",
   "branch": "main",
   "checkpoints_count": 0,
   "files_touched": [
@@ -16,31 +18,28 @@
     "frontend/src/pages/PeoplePage.tsx",
     "frontend/src/pages/ProjectsPage.tsx"
   ],
-  "sessions": [
-    {
-      "metadata": "/3a/4003ce6ee6/0/metadata.json",
-      "transcript": "/3a/4003ce6ee6/0/full.jsonl",
-      "content_hash": "/3a/4003ce6ee6/0/content_hash.txt",
-      "prompt": ""
-    },
-    {
-      "metadata": "/3a/4003ce6ee6/1/metadata.json",
-      "transcript": "/3a/4003ce6ee6/1/full.jsonl",
-      "content_hash": "/3a/4003ce6ee6/1/content_hash.txt",
-      "prompt": ""
-    },
-    {
-      "metadata": "/3a/4003ce6ee6/2/metadata.json",
-      "transcript": "/3a/4003ce6ee6/2/full.jsonl",
-      "content_hash": "/3a/4003ce6ee6/2/content_hash.txt",
-      "prompt": ""
-    }
-  ],
+  "agent": "OpenCode",
+  "model": "",
+  "turn_id": "90bc396cd2b0",
+  "checkpoint_transcript_start": 2,
+  "transcript_lines_at_start": 2,
   "token_usage": {
     "input_tokens": 0,
     "cache_creation_tokens": 0,
     "cache_read_tokens": 0,
     "output_tokens": 0,
     "api_call_count": 0
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-13T14:16:18.740365545Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 119,
+    "human_modified": 230,
+    "human_removed": 0,
+    "total_committed": 119,
+    "total_lines_changed": 349,
+    "agent_percentage": 0,
+    "metric_version": 2
   }
 }
