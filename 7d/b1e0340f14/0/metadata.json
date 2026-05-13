@@ -1,0 +1,23 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "7db1e0340f14",
+  "session_id": "ses_1df0722d6ffe5xS6HgzxrMexxB",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-13T12:07:43.522203903Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [],
+  "agent": "OpenCode",
+  "model": "moonshotai/kimi-k2.6",
+  "turn_id": "68de9634f7d5",
+  "token_usage": {
+    "input_tokens": 8799,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 113152,
+    "output_tokens": 1266,
+    "api_call_count": 12
+  },
+  "session_metrics": {
+    "turn_count": 1
+  }
+}

@@ -1,0 +1,16 @@
+The user wants you to execute an `/init` command for the OpenSpec workflow in their project.
+
+You are in a project at /project with an OpenSpec change already in progress (`project-health-dashboard`). The user wants to run `/init` — this typically means initializing a new OpenSpec change or setting up the OpenSpec workspace.
+
+Check the available OpenSpec commands in the project:
+- /project/.claude/commands/opsx/
+- /project/.opencode/commands/
+
+Look for any init-related commands or docs. The `openspec` CLI is available at /home/workshop/.local/bin/openspec.
+
+Try to understand what `/init` should do and execute it. If it's not clear, report back what you found.
+
+Return:
+1. What `/init` means in this context
+2. What action you took (or why you couldn't)
+3. Current state after your action
