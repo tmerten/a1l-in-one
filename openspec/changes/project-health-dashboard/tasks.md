@@ -1,7 +1,7 @@
 ## 1. Project Scaffolding
 
 - [x] 1.1 Initialize Python project with `uv init`, target Python 3.12+
-- [x] 1.2 Add backend dependencies: `fastapi`, `uvicorn[standard]`, `sqlalchemy[asyncio]`, `asyncpg`, `alembic`, `pydantic`, `pydantic-settings`, `apscheduler`, `typer`, `httpx`, `pyyaml`
+- [x] 1.2 Add backend dependencies: `fastapi`, `uvicorn[standard]`, `sqlalchemy[asyncio]`, `aiosqlite`, `alembic`, `pydantic`, `pydantic-settings`, `apscheduler`, `typer`, `httpx`, `pyyaml`
 - [x] 1.3 Add dev dependencies: `pytest`, `pytest-asyncio`, `pytest-postgresql`, `ruff`, `mypy`
 - [x] 1.4 Create module layout: `src/project_health/{config,ingestion,providers,aggregation,api,cli,db}`
 - [x] 1.5 Scaffold React frontend with Vite + TypeScript template under `frontend/`

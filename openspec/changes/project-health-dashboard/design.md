@@ -46,14 +46,14 @@ The tool runs on the engineering manager's own machine as a long-running Python 
 Backend:
   • Python 3.12+, managed by uv
   • FastAPI (async)
-  • SQLAlchemy 2.x async + asyncpg (raw SQL for hot aggregation queries; ORM for CRUD)
+  • SQLAlchemy 2.x async + aiosqlite (raw SQL for hot aggregation queries; ORM for CRUD)
   • Alembic for migrations
   • Pydantic v2 for event/payload models and config validation
   • APScheduler for the in-process scheduler
   • Typer for the `project-health` CLI (serve, backfill, healthcheck)
 
 Storage:
-  • PostgreSQL 15+ with JSONB
+  • SQLite (JSON1 extension) — embedded, no separate database process
   • No Redis — in-memory TTL cache and per-provider in-memory mutex are sufficient
     for a single-process tool
 
@@ -93,16 +93,16 @@ All ingested data is stored in a `raw_events` table before any aggregation. This
 
 ```sql
 CREATE TABLE raw_events (
-  id UUID PRIMARY KEY,
-  source VARCHAR NOT NULL,           -- "github", "jira"
-  event_type VARCHAR NOT NULL,       -- "commit", "pull_request",
+  id TEXT PRIMARY KEY,
+  source TEXT NOT NULL,              -- "github", "jira"
+  event_type TEXT NOT NULL,          -- "commit", "pull_request",
                                      -- "pull_request_review", "issue"
-  external_id VARCHAR NOT NULL,      -- ID from source system
-  timestamp TIMESTAMPTZ NOT NULL,    -- when the event occurred in the source
-  ingested_at TIMESTAMPTZ NOT NULL,  -- when we pulled it
-  actor VARCHAR,                     -- source-native identifier (username, accountId)
-  project VARCHAR,                   -- repo key, project key
-  data JSONB NOT NULL                -- source-specific payload
+  external_id TEXT NOT NULL,         -- ID from source system
+  timestamp DATETIME NOT NULL,       -- when the event occurred in the source (UTC)
+  ingested_at DATETIME NOT NULL,     -- when we pulled it (UTC)
+  actor TEXT,                        -- source-native identifier (username, accountId)
+  project TEXT,                      -- repo key, project key
+  data JSON NOT NULL                 -- source-specific payload (TEXT column, JSON1)
 );
 
 CREATE UNIQUE INDEX idx_raw_events_dedup
@@ -112,9 +112,9 @@ CREATE INDEX idx_raw_events_actor ON raw_events(actor);
 CREATE INDEX idx_raw_events_project ON raw_events(project);
 ```
 
-**Why JSONB**: Each source has different fields (GitHub PRs have `additions`/`deletions`, Jira issues have `story_points`, Launchpad MPs have different shape). JSONB lets us store source-specific data without per-provider schema changes, while still allowing indexed queries via GIN if hot fields emerge.
+**Why JSON (SQLite JSON1)**: Each source has different fields (GitHub PRs have `additions`/`deletions`, Jira issues have `story_points`, Launchpad MPs have different shape). Storing source-specific data as a JSON text column avoids per-provider schema changes while keeping queries readable via `json_extract`. Migrating to PostgreSQL JSONB in v2 (if multi-user deployment warrants it) requires only dialect changes in the writer and aggregation queries — the schema shape stays the same.
 
-Pull request reviews are stored as separate `raw_events` rows with `event_type = 'pull_request_review'`. Each review row captures the review state (`APPROVED | CHANGES_REQUESTED | COMMENTED`) and inline comment count in its `data` JSONB column.
+Pull request reviews are stored as separate `raw_events` rows with `event_type = 'pull_request_review'`. Each review row captures the review state (`APPROVED | CHANGES_REQUESTED | COMMENTED`) and inline comment count in its `data` JSON column.
 
 Records are never deleted: orphaned commits from force-pushes are harmless historical truth (see §13). PR LOC is captured at merge time and not maintained afterward.
 
@@ -153,19 +153,19 @@ The endpoint is bound to localhost only (consistent with §1). No queuing of pen
 
 ```sql
 CREATE TABLE ingestion_runs (
-  id UUID PRIMARY KEY,
-  source VARCHAR NOT NULL,
-  event_type VARCHAR NOT NULL,
-  started_at TIMESTAMPTZ NOT NULL,
-  finished_at TIMESTAMPTZ NULL,
-  status VARCHAR NOT NULL,           -- running | success | failure | skipped
-  trigger VARCHAR NOT NULL,          -- scheduled | manual | backfill
-  events_count INT NULL,
+  id TEXT PRIMARY KEY,
+  source TEXT NOT NULL,
+  event_type TEXT NOT NULL,
+  started_at DATETIME NOT NULL,
+  finished_at DATETIME NULL,
+  status TEXT NOT NULL,              -- running | success | failure | skipped
+  trigger TEXT NOT NULL,             -- scheduled | manual | backfill
+  events_count INTEGER NULL,
   error_message TEXT NULL
 );
 
 CREATE INDEX idx_ingestion_runs_source_event
-  ON ingestion_runs(source, event_type, started_at DESC);
+  ON ingestion_runs(source, event_type, started_at);
 ```
 
 The dashboard header displays a "Last synced" indicator per source, derived from the most recent `success` row per source. Stale-state escalation:
@@ -245,16 +245,16 @@ issue_type_mapping:              # optional, per source
 
 ```sql
 CREATE TABLE persons (
-  id UUID PRIMARY KEY,
+  id TEXT PRIMARY KEY,
   display_name TEXT NOT NULL,
-  active BOOLEAN NOT NULL DEFAULT TRUE
+  active INTEGER NOT NULL DEFAULT 1   -- SQLite boolean
 );
 
 CREATE TABLE person_identities (
-  id UUID PRIMARY KEY,
-  person_id UUID REFERENCES persons(id),  -- nullable: see auto-discovery
-  source VARCHAR NOT NULL,
-  external_id VARCHAR NOT NULL,
+  id TEXT PRIMARY KEY,
+  person_id TEXT REFERENCES persons(id),  -- nullable: see auto-discovery
+  source TEXT NOT NULL,
+  external_id TEXT NOT NULL,
   UNIQUE (source, external_id)
 );
 ```
@@ -367,12 +367,12 @@ Each metric component fetches from a dedicated aggregation endpoint via TanStack
 
 ### 18. Future Launchpad integration
 
-The provider interface already accommodates Launchpad: `fetch_pull_requests` returns `list[RawPREvent]` — Launchpad MPs map to this type with `source: "launchpad"`. The `data` JSONB field carries MP-specific fields without schema changes. Person identity mapping extends to Launchpad usernames in YAML. No code changes needed in the aggregation or UI layers.
+The provider interface already accommodates Launchpad: `fetch_pull_requests` returns `list[RawPREvent]` — Launchpad MPs map to this type with `source: "launchpad"`. The `data` JSON field carries MP-specific fields without schema changes. Person identity mapping extends to Launchpad usernames in YAML. No code changes needed in the aggregation or UI layers.
 
 ## Risks / Trade-offs
 
 - **[Risk] GitHub/Jira API rate limits** → Mitigation: configurable ingestion interval, incremental `since` fetching, exponential backoff (3 attempts) on transient errors, fail-fast on auth errors.
-- **[Risk] Query performance degrades as `raw_events` grows** → Mitigation: composite indexes on `(source, timestamp)`, `actor`, `project`; partition by month once the table is in the tens of millions of rows; per-source cache reduces recompute pressure.
+- **[Risk] Query performance degrades as `raw_events` grows** → Mitigation: composite indexes on `(source, timestamp)`, `actor`, `project`; per-source cache reduces recompute pressure. SQLite handles single-user data volumes well; if data grows beyond ~10M rows, migration to PostgreSQL is the natural v2 step (schema shape is identical, only the dialect layer changes).
 - **[Risk] Unmapped identities clutter the People view** → Mitigation: auto-discovery captures unmapped identities; `project-health identities list-unmapped` CLI gives the operator a one-step path to add them to YAML.
 - **[Risk] Issue type normalization is inconsistent across projects** → Mitigation: configurable mapping per source; `other` bucket catches unmapped types; source-native labels visible on drill-down.
 - **[Risk] Squash-merge + force-push can leave commit data that looks like garbage** → Accepted: aggregations don't rely on commit traversal; LOC is captured at PR-merge time.

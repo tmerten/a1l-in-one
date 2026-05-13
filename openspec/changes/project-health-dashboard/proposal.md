@@ -64,8 +64,8 @@ An engineering manager needs a single view of project health and team productivi
 
 - **New code**: Python backend (FastAPI + SQLAlchemy 2.x async + APScheduler + Pydantic v2 + Typer), React frontend (Vite + TanStack Query + Recharts + Tailwind).
 - **External dependencies**: GitHub API (commits, PRs, PR reviews, issues), Jira API (issues, sprints, boards).
-- **Storage**: PostgreSQL 15+ with JSONB. Tables: `raw_events`, `sprints`, `persons`, `person_identities`, `ingestion_runs`. No Redis.
-- **Infrastructure**: None beyond a Postgres instance. The tool runs as a single long-running Python process bound to localhost; ingestion is scheduled in-process by APScheduler.
+- **Storage**: SQLite (JSON1 extension) — embedded, no separate database process. Tables: `raw_events`, `sprints`, `persons`, `person_identities`, `ingestion_runs`. No Redis.
+- **Infrastructure**: None — SQLite is embedded in the process. The tool runs as a single long-running Python process bound to localhost; ingestion is scheduled in-process by APScheduler.
 - **No breaking changes** — this is a new feature with no existing functionality impacted.
 
 ## v1 / v2 Scope
