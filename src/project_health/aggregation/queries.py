@@ -424,7 +424,10 @@ class AggregationQueries:
         """
         result = await self._session.execute(text(sql), {"start": ctx.start, "end": ctx.end})
         data = [
-            {"bucket": row.bucket, "commits": row.commits, "prs": row.prs, "issues": row.issues}
+            {
+                "bucket": row.bucket,
+                "value": {"commits": row.commits, "prs": row.prs, "issues": row.issues},
+            }
             for row in result.mappings().all()
         ]
         return {"bucket_size": bucket_size, "data": data}
@@ -446,7 +449,14 @@ class AggregationQueries:
         """
         result = await self._session.execute(text(sql), {"start": ctx.start, "end": ctx.end})
         data = [
-            {"bucket": row.bucket, "avg_cycle_hours": round(row.avg_cycle_hours, 2) if row.avg_cycle_hours else None}
+            {
+                "bucket": row.bucket,
+                "value": {
+                    "avg_cycle_hours": round(row.avg_cycle_hours, 2)
+                    if row.avg_cycle_hours
+                    else None
+                },
+            }
             for row in result.mappings().all()
         ]
         return {"bucket_size": bucket_size, "data": data}
@@ -465,7 +475,7 @@ class AggregationQueries:
         """
         result = await self._session.execute(text(sql), {"start": ctx.start, "end": ctx.end})
         data = [
-            {"bucket": row.bucket, "reviews": row.reviews}
+            {"bucket": row.bucket, "value": {"reviews": row.reviews}}
             for row in result.mappings().all()
         ]
         return {"bucket_size": bucket_size, "data": data}

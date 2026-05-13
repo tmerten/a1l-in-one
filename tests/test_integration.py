@@ -188,3 +188,28 @@ async def test_aggregation_queries_requires_config(db_session: AsyncSession):
     queries = AggregationQueries(db_session, config)
     assert queries._config is config
     assert isinstance(queries._bots, set)
+
+
+@pytest.mark.asyncio
+async def test_contribution_volume_ts_shape(db_session: AsyncSession, minimal_config):
+    """Time-series data must include a 'value' dict wrapping the metric fields."""
+    writer = EventWriter(db_session)
+    now = datetime.now(timezone.utc)
+    await writer.write_pull_requests("github", [
+        RawPREvent(
+            external_id="PR-10",
+            timestamp=now,
+            actor="alice",
+            project="repo-a",
+            data={"merged_at": now.isoformat(), "additions": 5, "deletions": 1},
+        )
+    ])
+    queries = AggregationQueries(db_session, minimal_config)
+    ctx = Timeframe(kind="date_range", start=now - timedelta(days=1), end=now + timedelta(days=1))
+    result = await queries.contribution_volume_ts(ctx)
+    assert result["bucket_size"] in ("day", "week", "month", "quarter")
+    assert len(result["data"]) > 0
+    row = result["data"][0]
+    assert "bucket" in row
+    assert "value" in row, "each row must have a 'value' dict"
+    assert "prs" in row["value"]
