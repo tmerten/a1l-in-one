@@ -3,6 +3,7 @@ import { useSyncStatus } from '../hooks/useMetrics'
 import TimeframeSelector from './TimeframeSelector'
 import ProjectFilter from './ProjectFilter'
 import SyncStatusBadge from './SyncStatusBadge'
+import { SettingsProvider } from './SettingsPanel'
 
 export default function AppShell() {
   const location = useLocation()
@@ -11,6 +12,7 @@ export default function AppShell() {
   const tab = location.pathname.includes('/people') ? 'people' : 'projects'
 
   return (
+    <SettingsProvider>
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3">
@@ -52,5 +54,6 @@ export default function AppShell() {
         <Outlet />
       </main>
     </div>
+    </SettingsProvider>
   )
 }

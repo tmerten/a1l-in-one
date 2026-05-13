@@ -28,12 +28,20 @@ export async function getSprints(project?: string) {
   return fetchJson(`/sprints?${params}`)
 }
 
-export async function getMetrics(endpoint: string, query: {[key: string]: string}) {
-  const params = new URLSearchParams(query)
-  return fetchJson(`/metrics/${endpoint}?${params}`)
+function buildParams(query: Record<string, string | string[] | undefined>): URLSearchParams {
+  const params = new URLSearchParams()
+  for (const [k, v] of Object.entries(query)) {
+    if (!v) continue
+    if (Array.isArray(v)) v.forEach(item => params.append(k, item))
+    else params.set(k, v)
+  }
+  return params
 }
 
-export async function getMetricsTs(endpoint: string, query: {[key: string]: string}) {
-  const params = new URLSearchParams(query)
-  return fetchJson(`/metrics/${endpoint}/ts?${params}`)
+export async function getMetrics(endpoint: string, query: Record<string, string | string[] | undefined>) {
+  return fetchJson(`/metrics/${endpoint}?${buildParams(query)}`)
+}
+
+export async function getMetricsTs(endpoint: string, query: Record<string, string | string[] | undefined>) {
+  return fetchJson(`/metrics/${endpoint}/ts?${buildParams(query)}`)
 }

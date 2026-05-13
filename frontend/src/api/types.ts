@@ -304,6 +304,10 @@ export interface components {
         SyncRunResponse: {
             /** Run Id */
             run_id: string;
+            /** Source */
+            source: string;
+            /** Event Type */
+            event_type: string;
             /** Status */
             status: string;
         };
@@ -410,7 +414,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SyncRunResponse"];
+                    "application/json": components["schemas"]["SyncRunResponse"][];
                 };
             };
             /** @description Validation Error */
@@ -481,6 +485,8 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 sprint_id?: string | null;
+                projects?: string[] | null;
+                actors?: string[] | null;
             };
             header?: never;
             path?: never;
