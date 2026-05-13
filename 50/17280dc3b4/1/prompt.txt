@@ -1,0 +1,1 @@
+In this session always confirm before you start changin any files. Another agent is working on fixing bugs in this project and you should not collide.

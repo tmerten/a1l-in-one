@@ -1,0 +1,67 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "5017280dc3b4",
+  "session_id": "ses_1de62f9d7ffe28lI7muO5Ly2DK",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-13T13:58:53.182365453Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/project_health/aggregation/queries.py",
+    "tests/test_integration.py"
+  ],
+  "agent": "OpenCode",
+  "model": "moonshotai/kimi-k2.6",
+  "turn_id": "57fac33a0f4d",
+  "token_usage": {
+    "input_tokens": 38376,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 51240,
+    "output_tokens": 555,
+    "api_call_count": 8
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-13T13:58:53.180059088Z",
+    "agent_lines": 68,
+    "agent_removed": 35,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 68,
+    "total_lines_changed": 103,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1552,
+      "user_lines_removed": 16,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 10,
+        "docs/superpowers/plans/2026-05-13-bug-fixes.md": 1510,
+        "src/project_health/api/routes/metrics.py": 25,
+        "src/project_health/api/routes/sync.py": 7
+      },
+      "user_removed_per_file": {
+        "src/project_health/api/routes/metrics.py": 15,
+        "src/project_health/api/routes/sync.py": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 10,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1542,
+      "agent_lines_removed": 16,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 10
+      }
+    }
+  ]
+}
