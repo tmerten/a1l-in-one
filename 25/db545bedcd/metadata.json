@@ -20,6 +20,12 @@
       "transcript": "/25/db545bedcd/1/full.jsonl",
       "content_hash": "/25/db545bedcd/1/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/25/db545bedcd/2/metadata.json",
+      "transcript": "/25/db545bedcd/2/full.jsonl",
+      "content_hash": "/25/db545bedcd/2/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
