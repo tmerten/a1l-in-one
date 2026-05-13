@@ -1,7 +1,9 @@
 {
   "cli_version": "dev",
   "checkpoint_id": "33c0492daad5",
+  "session_id": "ses_1df11e80effeAloDUIjZ7Bv2Pb",
   "strategy": "manual-commit",
+  "created_at": "2026-05-13T13:45:35.879472538Z",
   "branch": "main",
   "checkpoints_count": 0,
   "files_touched": [
@@ -15,25 +17,28 @@
     "tests/test_ingestion.py",
     "tests/test_integration.py"
   ],
-  "sessions": [
-    {
-      "metadata": "/33/c0492daad5/0/metadata.json",
-      "transcript": "/33/c0492daad5/0/full.jsonl",
-      "content_hash": "/33/c0492daad5/0/content_hash.txt",
-      "prompt": ""
-    },
-    {
-      "metadata": "/33/c0492daad5/1/metadata.json",
-      "transcript": "/33/c0492daad5/1/full.jsonl",
-      "content_hash": "/33/c0492daad5/1/content_hash.txt",
-      "prompt": ""
-    }
-  ],
+  "agent": "OpenCode",
+  "model": "",
+  "turn_id": "90bc396cd2b0",
+  "checkpoint_transcript_start": 2,
+  "transcript_lines_at_start": 2,
   "token_usage": {
     "input_tokens": 0,
     "cache_creation_tokens": 0,
     "cache_read_tokens": 0,
     "output_tokens": 0,
     "api_call_count": 0
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-13T13:45:35.878577728Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 12,
+    "human_modified": 142,
+    "human_removed": 0,
+    "total_committed": 12,
+    "total_lines_changed": 154,
+    "agent_percentage": 0,
+    "metric_version": 2
   }
 }
