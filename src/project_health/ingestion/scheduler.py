@@ -149,7 +149,7 @@ class IngestionRunner:
             from project_health.db.models import Sprint
             count = 0
             for sp in events:
-                self._session.merge(
+                await self._session.merge(
                     Sprint(
                         id=sp.id,
                         name=sp.name,
