@@ -1,0 +1,34 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "3a4003ce6ee6",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "frontend/src/App.tsx",
+    "frontend/src/api/client.ts",
+    "frontend/src/api/types.ts",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/components/SettingsPanel.tsx",
+    "frontend/src/components/SyncStatusBadge.tsx",
+    "frontend/src/components/TimeframeSelector.tsx",
+    "frontend/src/hooks/useMetrics.ts",
+    "frontend/src/pages/PeoplePage.tsx",
+    "frontend/src/pages/ProjectsPage.tsx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/3a/4003ce6ee6/0/metadata.json",
+      "transcript": "/3a/4003ce6ee6/0/full.jsonl",
+      "content_hash": "/3a/4003ce6ee6/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}
