@@ -1,0 +1,53 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "effcc8ff5beb",
+  "session_id": "ses_1df8de85effet4KUtgRarZOhde",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-13T09:41:15.674350466Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "openspec/changes/project-health-dashboard/.openspec.yaml",
+    "openspec/changes/project-health-dashboard/design.md",
+    "openspec/changes/project-health-dashboard/proposal.md",
+    "openspec/changes/project-health-dashboard/specs/dashboard-ui/spec.md",
+    "openspec/changes/project-health-dashboard/specs/data-ingestion/spec.md",
+    "openspec/changes/project-health-dashboard/specs/metrics-aggregation/spec.md",
+    "openspec/changes/project-health-dashboard/specs/sprint-integration/spec.md",
+    "openspec/changes/project-health-dashboard/tasks.md"
+  ],
+  "agent": "OpenCode",
+  "model": "deepseek/deepseek-v4-pro",
+  "turn_id": "bd7a8e5a89c1",
+  "token_usage": {
+    "input_tokens": 347330,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 272768,
+    "output_tokens": 13660,
+    "api_call_count": 25
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-13T09:41:15.665620851Z",
+    "agent_lines": 871,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 871,
+    "total_lines_changed": 871,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
