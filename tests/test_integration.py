@@ -102,7 +102,7 @@ async def test_cycle_time_calculation(db_session: AsyncSession, minimal_config):
         actor="alice",
         project="repo-a",
         data={
-            "created_at": created.isoformat(),
+            # No "created_at" here — the query must use the timestamp column
             "merged_at": merged.isoformat(),
             "additions": 10,
             "deletions": 2,

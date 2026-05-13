@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import text
@@ -142,7 +142,7 @@ class AggregationQueries:
         # Cycle times for merged PRs
         cycle_sql = """
             SELECT
-                json_extract(data, '$.created_at') as created_at,
+                timestamp as created_at,
                 json_extract(data, '$.merged_at') as merged_at
             FROM raw_events
             WHERE source = 'github' AND event_type = 'pull_request'
@@ -152,14 +152,33 @@ class AggregationQueries:
         cycle_result = await self._session.execute(
             text(cycle_sql), {"start": ctx.start, "end": ctx.end}
         )
+        def _parse_dt(value: object) -> datetime | None:
+            """Parse a datetime value that may be a datetime object or ISO string.
+
+            SQLite stores DateTime columns without timezone, so naive datetimes are
+            treated as UTC to match the stored timestamp semantics.
+            """
+            if value is None:
+                return None
+            if isinstance(value, datetime):
+                dt = value
+            else:
+                dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+            # Coerce naive datetimes (from SQLite timestamp column) to UTC
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt
+
         cycle_times = []
         for row in cycle_result.mappings().all():
             created = row["created_at"]
             merged = row["merged_at"]
             if created and merged:
                 try:
-                    c_dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
-                    m_dt = datetime.fromisoformat(merged.replace("Z", "+00:00"))
+                    c_dt = _parse_dt(created)
+                    m_dt = _parse_dt(merged)
+                    if c_dt is None or m_dt is None:
+                        continue
                     hours = (m_dt - c_dt).total_seconds() / 3600
                     if hours > 0:
                         cycle_times.append(hours)
@@ -418,7 +437,7 @@ class AggregationQueries:
             SELECT
                 {bucket_expr} as bucket,
                 AVG(
-                    (julianday(json_extract(data, '$.merged_at')) - julianday(json_extract(data, '$.created_at'))) * 24
+                    (julianday(json_extract(data, '$.merged_at')) - julianday(timestamp)) * 24
                 ) as avg_cycle_hours
             FROM raw_events
             WHERE source = 'github' AND event_type = 'pull_request'
