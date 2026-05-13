@@ -40,7 +40,7 @@ def build_app(config_path: Path) -> FastAPI:
     # CORS for local dev (frontend on different port)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -59,9 +59,6 @@ def build_app(config_path: Path) -> FastAPI:
 async def start_server(config_path: Path, host: str, port: int) -> None:
     """Start the uvicorn server."""
     import uvicorn
-
-    if host != "127.0.0.1":
-        raise ValueError("v1 only supports binding to 127.0.0.1")
 
     app = build_app(config_path)
     config = uvicorn.Config(app, host=host, port=port, log_level="info")

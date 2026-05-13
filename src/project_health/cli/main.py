@@ -26,7 +26,7 @@ def serve(
         exists=True,
         readable=True,
     ),
-    host: str = typer.Option("127.0.0.1", "--host", help="Bind address (127.0.0.1 enforced in v1)"),
+    host: str = typer.Option("0.0.0.0", "--host", help="Bind address"),
     port: int = typer.Option(8000, "--port", "-p", help="HTTP port"),
 ) -> None:
     """Start the dashboard server with in-process scheduler."""
