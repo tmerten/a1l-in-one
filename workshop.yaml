@@ -27,3 +27,6 @@ actions:
 
   pi: |
     pi "$@"
+
+  entire: |
+    entire "$@"
