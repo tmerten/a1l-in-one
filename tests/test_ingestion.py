@@ -88,24 +88,25 @@ async def test_cache_basic():
     assert c.misses == 1
 
 
-def test_bot_filter_from_config(monkeypatch):
-    import project_health.aggregation.core as core_mod
+def test_bot_filter_from_config():
+    from project_health.aggregation.core import get_bot_set
     from project_health.config.loader import Config
 
-    # Reset cache
-    core_mod.BOT_CACHE = None
+    config = Config.model_validate({
+        "credentials": {"github_token": "test"},
+        "bots": {"github": ["dependabot[bot]"]},
+    })
+    bots = get_bot_set(config)
+    assert "dependabot[bot]" in bots
 
-    # Mock load_config inside core_mod (where it's imported)
-    orig_load = core_mod.load_config
-    def mock_load(_path=None):
-        return Config.model_validate({
-            "credentials": {"github_token": "test"},
-            "bots": {"github": ["dependabot[bot]"]}
-        })
-    core_mod.load_config = mock_load
-    try:
-        bots = core_mod.get_bot_set()
-        assert "dependabot[bot]" in bots
-    finally:
-        core_mod.load_config = orig_load
-        core_mod.BOT_CACHE = None
+
+def test_get_bot_set_uses_passed_config():
+    """get_bot_set must accept Config directly, not load via global cache."""
+    from project_health.aggregation.core import get_bot_set
+    from project_health.config.loader import Config
+    config = Config.model_validate({
+        "credentials": {"github_token": "test"},
+        "bots": {"github": ["my-bot[bot]"]},
+    })
+    bots = get_bot_set(config)
+    assert "my-bot[bot]" in bots

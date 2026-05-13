@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import func, select
 
-from project_health.config.loader import load_config
+from project_health.api.deps import get_config
+from project_health.config.loader import Config
 from project_health.db.models import IngestionRun
 from project_health.db.session import get_session_maker
 from project_health.ingestion.scheduler import IngestionRunner
@@ -39,9 +40,9 @@ class SyncStatusResponse(BaseModel):
 async def sync_run(
     source: str | None = Query(None),
     event_type: str | None = Query(None),
+    config: Config = Depends(get_config),
 ) -> SyncRunResponse:
     """Trigger an immediate ingestion run."""
-    config = load_config()
     registry = await build_registry(config)
 
     targets = []

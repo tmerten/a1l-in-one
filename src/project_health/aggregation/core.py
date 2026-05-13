@@ -1,5 +1,3 @@
-"""Aggregation core: timeframe resolution, classification, bucketing."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -8,7 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from project_health.config.loader import Config, load_config
+from project_health.config.loader import Config
 
 
 class Timeframe(BaseModel):
@@ -37,8 +35,7 @@ def build_timeframe(
     """Build a normalized timeframe from query params."""
     if from_date and to_date:
         return Timeframe(kind="date_range", start=from_date, end=to_date)
-    # Default to last 30 days
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)  # was datetime.now(timezone.utc) — NameError
     return Timeframe(
         kind="date_range",
         start=now - timedelta(days=30),
@@ -78,16 +75,6 @@ def normalize_issue_type(source: str, raw_type: str, config: Config) -> str:
     return "other"
 
 
-BOT_CACHE: set[str] | None = None
-
-
-def get_bot_set() -> set[str]:
-    """Return cached bot set from config."""
-    global BOT_CACHE
-    if BOT_CACHE is None:
-        try:
-            cfg = load_config()
-            BOT_CACHE = cfg.github_bots
-        except Exception:
-            BOT_CACHE = set()
-    return BOT_CACHE
+def get_bot_set(config: Config) -> set[str]:
+    """Return the set of bot identifiers from config."""
+    return config.github_bots

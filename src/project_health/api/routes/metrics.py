@@ -5,12 +5,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from project_health.aggregation.core import Timeframe, build_timeframe
 from project_health.aggregation.queries import AggregationQueries
-from project_health.api.deps import get_session
+from project_health.api.deps import get_config, get_session
+from project_health.config.loader import Config
 
 router = APIRouter()
 
@@ -55,83 +57,6 @@ class SprintBurndownResponse(BaseModel):
     unit: str
 
 
-def _build_timeframe(
-    from_date: datetime | None = None,
-    to_date: datetime | None = None,
-    sprint_id: str | None = None,
-) -> Timeframe:
-    return build_timeframe(from_date=from_date, to_date=to_date, sprint_id=sprint_id)
-
-
-@router.get("/contribution-volume")
-async def contribution_volume(
-    from_date: datetime | None = Query(None, alias="from"),
-    to_date: datetime | None = Query(None, alias="to"),
-    sprint_id: str | None = Query(None),
-) -> ContributionVolumeResponse:
-    ctx = _build_timeframe(from_date, to_date, sprint_id)
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.contribution_volume(ctx)
-    return ContributionVolumeResponse(**result)
-
-
-@router.get("/velocity")
-async def velocity(
-    from_date: datetime | None = Query(None, alias="from"),
-    to_date: datetime | None = Query(None, alias="to"),
-    sprint_id: str | None = Query(None),
-) -> VelocityResponse:
-    ctx = _build_timeframe(from_date, to_date, sprint_id)
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.velocity(ctx)
-    return VelocityResponse(**result)
-
-
-@router.get("/composition")
-async def composition(
-    from_date: datetime | None = Query(None, alias="from"),
-    to_date: datetime | None = Query(None, alias="to"),
-    sprint_id: str | None = Query(None),
-) -> CompositionResponse:
-    ctx = _build_timeframe(from_date, to_date, sprint_id)
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.composition(ctx)
-    return CompositionResponse(**result)
-
-
-@router.get("/collaboration")
-async def collaboration(
-    from_date: datetime | None = Query(None, alias="from"),
-    to_date: datetime | None = Query(None, alias="to"),
-    sprint_id: str | None = Query(None),
-) -> CollaborationResponse:
-    ctx = _build_timeframe(from_date, to_date, sprint_id)
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.collaboration(ctx)
-    return CollaborationResponse(**result)
-
-
-@router.get("/sprint-burndown")
-async def sprint_burndown(
-    sprint_id: str = Query(...),
-) -> SprintBurndownResponse:
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.sprint_burndown(sprint_id)
-    return SprintBurndownResponse(**result)
-
-
-# Time-series variants
-
 class TimeSeriesPoint(BaseModel):
     bucket: str
     value: dict[str, Any]
@@ -142,17 +67,84 @@ class TimeSeriesResponse(BaseModel):
     data: list[TimeSeriesPoint]
 
 
+@router.get("/contribution-volume")
+async def contribution_volume(
+    from_date: datetime | None = Query(None, alias="from"),
+    to_date: datetime | None = Query(None, alias="to"),
+    sprint_id: str | None = Query(None),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
+) -> ContributionVolumeResponse:
+    ctx = build_timeframe(from_date, to_date, sprint_id)
+    queries = AggregationQueries(session, config)
+    result = await queries.contribution_volume(ctx)
+    return ContributionVolumeResponse(**result)
+
+
+@router.get("/velocity")
+async def velocity(
+    from_date: datetime | None = Query(None, alias="from"),
+    to_date: datetime | None = Query(None, alias="to"),
+    sprint_id: str | None = Query(None),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
+) -> VelocityResponse:
+    ctx = build_timeframe(from_date, to_date, sprint_id)
+    queries = AggregationQueries(session, config)
+    result = await queries.velocity(ctx)
+    return VelocityResponse(**result)
+
+
+@router.get("/composition")
+async def composition(
+    from_date: datetime | None = Query(None, alias="from"),
+    to_date: datetime | None = Query(None, alias="to"),
+    sprint_id: str | None = Query(None),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
+) -> CompositionResponse:
+    ctx = build_timeframe(from_date, to_date, sprint_id)
+    queries = AggregationQueries(session, config)
+    result = await queries.composition(ctx)
+    return CompositionResponse(**result)
+
+
+@router.get("/collaboration")
+async def collaboration(
+    from_date: datetime | None = Query(None, alias="from"),
+    to_date: datetime | None = Query(None, alias="to"),
+    sprint_id: str | None = Query(None),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
+) -> CollaborationResponse:
+    ctx = build_timeframe(from_date, to_date, sprint_id)
+    queries = AggregationQueries(session, config)
+    result = await queries.collaboration(ctx)
+    return CollaborationResponse(**result)
+
+
+@router.get("/sprint-burndown")
+async def sprint_burndown(
+    sprint_id: str = Query(...),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
+) -> SprintBurndownResponse:
+    queries = AggregationQueries(session, config)
+    result = await queries.sprint_burndown(sprint_id)
+    return SprintBurndownResponse(**result)
+
+
 @router.get("/contribution-volume/ts")
 async def contribution_volume_ts(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = _build_timeframe(from_date, to_date, sprint_id)
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.contribution_volume_ts(ctx)
+    ctx = build_timeframe(from_date, to_date, sprint_id)
+    queries = AggregationQueries(session, config)
+    result = await queries.contribution_volume_ts(ctx)
     return TimeSeriesResponse(**result)
 
 
@@ -161,12 +153,12 @@ async def velocity_ts(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = _build_timeframe(from_date, to_date, sprint_id)
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.velocity_ts(ctx)
+    ctx = build_timeframe(from_date, to_date, sprint_id)
+    queries = AggregationQueries(session, config)
+    result = await queries.velocity_ts(ctx)
     return TimeSeriesResponse(**result)
 
 
@@ -175,10 +167,10 @@ async def collaboration_ts(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = _build_timeframe(from_date, to_date, sprint_id)
-    maker = get_session()
-    async with maker() as session:
-        queries = AggregationQueries(session)
-        result = await queries.collaboration_ts(ctx)
+    ctx = build_timeframe(from_date, to_date, sprint_id)
+    queries = AggregationQueries(session, config)
+    result = await queries.collaboration_ts(ctx)
     return TimeSeriesResponse(**result)

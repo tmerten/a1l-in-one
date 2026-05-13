@@ -35,6 +35,7 @@ def build_app(config_path: Path) -> FastAPI:
         version="0.1.0",
         lifespan=lifespan,
     )
+    app.state.config = config
 
     # CORS for local dev (frontend on different port)
     app.add_middleware(

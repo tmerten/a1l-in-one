@@ -26,8 +26,23 @@ async def db_session():
     await engine.dispose()
 
 
+@pytest.fixture
+def minimal_config():
+    from project_health.config.loader import Config
+    return Config.model_validate({"credentials": {"github_token": "test"}})
+
+
+@pytest.fixture
+def bot_config():
+    from project_health.config.loader import Config
+    return Config.model_validate({
+        "credentials": {"github_token": "test"},
+        "bots": {"github": ["dependabot[bot]"]},
+    })
+
+
 @pytest.mark.asyncio
-async def test_bot_filter_excludes_from_metrics(db_session: AsyncSession):
+async def test_bot_filter_excludes_from_metrics(db_session: AsyncSession, bot_config):
     """Bot-authored PR exists in raw_events but absent from human metrics."""
     writer = EventWriter(db_session)
 
@@ -66,8 +81,7 @@ async def test_bot_filter_excludes_from_metrics(db_session: AsyncSession):
     assert len(result.scalars().all()) == 2
 
     # Metrics should only count human PR
-    queries = AggregationQueries(db_session)
-    queries._bots = {"dependabot[bot]"}  # inject bot filter for test
+    queries = AggregationQueries(db_session, bot_config)
     now = datetime.now(timezone.utc)
     ctx = Timeframe(kind="date_range", start=now - timedelta(days=1), end=now)
     volume = await queries.contribution_volume(ctx)
@@ -76,7 +90,7 @@ async def test_bot_filter_excludes_from_metrics(db_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_cycle_time_calculation(db_session: AsyncSession):
+async def test_cycle_time_calculation(db_session: AsyncSession, minimal_config):
     """PR with created_at and merged_at produces correct median."""
     writer = EventWriter(db_session)
     created = datetime(2025, 1, 1, 9, 0, tzinfo=timezone.utc)
@@ -96,7 +110,7 @@ async def test_cycle_time_calculation(db_session: AsyncSession):
     )
     await writer.write_pull_requests("github", [pr])
 
-    queries = AggregationQueries(db_session)
+    queries = AggregationQueries(db_session, minimal_config)
     ctx = Timeframe(kind="date_range", start=created, end=merged + timedelta(days=1))
     vel = await queries.velocity(ctx)
     assert vel["cycle_time_median"] == 72.0
@@ -124,7 +138,7 @@ async def test_cache_invalidation_per_source(db_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_squash_merge_not_double_counted(db_session: AsyncSession):
+async def test_squash_merge_not_double_counted(db_session: AsyncSession, minimal_config):
     """PR-associated commits counted; squash commit on main not double-counted."""
     writer = EventWriter(db_session)
     now = datetime.now(timezone.utc)
@@ -158,8 +172,19 @@ async def test_squash_merge_not_double_counted(db_session: AsyncSession):
     # In v1, commit count comes from PR-associated commits (all stored)
     # The aggregation query simply counts commits; in a real impl we'd filter squash
     # For this test, we verify the storage side is correct
-    queries = AggregationQueries(db_session)
+    queries = AggregationQueries(db_session, minimal_config)
     ctx = Timeframe(kind="date_range", start=now - timedelta(days=1), end=now)
     volume = await queries.contribution_volume(ctx)
     # The query counts all commits; in production we'd add squash filtering
     assert volume["commits"] == 4  # Storage has all 4
+
+
+@pytest.mark.asyncio
+async def test_aggregation_queries_requires_config(db_session: AsyncSession):
+    """AggregationQueries must accept Config, not load it internally."""
+    from project_health.config.loader import Config
+    config = Config.model_validate({"credentials": {"github_token": "test"}})
+    # This should not raise TypeError (previously failed because load_config() got no path arg)
+    queries = AggregationQueries(db_session, config)
+    assert queries._config is config
+    assert isinstance(queries._bots, set)

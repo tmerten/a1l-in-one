@@ -16,20 +16,16 @@ from project_health.aggregation.core import (
     normalize_issue_type,
     resolve_bucket_size,
 )
-from project_health.config.loader import load_config
+from project_health.config.loader import Config
 
 
 class AggregationQueries:
     """Execute aggregation queries against raw_events."""
 
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, config: Config) -> None:
         self._session = session
-        try:
-            self._config = load_config()
-        except Exception:
-            from project_health.config.loader import Config
-            self._config = Config.model_validate({"credentials": {"github_token": ""}})
-        self._bots = get_bot_set()
+        self._config = config
+        self._bots = get_bot_set(config)
 
     # ------------------------------------------------------------------
     # 13.1–13.11 Metric Queries
