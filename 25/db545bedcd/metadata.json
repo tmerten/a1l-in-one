@@ -1,0 +1,26 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "25db545bedcd",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/project_health/api/server.py",
+    "src/project_health/cli/main.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/25/db545bedcd/0/metadata.json",
+      "transcript": "/25/db545bedcd/0/full.jsonl",
+      "content_hash": "/25/db545bedcd/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}
