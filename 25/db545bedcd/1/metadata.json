@@ -1,0 +1,40 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "25db545bedcd",
+  "session_id": "ses_1df0722d6ffe5xS6HgzxrMexxB",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-13T14:20:32.978538354Z",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/project_health/api/server.py",
+    "src/project_health/cli/main.py"
+  ],
+  "agent": "OpenCode",
+  "model": "moonshotai/kimi-k2.6",
+  "turn_id": "68de9634f7d5",
+  "checkpoint_transcript_start": 13,
+  "transcript_lines_at_start": 13,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-13T14:20:32.965937963Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 2,
+    "human_removed": 3,
+    "total_committed": 0,
+    "total_lines_changed": 5,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
