@@ -1,11 +1,1 @@
-When I run backfill in this project (see @src/ ) I get the following error: /home/thorsten.merten@canonical.com/src/megademo/src/project_health/ingestion/scheduler.py:152: RuntimeWarning: coroutine 'AsyncSession.merge' was never awaited
-  self._session.merge(
-RuntimeWarning: Enable tracemalloc to get the object allocation traceback  Debug it
-Called the Read tool with the following input: {"filePath":"/project/src/"}
-<path>/project/src/</path>
-<type>directory</type>
-<entries>
-project_health/
-
-(1 entries)
-</entries>
+commit change when done
