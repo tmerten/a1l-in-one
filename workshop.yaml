@@ -1,0 +1,29 @@
+name: megademo
+base: ubuntu@24.04
+sdks:
+  - name: uv
+  - name: claude-code
+  - name: opencode
+  - name: vscode-remote
+  - name: node
+  - name: project-pi
+  - name: project-entire
+
+actions:
+  install: |
+    pip install -r /project/requirements.txt "$@"
+
+  test: |
+    python -m pytest /project "$@"
+
+  claude: |
+    claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions "$@"
+
+  claude-auto: |
+    claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions --print "$@"
+
+  opencode: |
+    opencode "$@"
+
+  pi: |
+    pi "$@"
