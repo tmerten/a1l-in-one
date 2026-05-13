@@ -1,3 +1,4 @@
 .workshop.lock
 .vscode
 project-health.yaml
+node_modules
