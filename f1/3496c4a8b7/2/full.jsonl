@@ -1,0 +1,2085 @@
+{
+  "info": {
+    "id": "ses_1df774840ffe0ZtpROSHyKxsLb",
+    "slug": "glowing-squid",
+    "projectID": "9f45355d0877ef58dc73b93be3e492ea509d0f8a",
+    "directory": "/project",
+    "path": "",
+    "parentID": "ses_1df777536ffeHVNG5e675XZFT4",
+    "title": "Explore project and find spec (@explore subagent)",
+    "version": "1.14.37",
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    },
+    "permission": [
+      {
+        "permission": "todowrite",
+        "action": "deny",
+        "pattern": "*"
+      },
+      {
+        "permission": "task",
+        "action": "deny",
+        "pattern": "*"
+      }
+    ],
+    "time": {
+      "created": 1778662291391,
+      "updated": 1778662517841
+    }
+  },
+  "messages": [
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1778662291414
+        },
+        "tools": {
+          "todowrite": false,
+          "task": false
+        },
+        "agent": "explore",
+        "model": {
+          "providerID": "openrouter",
+          "modelID": "deepseek/deepseek-v4-pro"
+        },
+        "summary": {
+          "diffs": []
+        },
+        "id": "msg_e2088b7d3001AmVPlrZ2WKMWuD",
+        "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Explore the codebase to understand what this project is about. Look for:\n1. README or any top-level documentation\n2. Any spec files, design docs, or proposal files (look for files matching *spec*, *proposal*, *design*, *plan*, *openspec* patterns)\n3. The overall project structure and tech stack\n4. Any UI-related code or plans\n\nReturn a comprehensive summary of:\n- What the project does\n- The tech stack\n- Any spec/proposal content you find (especially related to metrics, team mate productivity, or UI)\n- Key file paths relevant to specs/designs",
+          "id": "prt_e2088b7d70015AXQK1qtzkSl7u",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b7d3001AmVPlrZ2WKMWuD"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e2088b7d3001AmVPlrZ2WKMWuD",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.01009374,
+        "tokens": {
+          "total": 5431,
+          "input": 5061,
+          "output": 342,
+          "reasoning": 28,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "modelID": "deepseek/deepseek-v4-pro",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1778662291492,
+          "completed": 1778662306302
+        },
+        "finish": "tool-calls",
+        "id": "msg_e2088b824001Z9dg9Ojlhh20S5",
+        "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb"
+      },
+      "parts": [
+        {
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-start",
+          "id": "prt_e2088c32a001uCaCPSBMXlYV7C",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "reasoning",
+          "text": "Let me explore the codebase systematically to understand what this project is about. I'll start with multiple parallel searches to get a broad overview.",
+          "time": {
+            "start": 1778662294326,
+            "end": 1778662306183
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me explore the codebase systematically to understand what this project is about. I'll start with multiple parallel searches to get a broad overview.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e2088c336001rDV6Fk7CE51rQ6",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_df4fa2bfdecd4510a9e64ef9",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project"
+            },
+            "output": "<path>/project</path>\n<type>directory</type>\n<entries>\n.claude/\n.entire/\n.git/\n.gitignore\n.opencode/\n.vscode/\n.workshop.lock\n.workshop/\nopenspec/\nworkshop.yaml\n\n(10 entries)\n</entries>",
+            "metadata": {
+              "preview": ".claude/\n.entire/\n.git/\n.gitignore\n.opencode/\n.vscode/\n.workshop.lock\n.workshop/\nopenspec/\nworkshop.yaml",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "",
+            "time": {
+              "start": 1778662296142,
+              "end": 1778662296148
+            }
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me explore the codebase systematically to understand what this project is about. I'll start with multiple parallel searches to get a broad overview.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e2088c800001oGGgUJrnm2ZI2T",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_2e90a8acf2fc47e392e94351",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/README*",
+              "path": "/project"
+            },
+            "output": "No files found",
+            "metadata": {
+              "count": 0,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662297887,
+              "end": 1778662297910
+            }
+          },
+          "id": "prt_e2088cbf7001Fi5eJzeqvq3Rf0",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_a04212a230b648218b858544",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/*spec*",
+              "path": "/project"
+            },
+            "output": "/project/openspec/changes/project-health-dashboard/specs/sprint-integration/spec.md\n/project/openspec/changes/project-health-dashboard/specs/dashboard-ui/spec.md\n/project/openspec/changes/project-health-dashboard/specs/metrics-aggregation/spec.md\n/project/openspec/changes/project-health-dashboard/specs/data-ingestion/spec.md\n/project/openspec/changes/project-health-dashboard/.openspec.yaml",
+            "metadata": {
+              "count": 5,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662299477,
+              "end": 1778662299503
+            }
+          },
+          "id": "prt_e2088d35e001IQLqTs14OwlpWy",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_004f4a46dc2644b2a914d1ad",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/*proposal*",
+              "path": "/project"
+            },
+            "output": "/project/openspec/changes/project-health-dashboard/proposal.md",
+            "metadata": {
+              "count": 1,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662300850,
+              "end": 1778662300878
+            }
+          },
+          "id": "prt_e2088d83e001wpz1665XJGUPVg",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_e2681f5311a24318bca82eb3",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/*design*",
+              "path": "/project"
+            },
+            "output": "/project/openspec/changes/project-health-dashboard/design.md",
+            "metadata": {
+              "count": 1,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662303374,
+              "end": 1778662303404
+            }
+          },
+          "id": "prt_e2088dd2e0019EHeH25mZ5Fy91",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_cdba0960914240bc8d9ef6e4",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/*plan*",
+              "path": "/project"
+            },
+            "output": "No files found",
+            "metadata": {
+              "count": 0,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662304773,
+              "end": 1778662304801
+            }
+          },
+          "id": "prt_e2088e6cf001EdYRvKXWElewc6",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_6aa2447e4a6a408b96ba4107",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/*openspec*",
+              "path": "/project"
+            },
+            "output": "/project/openspec/changes/project-health-dashboard/.openspec.yaml",
+            "metadata": {
+              "count": 1,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662306054,
+              "end": 1778662306085
+            }
+          },
+          "id": "prt_e2088ec16001mm4ZyPt0ND3AZk",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-finish",
+          "tokens": {
+            "total": 5431,
+            "input": 5061,
+            "output": 342,
+            "reasoning": 28,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "cost": 0.01009374,
+          "id": "prt_e2088f1b9001XHjLSCEKRHU15D",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088b824001Z9dg9Ojlhh20S5"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e2088b7d3001AmVPlrZ2WKMWuD",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.01190682,
+        "tokens": {
+          "total": 6273,
+          "input": 5703,
+          "output": 512,
+          "reasoning": 58,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "modelID": "deepseek/deepseek-v4-pro",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1778662306309,
+          "completed": 1778662325414
+        },
+        "finish": "tool-calls",
+        "id": "msg_e2088f205001X8ef6SzvPo5RSM",
+        "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb"
+      },
+      "parts": [
+        {
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-start",
+          "id": "prt_e2088f9500010dXaushCzkMoAu",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "reasoning",
+          "text": "Let me read the key files I've found. There's an `openspec` directory with specs, proposals, and design docs for a \"project-health-dashboard\". Let me also look at the workshop and opencode config files, and read the proposal, design, and spec files.",
+          "time": {
+            "start": 1778662308190,
+            "end": 1778662325302
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me read the key files I've found. There's an `openspec` directory with specs, proposals, and design docs for a \"project-health-dashboard\". Let me also look at the workshop and opencode config files, and read the proposal, design, and spec files.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e2088f95e001AXSijuZHZdZCGH",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_780d50a0dbc74463bd2b82bd",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec"
+            },
+            "output": "<path>/project/openspec</path>\n<type>directory</type>\n<entries>\nchanges/\nconfig.yaml\nspecs/\n\n(3 entries)\n</entries>",
+            "metadata": {
+              "preview": "changes/\nconfig.yaml\nspecs/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec",
+            "time": {
+              "start": 1778662311240,
+              "end": 1778662311256
+            }
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me read the key files I've found. There's an `openspec` directory with specs, proposals, and design docs for a \"project-health-dashboard\". Let me also look at the workshop and opencode config files, and read the proposal, design, and spec files.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e208904bf001JkQP0s5hCvqCrM",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_1b54788a2c8046748135168b",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/proposal.md"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/proposal.md</path>\n<type>file</type>\n<content>\n1: ## Why\n2: \n3: Engineering leads need a single dashboard to understand project health and team productivity across multiple systems (GitHub, Jira). Without it, assessing who contributes where, how fast work moves, and whether quality is improving requires manual data stitching across platforms. This change delivers that visibility, enabling data-backed conversations about output and performance — not to judge individuals, but to surface patterns, bottlenecks, and contributions across projects.\n4: \n5: ## What Changes\n6: \n7: - New dashboard UI for project health overview with selectable timeframes (custom date ranges + Jira sprints)\n8: - Data ingestion pipeline from GitHub (commits, PRs, issues) and Jira (issues, sprints)\n9: - Aggregated metrics display across systems, with the ability to drill into raw per-system data\n10: - Extensible data-source architecture supporting future additions (e.g., Launchpad)\n11: - Person-centric view that treats issues from GitHub and Jira equivalently, showing resolved work across all platforms\n12: \n13: ### Metrics — v1\n14: \n15: **Contribution volume:**\n16: - Number of commits per project (selectable timeframe)\n17: - Number of PRs per project with LOC added/removed\n18: - Internal vs. external contribution ratio\n19: - PRs per team member across all projects with LOC added/removed\n20: - Issues opened vs. resolved per project and per person\n21: \n22: **Velocity & throughput:**\n23: - Cycle time (first commit to PR merge)\n24: - PR review turnaround (PR opened to first review)\n25: \n26: **Quality & composition:**\n27: - Issue type breakdown (bug / feature / maintenance) across GitHub + Jira\n28: - PR size distribution (small / medium / large)\n29: \n30: **Collaboration:**\n31: - PR review distribution (who reviews whose code)\n32: \n33: **Time reference:**\n34: - Custom date range selector (Grafana-style)\n35: - Jira sprint selector as an alternative timeframe\n36: \n37: ## Capabilities\n38: \n39: ### New Capabilities\n40: \n41: - `data-ingestion`: Pull and store raw metrics from GitHub and Jira on a schedule, with an extensible provider architecture for future data sources (Launchpad, etc.)\n42: - `metrics-aggregation`: Compute aggregated metrics across data sources — per-project, per-person, and per-timeframe — treating equivalent entities (e.g., GitHub issues and Jira issues) uniformly\n43: - `dashboard-ui`: Display project health metrics with Grafana-style timeframe selectors (custom date ranges + sprint dropdown), project/person toggles, and drill-down into per-system raw data\n44: - `sprint-integration`: Integrate Jira sprints as a first-class timeframe reference, selectable alongside custom date ranges in all dashboard views\n45: \n46: ### Modified Capabilities\n47: \n48: <!-- No existing capabilities to modify — this is a greenfield feature. -->\n49: \n50: ## Impact\n51: \n52: - **New code**: Data ingestion service, aggregation layer, dashboard UI components, timeframe selector component\n53: - **External dependencies**: GitHub API (commits, PRs, issues), Jira API (issues, sprints, boards)\n54: - **Storage**: Raw metrics store (database or time-series store) and aggregation store\n55: - **Infrastructure**: Scheduled ingestion jobs (cron or event-driven)\n56: - **No breaking changes** — this is a new feature with no existing functionality impacted\n\n(End of file - total 56 lines)\n</content>",
+            "metadata": {
+              "preview": "## Why\n\nEngineering leads need a single dashboard to understand project health and team productivity across multiple systems (GitHub, Jira). Without it, assessing who contributes where, how fast work moves, and whether quality is improving requires manual data stitching across platforms. This change delivers that visibility, enabling data-backed conversations about output and performance — not to judge individuals, but to surface patterns, bottlenecks, and contributions across projects.\n\n## What Changes\n\n- New dashboard UI for project health overview with selectable timeframes (custom date ranges + Jira sprints)\n- Data ingestion pipeline from GitHub (commits, PRs, issues) and Jira (issues, sprints)\n- Aggregated metrics display across systems, with the ability to drill into raw per-system data\n- Extensible data-source architecture supporting future additions (e.g., Launchpad)\n- Person-centric view that treats issues from GitHub and Jira equivalently, showing resolved work across all platforms\n\n### Metrics — v1\n\n**Contribution volume:**\n- Number of commits per project (selectable timeframe)\n- Number of PRs per project with LOC added/removed\n- Internal vs. external contribution ratio\n- PRs per team member across all projects with LOC added/removed\n- Issues opened vs. resolved per project and per person",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/proposal.md",
+            "time": {
+              "start": 1778662312874,
+              "end": 1778662312907
+            }
+          },
+          "id": "prt_e208907ec001DUIIa7Nu2xDAVw",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_0c9daff155ff4380a4051233",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/design.md"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/design.md</path>\n<type>file</type>\n<content>\n1: ## Context\n2: \n3: This is a greenfield feature. There is no existing dashboard, metrics pipeline, or data ingestion from GitHub or Jira. The system must integrate with external APIs, store raw data per source for future drill-down, and present aggregated cross-system metrics in a single UI. The architecture must be extensible — Launchpad is planned as a third data source with its own entity model (merge proposals instead of PRs).\n4: \n5: ## Goals / Non-Goals\n6: \n7: **Goals:**\n8: - Ingest data from GitHub (commits, PRs, issues) and Jira (issues, sprints) on a schedule\n9: - Store raw events per source in a normalized schema, preserving source-specific fields in a flexible payload\n10: - Compute aggregated metrics across systems (unified issue view, unified person view)\n11: - Expose metrics via API, filterable by timeframe (date range or sprint), project, and person\n12: - Provide a dashboard UI with Grafana-style timeframe selector and metric cards/charts\n13: - Design the data-source provider interface to support future additions (Launchpad)\n14: \n15: **Non-Goals:**\n16: - Real-time streaming ingestion (batch/scheduled is sufficient for v1)\n17: - Alerting or notifications on metric thresholds\n18: - Historical data migration (v1 starts fresh with forward-looking data)\n19: - Authentication/authorization (assumes single-tenant or existing auth layer)\n20: - Custom metric definitions by end users\n21: \n22: ## Decisions\n23: \n24: ### 1. Provider Interface Pattern\n25: \n26: Each data source implements a `DataSourceProvider` interface with methods for each event type it supports. Providers return `null` or empty for unsupported event types. A `DataSourceRegistry` holds active providers and a scheduler invokes them.\n27: \n28: ```typescript\n29: interface DataSourceProvider {\n30:   id: string;                    // \"github\", \"jira\", \"launchpad\"\n31:   fetchCommits(since: Date): Promise<RawCommitEvent[]>;\n32:   fetchPullRequests(since: Date): Promise<RawPREvent[]>;\n33:   fetchIssues(since: Date): Promise<RawIssueEvent[]>;\n34:   fetchSprints(): Promise<SprintDefinition[]>;\n35:   healthCheck(): Promise<boolean>;\n36: }\n37: ```\n38: \n39: **Alternatives considered**: Webhook-driven ingestion (rejected — adds infrastructure complexity; batch polling is simpler and adequate for a dashboard that refreshes every few hours).\n40: \n41: ### 2. Raw Event Storage as Source of Truth\n42: \n43: All ingested data is stored in a `raw_events` table before any aggregation. This ensures we can always recompute metrics, add new aggregations later, and drill down into per-source data. The schema:\n44: \n45: ```sql\n46: CREATE TABLE raw_events (\n47:   id UUID PRIMARY KEY,\n48:   source VARCHAR NOT NULL,           -- \"github\", \"jira\"\n49:   event_type VARCHAR NOT NULL,       -- \"commit\", \"pull_request\", \"issue\", \"sprint\"\n50:   external_id VARCHAR NOT NULL,      -- ID from source system\n51:   timestamp TIMESTAMPTZ NOT NULL,    -- when the event occurred in the source\n52:   ingested_at TIMESTAMPTZ NOT NULL,  -- when we pulled it\n53:   actor VARCHAR,                     -- person identifier (username, accountId)\n54:   project VARCHAR,                   -- repo key, project key\n55:   data JSONB NOT NULL                -- source-specific payload\n56: );\n57: \n58: CREATE INDEX idx_raw_events_source_ts ON raw_events(source, timestamp);\n59: CREATE INDEX idx_raw_events_actor ON raw_events(actor);\n60: CREATE INDEX idx_raw_events_project ON raw_events(project);\n61: ```\n62: \n63: **Why JSONB for `data`**: Each source has different fields (GitHub PRs have `additions`/`deletions`, Jira issues have `story_points`, Launchpad MPs have different fields). JSONB lets us store source-specific data without schema changes per provider, while still allowing indexed queries via GIN.\n64: \n65: ### 3. Aggregation Layer — On-the-Fly Queries with Caching\n66: \n67: For v1, metrics are computed on-the-fly from `raw_events` with a TTL-based cache. This avoids the complexity of materialized views and refresh logic while keeping the dashboard responsive for common queries.\n68: \n69: - Aggregation API endpoints accept `timeframe` (start/end or sprint_id), `projects[]`, `actors[]`\n70: - Results cached with a key derived from query parameters, TTL of 5 minutes\n71: - Cache invalidated after each ingestion run\n72: \n73: **Alternatives considered**: Pre-computed materialized views (rejected for v1 — adds refresh complexity; on-the-fly is fast enough for moderate data volumes with proper indexing).\n74: \n75: ### 4. Cross-System Entity Normalization\n76: \n77: GitHub issues and Jira issues are treated as the same entity type for person-centric aggregation. Normalization happens at query time:\n78: \n79: - **Issue type mapping**: GitHub labels → normalized type (bug/feature/maintenance). Jira issue type → normalized type. Configurable mapping per project.\n80: - **Person identity mapping**: Configurable mapping file linking GitHub usernames to Jira account IDs (and future Launchpad usernames). Without mapping, each system identity is shown separately but labeled by source.\n81: - **PR/MR equivalence**: GitHub PRs and Launchpad Merge Proposals both produce `pull_request` events with source-specific metadata in `data`.\n82: \n83: ### 5. Timeframe System\n84: \n85: Timeframes are a unified abstraction passed to every query:\n86: \n87: ```\n88: type Timeframe =\n89:   | { kind: \"date_range\"; start: Date; end: Date }\n90:   | { kind: \"sprint\"; sprintId: string; start: Date; end: Date }\n91: ```\n92: \n93: Sprints are stored in a `sprints` table populated by the Jira provider. The UI offers:\n94: - Grafana-style relative presets (Last 7 days, Last 30 days, Last 90 days, This month, This quarter)\n95: - Absolute date range picker (start → end)\n96: - Sprint dropdown (auto-populated from stored sprints, ordered by end date descending)\n97: \n98: When a sprint is selected, the underlying query uses the sprint's start/end dates as the time range.\n99: \n100: ### 6. Dashboard Component Architecture\n101: \n102: ```\n103: Dashboard\n104: ├── TimeframeSelector\n105: │   ├── RelativePresets (Last 7d, 30d, 90d, etc.)\n106: │   ├── DateRangePicker (start/end)\n107: │   └── SprintPicker (dropdown from /api/sprints)\n108: ├── ProjectFilter (multi-select)\n109: ├── ViewToggle (Project view | People view)\n110: ├── MetricSection: Contribution Volume\n111: │   ├── CommitCountChart\n112: │   ├── PRCountChart (with LOC delta)\n113: │   ├── InternalVsExternalRatio\n114: │   ├── PRsPerPersonTable\n115: │   └── IssuesOpenedVsResolvedChart\n116: ├── MetricSection: Velocity & Throughput\n117: │   ├── CycleTimeChart\n118: │   └── PRReviewTurnaroundChart\n119: ├── MetricSection: Quality & Composition\n120: │   ├── IssueTypeBreakdown\n121: │   └── PRSizeDistribution\n122: └── MetricSection: Collaboration\n123:     └── ReviewDistributionMatrix\n124: ```\n125: \n126: Each metric component fetches from a dedicated aggregation endpoint. The `TimeframeSelector` emits timeframe changes that propagate to all components via shared state.\n127: \n128: ### 7. Future Launchpad Integration\n129: \n130: The provider interface already accommodates Launchpad: `fetchPullRequests` returns `RawPREvent[]` — Launchpad MPs map to this type with `source: \"launchpad\"`. The `data` JSONB field carries MP-specific fields (e.g., diff size, branch info) without schema changes. Person identity mapping extends to Launchpad usernames. No code changes needed in the aggregation or UI layers.\n131: \n132: ## Risks / Trade-offs\n133: \n134: - **[Risk] GitHub/Jira API rate limits** → Mitigation: Configurable ingestion interval (default every 15 min), incremental fetching with `since` parameter, exponential backoff on rate-limit errors.\n135: - **[Risk] Query performance degrades as `raw_events` grows** → Mitigation: Composite indexes on (source, timestamp, actor, project); partition by month in future; cache layer in front of aggregation queries.\n136: - **[Risk] Person identity mapping is incomplete or stale** → Mitigation: Show per-source breakdown alongside aggregated view; make mapping file easy to update; unmapped identities still appear labeled by source.\n137: - **[Risk] Issue type normalization is inconsistent across projects** → Mitigation: Configurable mapping per project; show source-native type as secondary label.\n138: - **[Trade-off] Batch polling vs real-time** → Batch is simpler to build and operate; dashboard users don't need sub-minute freshness. Acceptable for v1.\n139: \n140: ## Open Questions\n141: \n142: - What is the hosting environment? (determines cron vs task-queue scheduling, database choice beyond PostgreSQL)\n143: - Is there an existing identity/SSO system we can leverage for person mapping?\n144: - What is the preferred frontend framework for the dashboard? (React, Vue, etc.)\n145: - How many projects and users are expected initially? (informs caching and partition strategy)\n146: - Do we need an admin UI for configuring provider credentials and issue-type mappings, or is config-file sufficient for v1?\n\n(End of file - total 146 lines)\n</content>",
+            "metadata": {
+              "preview": "## Context\n\nThis is a greenfield feature. There is no existing dashboard, metrics pipeline, or data ingestion from GitHub or Jira. The system must integrate with external APIs, store raw data per source for future drill-down, and present aggregated cross-system metrics in a single UI. The architecture must be extensible — Launchpad is planned as a third data source with its own entity model (merge proposals instead of PRs).\n\n## Goals / Non-Goals\n\n**Goals:**\n- Ingest data from GitHub (commits, PRs, issues) and Jira (issues, sprints) on a schedule\n- Store raw events per source in a normalized schema, preserving source-specific fields in a flexible payload\n- Compute aggregated metrics across systems (unified issue view, unified person view)\n- Expose metrics via API, filterable by timeframe (date range or sprint), project, and person\n- Provide a dashboard UI with Grafana-style timeframe selector and metric cards/charts\n- Design the data-source provider interface to support future additions (Launchpad)\n\n**Non-Goals:**\n- Real-time streaming ingestion (batch/scheduled is sufficient for v1)\n- Alerting or notifications on metric thresholds\n- Historical data migration (v1 starts fresh with forward-looking data)\n- Authentication/authorization (assumes single-tenant or existing auth layer)\n- Custom metric definitions by end users",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/design.md",
+            "time": {
+              "start": 1778662314254,
+              "end": 1778662314265
+            }
+          },
+          "id": "prt_e20890db6001nFnBRdDxAjCsVE",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_ec27c768851e4bac83c22755",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/specs/data-ingestion/spec.md"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/specs/data-ingestion/spec.md</path>\n<type>file</type>\n<content>\n1: ## ADDED Requirements\n2: \n3: ### Requirement: Extensible data source provider interface\n4: The system SHALL define a `DataSourceProvider` interface that each data source (GitHub, Jira, future Launchpad) implements. Each provider MUST support a health check and return typed event arrays for the event types it supports.\n5: \n6: #### Scenario: Provider returns events for a supported type\n7: - **WHEN** the GitHub provider is invoked with `fetchPullRequests(since)` for a valid repository\n8: - **THEN** it returns an array of `RawPREvent` objects, each with `external_id`, `timestamp`, `actor`, `project`, and source-specific data\n9: \n10: #### Scenario: Provider returns empty for unsupported event type\n11: - **WHEN** the GitHub provider is invoked with `fetchSprints()`\n12: - **THEN** it returns an empty array\n13: \n14: #### Scenario: Provider health check fails\n15: - **WHEN** a provider's credentials are invalid or the upstream API is unreachable\n16: - **THEN** `healthCheck()` returns `false` and the scheduler logs the failure without halting other providers\n17: \n18: ### Requirement: Scheduled data ingestion\n19: The system SHALL run ingestion for all configured data sources on a configurable schedule, with each run fetching only events newer than the most recent stored event for that source and event type.\n20: \n21: #### Scenario: Incremental ingestion on schedule\n22: - **WHEN** the scheduler triggers ingestion and a prior run exists for GitHub commits\n23: - **THEN** the provider is called with `since` set to the timestamp of the last ingested commit, and only new commits are inserted into `raw_events`\n24: \n25: #### Scenario: First-time ingestion (backfill)\n26: - **WHEN** a data source is configured for the first time with no prior events in `raw_events`\n27: - **THEN** the provider fetches events from a configurable lookback window (default 90 days) and inserts all of them\n28: \n29: #### Scenario: Ingestion deduplication\n30: - **WHEN** ingestion results contain an event with an `external_id` that already exists for the same source and event type\n31: - **THEN** the existing row is updated with the latest data, and no duplicate is inserted\n32: \n33: ### Requirement: Raw event storage schema\n34: The system SHALL store all ingested events in a `raw_events` table with fields `source`, `event_type`, `external_id`, `timestamp`, `ingested_at`, `actor`, `project`, and a JSONB `data` column for source-specific payload. Indexes MUST exist on `(source, timestamp)`, `actor`, and `project`.\n35: \n36: #### Scenario: GitHub PR event stored with additions and deletions\n37: - **WHEN** a GitHub pull request event is ingested\n38: - **THEN** the `data` JSONB column contains `{ \"additions\": <int>, \"deletions\": <int>, \"state\": \"<open|closed|merged>\", \"reviewers\": [...] }` and the event is queryable by `source = 'github'` and `event_type = 'pull_request'`\n39: \n40: #### Scenario: Jira issue event stored with story points\n41: - **WHEN** a Jira issue event is ingested\n42: - **THEN** the `data` JSONB column contains `{ \"issue_type\": \"<Bug|Feature|Task|...>\", \"story_points\": <float>, \"status\": \"<string>\", \"labels\": [...] }` and the event is queryable by `source = 'jira'` and `event_type = 'issue'`\n43: \n44: ### Requirement: Sprint storage\n45: The system SHALL store Jira sprint definitions in a `sprints` table with `id`, `name`, `project`, `start_date`, `end_date`, and `state` fields, populated by the Jira provider's `fetchSprints()` method.\n46: \n47: #### Scenario: Sprint data refreshed on each ingestion cycle\n48: - **WHEN** the Jira provider runs `fetchSprints()`\n49: - **THEN** all active and recently completed sprints (last 90 days) are upserted into the `sprints` table by `id`\n50: \n51: ### Requirement: Provider configuration\n52: The system SHALL support per-provider configuration (API credentials, repository/project keys, event type filters) via a configuration store, and MUST allow providers to be added without code changes to the ingestion scheduler.\n53: \n54: #### Scenario: Adding a new provider via configuration\n55: - **WHEN** a new provider entry is added to the configuration with type \"github\", credentials, and repository list\n56: - **THEN** on the next scheduler cycle, the provider is instantiated and begins ingesting data\n57: \n58: ### Requirement: Error handling and retry\n59: The system SHALL handle provider errors gracefully, retry on transient failures with exponential backoff, and log all failures without halting ingestion from other providers or event types.\n60: \n61: #### Scenario: Transient API failure retries successfully\n62: - **WHEN** a GitHub API call fails with a 503 status code\n63: - **THEN** the provider retries up to 3 times with exponential backoff, and if any retry succeeds, ingestion completes normally\n64: \n65: #### Scenario: Persistent failure does not block other providers\n66: - **WHEN** the Jira provider consistently fails after all retries\n67: - **THEN** the GitHub provider continues to ingest on schedule, and the Jira failure is logged with severity level ERROR\n\n(End of file - total 67 lines)\n</content>",
+            "metadata": {
+              "preview": "## ADDED Requirements\n\n### Requirement: Extensible data source provider interface\nThe system SHALL define a `DataSourceProvider` interface that each data source (GitHub, Jira, future Launchpad) implements. Each provider MUST support a health check and return typed event arrays for the event types it supports.\n\n#### Scenario: Provider returns events for a supported type\n- **WHEN** the GitHub provider is invoked with `fetchPullRequests(since)` for a valid repository\n- **THEN** it returns an array of `RawPREvent` objects, each with `external_id`, `timestamp`, `actor`, `project`, and source-specific data\n\n#### Scenario: Provider returns empty for unsupported event type\n- **WHEN** the GitHub provider is invoked with `fetchSprints()`\n- **THEN** it returns an empty array\n\n#### Scenario: Provider health check fails\n- **WHEN** a provider's credentials are invalid or the upstream API is unreachable\n- **THEN** `healthCheck()` returns `false` and the scheduler logs the failure without halting other providers\n\n### Requirement: Scheduled data ingestion\nThe system SHALL run ingestion for all configured data sources on a configurable schedule, with each run fetching only events newer than the most recent stored event for that source and event type.\n",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/specs/data-ingestion/spec.md",
+            "time": {
+              "start": 1778662315349,
+              "end": 1778662315367
+            }
+          },
+          "id": "prt_e20891299001MDkRXYdwhVe46S",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_5abc7b91096f4c2a82b14d4b",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/specs/metrics-aggregation/spec.md"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/specs/metrics-aggregation/spec.md</path>\n<type>file</type>\n<content>\n1: ## ADDED Requirements\n2: \n3: ### Requirement: Unified issue aggregation across systems\n4: The system SHALL aggregate issues from GitHub and Jira into a unified view, treating them as equivalent entities for person-centric and project-centric metrics. Aggregation MUST normalize issue types to a common taxonomy (bug, feature, maintenance) using configurable per-project mappings.\n5: \n6: #### Scenario: GitHub and Jira issues combined in a single count\n7: - **WHEN** a project has 5 GitHub issues and 3 Jira issues opened in the selected timeframe\n8: - **THEN** the \"issues opened\" metric reports 8 total, with the ability to drill down and see 5 from GitHub and 3 from Jira\n9: \n10: #### Scenario: Issue type normalization across systems\n11: - **WHEN** a GitHub issue has label \"bug\" and a Jira issue has type \"Bug\"\n12: - **THEN** both are categorized as \"bug\" in the issue type breakdown metric\n13: \n14: #### Scenario: Unmapped issue type handled gracefully\n15: - **WHEN** a Jira issue has an issue type not present in the mapping configuration\n16: - **THEN** it is categorized as \"other\" and still counted in the total\n17: \n18: ### Requirement: Per-person contribution aggregation\n19: The system SHALL compute contribution metrics per person across all data sources, summing commits, PRs, LOC added/removed, and issues resolved regardless of which system they originate from.\n20: \n21: #### Scenario: Person resolves issues in both GitHub and Jira\n22: - **WHEN** a team member closes 2 GitHub issues and resolves 3 Jira issues in the selected timeframe\n23: - **THEN** their \"issues resolved\" count is 5, with per-source breakdown available on drill-down\n24: \n25: #### Scenario: Person identity mapping across systems\n26: - **WHEN** a configured identity mapping links `github-user-a` to `jira-account-id-X`\n27: - **THEN** all events from both identities are attributed to a single person in aggregated views\n28: \n29: #### Scenario: Unmapped identities shown separately\n30: - **WHEN** an identity mapping is not configured for a given person\n31: - **THEN** their contributions are shown as separate rows per source (labeled \"GitHub: username\" and \"Jira: accountId\") in the per-person table\n32: \n33: ### Requirement: PR and commit aggregation\n34: The system SHALL aggregate PR count, commit count, and LOC added/removed per project and per person from GitHub data (and future Launchpad data) within a given timeframe.\n35: \n36: #### Scenario: PR count and LOC aggregated per project\n37: - **WHEN** a project has 10 merged PRs in the last 30 days with total 500 additions and 200 deletions\n38: - **THEN** the project metric shows 10 PRs, +500/-200 LOC\n39: \n40: #### Scenario: PRs per team member across all projects\n41: - **WHEN** the \"people\" view is selected for the last 90 days\n42: - **THEN** each team member row shows total PRs and net LOC across all configured projects, sorted by PR count descending\n43: \n44: ### Requirement: Velocity metrics computation\n45: The system SHALL compute cycle time (time from first commit to PR merge) and PR review turnaround (time from PR opened to first review) for all merged PRs in the selected timeframe.\n46: \n47: #### Scenario: Cycle time calculated for a merged PR\n48: - **WHEN** a PR received its first commit on day 1 and was merged on day 4\n49: - **THEN** the cycle time is 3 days, and the PR contributes to the median and p50/p90 cycle time charts\n50: \n51: #### Scenario: PR review turnaround calculated\n52: - **WHEN** a PR was opened on Monday at 10:00 and received its first review on Tuesday at 10:00\n53: - **THEN** the review turnaround is 24 hours, included in the turnaround distribution\n54: \n55: ### Requirement: PR size distribution\n56: The system SHALL categorize PRs into size buckets (small: <100 LOC, medium: 100-500 LOC, large: >500 LOC) based on total additions + deletions and SHALL display the distribution for the selected timeframe.\n57: \n58: #### Scenario: PR size buckets computed\n59: - **WHEN** 20 PRs were merged with sizes: 5 small, 10 medium, 5 large\n60: - **THEN** the size distribution chart shows 25% small, 50% medium, 25% large\n61: \n62: ### Requirement: Review distribution matrix\n63: The system SHALL compute which team members review PRs from which authors, producing a review distribution matrix for the selected timeframe.\n64: \n65: #### Scenario: Review relationships captured\n66: - **WHEN** Alice reviewed 3 of Bob's PRs and 1 of Carol's PRs in the last 30 days\n67: - **THEN** the review distribution matrix shows Alice as reviewer for Bob (3 reviews) and Carol (1 review)\n68: \n69: ### Requirement: Internal vs external contribution ratio\n70: The system SHALL classify PR authors and issue reporters as \"internal\" (listed in a configured team members list) or \"external\" and compute the ratio for the selected timeframe.\n71: \n72: #### Scenario: Ratio calculated for mixed contributions\n73: - **WHEN** in the last 30 days, 40 PRs were from internal members and 10 from external contributors\n74: - **THEN** the ratio is reported as 80% internal / 20% external\n75: \n76: ### Requirement: Aggregation API endpoints\n77: The system SHALL expose REST API endpoints for each metric, accepting query parameters for timeframe (start/end timestamps or sprint ID), project filter, and person filter.\n78: \n79: #### Scenario: Fetch contribution volume for a date range\n80: - **WHEN** `GET /api/metrics/contribution-volume?from=2025-01-01&to=2025-01-31&projects=repo-a`\n81: - **THEN** the response includes commit count, PR count, LOC added/removed, internal/external ratio, PRs per person, and issues opened/resolved for repo-a in January 2025\n82: \n83: #### Scenario: Fetch velocity metrics for a sprint\n84: - **WHEN** `GET /api/metrics/velocity?sprint_id=sprint-42`\n85: - **THEN** the response includes cycle time distribution and PR review turnaround for all PRs merged during sprint-42\n86: \n87: ### Requirement: Caching with invalidation\n88: The system SHALL cache aggregation query results with a TTL of 5 minutes and SHALL invalidate all caches after each completed ingestion cycle.\n89: \n90: #### Scenario: Cache hit returns fast response\n91: - **WHEN** the same aggregation query is made twice within the TTL\n92: - **THEN** the second request returns from cache without re-computing\n93: \n94: #### Scenario: Cache invalidated after ingestion\n95: - **WHEN** an ingestion cycle completes\n96: - **THEN** all cached aggregation results are invalidated, and the next query for any metric recomputes from fresh `raw_events` data\n\n(End of file - total 96 lines)\n</content>",
+            "metadata": {
+              "preview": "## ADDED Requirements\n\n### Requirement: Unified issue aggregation across systems\nThe system SHALL aggregate issues from GitHub and Jira into a unified view, treating them as equivalent entities for person-centric and project-centric metrics. Aggregation MUST normalize issue types to a common taxonomy (bug, feature, maintenance) using configurable per-project mappings.\n\n#### Scenario: GitHub and Jira issues combined in a single count\n- **WHEN** a project has 5 GitHub issues and 3 Jira issues opened in the selected timeframe\n- **THEN** the \"issues opened\" metric reports 8 total, with the ability to drill down and see 5 from GitHub and 3 from Jira\n\n#### Scenario: Issue type normalization across systems\n- **WHEN** a GitHub issue has label \"bug\" and a Jira issue has type \"Bug\"\n- **THEN** both are categorized as \"bug\" in the issue type breakdown metric\n\n#### Scenario: Unmapped issue type handled gracefully\n- **WHEN** a Jira issue has an issue type not present in the mapping configuration\n- **THEN** it is categorized as \"other\" and still counted in the total\n\n### Requirement: Per-person contribution aggregation\nThe system SHALL compute contribution metrics per person across all data sources, summing commits, PRs, LOC added/removed, and issues resolved regardless of which system they originate from.\n",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/specs/metrics-aggregation/spec.md",
+            "time": {
+              "start": 1778662316928,
+              "end": 1778662316950
+            }
+          },
+          "id": "prt_e20891740001caJRiWmYV50waN",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_3d2e2fe0890849eda43da1cc",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/specs/dashboard-ui/spec.md"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/specs/dashboard-ui/spec.md</path>\n<type>file</type>\n<content>\n1: ## ADDED Requirements\n2: \n3: ### Requirement: Timeframe selector component\n4: The dashboard SHALL include a single timeframe selector that supports Grafana-style relative presets (Last 7d, 30d, 90d, This month, This quarter, This year), an absolute date range picker (start → end calendar), and a sprint selector populated from available sprints. Changing the timeframe MUST trigger a refresh of all displayed metrics.\n5: \n6: #### Scenario: User selects a relative preset\n7: - **WHEN** the user selects \"Last 30 days\" from the timeframe selector\n8: - **THEN** all metric components on the dashboard re-fetch data with `from = now - 30 days` and `to = now`\n9: \n10: #### Scenario: User picks a custom date range\n11: - **WHEN** the user selects January 1, 2025 as start date and January 31, 2025 as end date\n12: - **THEN** all metric components on the dashboard re-fetch data with the custom range\n13: \n14: #### Scenario: User selects a sprint\n15: - **WHEN** the user picks \"Sprint 42\" from the sprint dropdown\n16: - **THEN** all metric components re-fetch data bounded by Sprint 42's start and end dates, and the timeframe selector displays \"Sprint 42 (Jan 6 – Jan 20, 2025)\"\n17: \n18: ### Requirement: Project filter\n19: The dashboard SHALL include a multi-select project filter that allows users to view metrics for one, several, or all configured projects.\n20: \n21: #### Scenario: Single project selected\n22: - **WHEN** the user selects only \"repo-a\" in the project filter\n23: - **THEN** all metrics show data scoped to repo-a only\n24: \n25: #### Scenario: Multiple projects selected\n26: - **WHEN** the user selects \"repo-a\" and \"repo-b\"\n27: - **THEN** all metrics show combined data from both projects\n28: \n29: #### Scenario: All projects selected (default)\n30: - **WHEN** the dashboard loads with no project filter applied\n31: - **THEN** all metrics show data aggregated across all configured projects\n32: \n33: ### Requirement: Project vs. people view toggle\n34: The dashboard SHALL provide a toggle between \"Project view\" and \"People view\". Project view shows metrics aggregated per project. People view shows metrics per team member across all selected projects.\n35: \n36: #### Scenario: Switch to people view\n37: - **WHEN** the user toggles to \"People view\"\n38: - **THEN** the dashboard replaces per-project charts with a per-person contributions table showing commits, PRs, LOC, and issues resolved per team member\n39: \n40: ### Requirement: Contribution volume section\n41: The dashboard SHALL display a \"Contribution Volume\" section containing charts for commit count, PR count with LOC delta, internal vs external ratio, PRs per person, and issues opened vs resolved — all scoped to the selected timeframe and project filter.\n42: \n43: #### Scenario: Contribution volume section renders with data\n44: - **WHEN** the dashboard loads with valid data for the selected timeframe\n45: - **THEN** the contribution volume section shows all five charts, each populated with data from the `/api/metrics/contribution-volume` endpoint\n46: \n47: #### Scenario: No data in timeframe\n48: - **WHEN** the selected timeframe has no events (e.g., future date range)\n49: - **THEN** each chart displays an \"No data for this period\" empty state\n50: \n51: ### Requirement: Velocity and throughput section\n52: The dashboard SHALL display a \"Velocity & Throughput\" section with cycle time distribution (p50, p90, median) and PR review turnaround distribution for merged PRs in the selected timeframe.\n53: \n54: #### Scenario: Cycle time chart shows distribution\n55: - **WHEN** 50 PRs were merged in the selected timeframe with varying cycle times\n56: - **THEN** the cycle time chart displays a histogram or box plot with p50 and p90 indicators\n57: \n58: ### Requirement: Quality and composition section\n59: The dashboard SHALL display a \"Quality & Composition\" section with an issue type breakdown chart (bug / feature / maintenance / other) and a PR size distribution chart (small / medium / large).\n60: \n61: #### Scenario: Issue type breakdown renders\n62: - **WHEN** the selected timeframe has 60% features, 30% bugs, 10% maintenance across all systems\n63: - **THEN** the breakdown chart shows those proportions, with hover/drill-down showing per-source breakdown within each type\n64: \n65: ### Requirement: Collaboration section\n66: The dashboard SHALL display a \"Collaboration\" section with a review distribution matrix or chord diagram showing who reviews whose PRs.\n67: \n68: #### Scenario: Review matrix shows reviewer-author pairs\n69: - **WHEN** PR reviews occurred between team members in the selected timeframe\n70: - **THEN** the matrix shows each reviewer-author pair with review count, enabling identification of review patterns and potential silos\n71: \n72: ### Requirement: Drill-down to per-system raw data\n73: Each aggregated metric SHALL support drill-down to show per-source breakdowns (GitHub vs Jira contribution to the total). Clicking a data point or row MUST expand to show source-level detail.\n74: \n75: #### Scenario: Drill into issues opened by source\n76: - **WHEN** the user clicks on \"12 issues opened\" in the contribution volume section\n77: - **THEN** a breakdown appears showing \"GitHub: 7, Jira: 5\" with a link to view the raw event list\n78: \n79: #### Scenario: Drill into per-source issue type breakdown\n80: - **WHEN** the user clicks a \"bug\" segment in the issue type breakdown chart\n81: - **THEN** the breakdown shows how many bugs came from GitHub vs Jira, with system-native labels (e.g., \"GitHub label: bug\", \"Jira type: Bug\")\n82: \n83: ### Requirement: Loading and error states\n84: Every metric component SHALL handle loading, error, and empty states gracefully.\n85: \n86: #### Scenario: Metric data is loading\n87: - **WHEN** a metric component is fetching data from the API\n88: - **THEN** it displays a skeleton placeholder or spinner until data arrives\n89: \n90: #### Scenario: API returns an error\n91: - **WHEN** a metric endpoint returns a 5xx error\n92: - **THEN** the component displays an error message with a retry button, without affecting other metric components\n93: \n94: ### Requirement: Settings and configuration panel\n95: The dashboard SHALL include a settings panel where the user can configure which metric sections are visible (show/hide toggle per section) and persist layout preferences.\n96: \n97: #### Scenario: User hides a metric section\n98: - **WHEN** the user toggles off the \"Collaboration\" section in settings\n99: - **THEN** the collaboration section is hidden from the dashboard and the preference is saved locally\n\n(End of file - total 99 lines)\n</content>",
+            "metadata": {
+              "preview": "## ADDED Requirements\n\n### Requirement: Timeframe selector component\nThe dashboard SHALL include a single timeframe selector that supports Grafana-style relative presets (Last 7d, 30d, 90d, This month, This quarter, This year), an absolute date range picker (start → end calendar), and a sprint selector populated from available sprints. Changing the timeframe MUST trigger a refresh of all displayed metrics.\n\n#### Scenario: User selects a relative preset\n- **WHEN** the user selects \"Last 30 days\" from the timeframe selector\n- **THEN** all metric components on the dashboard re-fetch data with `from = now - 30 days` and `to = now`\n\n#### Scenario: User picks a custom date range\n- **WHEN** the user selects January 1, 2025 as start date and January 31, 2025 as end date\n- **THEN** all metric components on the dashboard re-fetch data with the custom range\n\n#### Scenario: User selects a sprint\n- **WHEN** the user picks \"Sprint 42\" from the sprint dropdown\n- **THEN** all metric components re-fetch data bounded by Sprint 42's start and end dates, and the timeframe selector displays \"Sprint 42 (Jan 6 – Jan 20, 2025)\"\n\n### Requirement: Project filter\nThe dashboard SHALL include a multi-select project filter that allows users to view metrics for one, several, or all configured projects.\n",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/specs/dashboard-ui/spec.md",
+            "time": {
+              "start": 1778662317922,
+              "end": 1778662317949
+            }
+          },
+          "id": "prt_e20891c22001ONTOCtGADch7az",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_67c6e536adec4e2c97afdb11",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/specs/sprint-integration/spec.md"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/specs/sprint-integration/spec.md</path>\n<type>file</type>\n<content>\n1: ## ADDED Requirements\n2: \n3: ### Requirement: Sprint definitions storage and retrieval\n4: The system SHALL store sprint definitions from Jira (id, name, project, start_date, end_date, state) in a `sprints` table and expose them via a `GET /api/sprints` endpoint for use as timeframe references.\n5: \n6: #### Scenario: Sprint list returned for the UI\n7: - **WHEN** `GET /api/sprints?project=PROJ` is called\n8: - **THEN** the response returns sprints for project PROJ ordered by end_date descending, including active sprints and completed sprints from the last 90 days\n9: \n10: #### Scenario: Sprint data includes date bounds\n11: - **WHEN** a sprint is returned from the API\n12: - **THEN** each sprint object includes `start_date` and `end_date` fields that can be used directly as timeframe bounds for metric queries\n13: \n14: ### Requirement: Sprint as first-class timeframe\n15: The system SHALL treat sprints as equivalent to custom date ranges in all metric aggregation queries, using sprint start and end dates as the time window.\n16: \n17: #### Scenario: Metrics queried by sprint\n18: - **WHEN** the aggregation API receives `sprint_id=sprint-42` as a timeframe parameter\n19: - **THEN** it resolves the sprint's start and end dates from the `sprints` table and queries `raw_events` with `timestamp BETWEEN start AND end`\n20: \n21: #### Scenario: Sprint and date range produce consistent results\n22: - **WHEN** a sprint runs from Jan 6 to Jan 20 and a custom date range of the same dates is selected\n23: - **THEN** both queries return identical metric values for all aggregation endpoints\n24: \n25: ### Requirement: Active sprint detection\n26: The system SHALL identify the currently active sprint (if any) for each Jira project and surface it prominently in the sprint selector (e.g., \"(active)\" badge, default selection on dashboard load).\n27: \n28: #### Scenario: Active sprint is the default timeframe\n29: - **WHEN** the dashboard loads and a sprint is currently active for the selected project\n30: - **THEN** the sprint selector defaults to the active sprint, labeled \"Sprint 42 (active)\"\n31: \n32: #### Scenario: No active sprint falls back to relative preset\n33: - **WHEN** the dashboard loads and no sprint is currently active\n34: - **THEN** the timeframe defaults to \"Last 30 days\"\n35: \n36: ### Requirement: Sprint-aware metric aggregation\n37: The system SHALL compute sprint-specific aggregations: sprint burndown (starts as simple committed-vs-completed), sprint velocity, and issues carried over to next sprint.\n38: \n39: #### Scenario: Sprint burndown computed\n40: - **WHEN** a sprint is selected that has Jira issues with story points\n41: - **THEN** the dashboard displays a burndown showing committed story points vs completed story points, with carried-over count\n42: \n43: #### Scenario: Sprint without story points\n44: - **WHEN** a sprint has issues but no story points configured\n45: - **THEN** the burndown falls back to issue count (committed vs completed issues) and displays a note \"Story points not configured — showing issue count\"\n\n(End of file - total 45 lines)\n</content>",
+            "metadata": {
+              "preview": "## ADDED Requirements\n\n### Requirement: Sprint definitions storage and retrieval\nThe system SHALL store sprint definitions from Jira (id, name, project, start_date, end_date, state) in a `sprints` table and expose them via a `GET /api/sprints` endpoint for use as timeframe references.\n\n#### Scenario: Sprint list returned for the UI\n- **WHEN** `GET /api/sprints?project=PROJ` is called\n- **THEN** the response returns sprints for project PROJ ordered by end_date descending, including active sprints and completed sprints from the last 90 days\n\n#### Scenario: Sprint data includes date bounds\n- **WHEN** a sprint is returned from the API\n- **THEN** each sprint object includes `start_date` and `end_date` fields that can be used directly as timeframe bounds for metric queries\n\n### Requirement: Sprint as first-class timeframe\nThe system SHALL treat sprints as equivalent to custom date ranges in all metric aggregation queries, using sprint start and end dates as the time window.\n\n#### Scenario: Metrics queried by sprint\n- **WHEN** the aggregation API receives `sprint_id=sprint-42` as a timeframe parameter\n- **THEN** it resolves the sprint's start and end dates from the `sprints` table and queries `raw_events` with `timestamp BETWEEN start AND end`\n",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/specs/sprint-integration/spec.md",
+            "time": {
+              "start": 1778662319077,
+              "end": 1778662319101
+            }
+          },
+          "id": "prt_e2089217e001b4g8d2GVVdEKZm",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_2e99b1d613cf45df8dfc8811",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.workshop"
+            },
+            "output": "<path>/project/.workshop</path>\n<type>directory</type>\n<entries>\nentire/\npi/\n\n(2 entries)\n</entries>",
+            "metadata": {
+              "preview": "entire/\npi/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".workshop",
+            "time": {
+              "start": 1778662320139,
+              "end": 1778662320158
+            }
+          },
+          "id": "prt_e208927c9001c7C24Us0HYa0ZI",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_2902c858c598496099df2366",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode"
+            },
+            "output": "<path>/project/.opencode</path>\n<type>directory</type>\n<entries>\n.gitignore\ncommands/\nnode_modules/\npackage-lock.json\npackage.json\nplugins/\nskills/\n\n(7 entries)\n</entries>",
+            "metadata": {
+              "preview": ".gitignore\ncommands/\nnode_modules/\npackage-lock.json\npackage.json\nplugins/\nskills/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode",
+            "time": {
+              "start": 1778662322094,
+              "end": 1778662322127
+            }
+          },
+          "id": "prt_e20892ddb001R2eq5aPG8E5aVP",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_a2a5468fa937440081f29614",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/workshop.yaml"
+            },
+            "output": "<path>/project/workshop.yaml</path>\n<type>file</type>\n<content>\n1: name: megademo\n2: base: ubuntu@24.04\n3: sdks:\n4:   - name: uv\n5:   - name: claude-code\n6:   - name: opencode\n7:   - name: vscode-remote\n8:   - name: node\n9:   - name: project-pi\n10:   - name: project-entire\n11: \n12: actions:\n13:   install: |\n14:     pip install -r /project/requirements.txt \"$@\"\n15: \n16:   test: |\n17:     python -m pytest /project \"$@\"\n18: \n19:   claude: |\n20:     claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions \"$@\"\n21: \n22:   claude-auto: |\n23:     claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions --print \"$@\"\n24: \n25:   opencode: |\n26:     opencode \"$@\"\n27: \n28:   pi: |\n29:     pi \"$@\"\n30: \n31:   entire: |\n32:     entire \"$@\"\n\n(End of file - total 32 lines)\n</content>",
+            "metadata": {
+              "preview": "name: megademo\nbase: ubuntu@24.04\nsdks:\n  - name: uv\n  - name: claude-code\n  - name: opencode\n  - name: vscode-remote\n  - name: node\n  - name: project-pi\n  - name: project-entire\n\nactions:\n  install: |\n    pip install -r /project/requirements.txt \"$@\"\n\n  test: |\n    python -m pytest /project \"$@\"\n\n  claude: |\n    claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions \"$@\"",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "workshop.yaml",
+            "time": {
+              "start": 1778662323380,
+              "end": 1778662323403
+            }
+          },
+          "id": "prt_e208931df0019rknGqoyH0bkqV",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_321b1380b94349679781e781",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.vscode"
+            },
+            "output": "<path>/project/.vscode</path>\n<type>directory</type>\n<entries>\nsettings.json\n\n(1 entries)\n</entries>",
+            "metadata": {
+              "preview": "settings.json",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".vscode",
+            "time": {
+              "start": 1778662323868,
+              "end": 1778662323887
+            }
+          },
+          "id": "prt_e2089355f001TXYAhYB5AZKlGb",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_38da7a3898164515940a004f",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.gitignore"
+            },
+            "output": "<path>/project/.gitignore</path>\n<type>file</type>\n<content>\n1: .workshop.lock\n\n(End of file - total 1 lines)\n</content>",
+            "metadata": {
+              "preview": ".workshop.lock",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".gitignore",
+            "time": {
+              "start": 1778662325186,
+              "end": 1778662325206
+            }
+          },
+          "id": "prt_e20893a25001TIqZgAQz7U8wTY",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-finish",
+          "tokens": {
+            "total": 6273,
+            "input": 5703,
+            "output": 512,
+            "reasoning": 58,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "cost": 0.01190682,
+          "id": "prt_e20893c62001oaPfih2Y1aixvX",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e2088f205001X8ef6SzvPo5RSM"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e2088b7d3001AmVPlrZ2WKMWuD",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.02887356,
+        "tokens": {
+          "total": 15971,
+          "input": 15348,
+          "output": 579,
+          "reasoning": 44,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "modelID": "deepseek/deepseek-v4-pro",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1778662325421,
+          "completed": 1778662349516
+        },
+        "finish": "tool-calls",
+        "id": "msg_e20893cad001EaWVXVqE3eKpnt",
+        "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb"
+      },
+      "parts": [
+        {
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-start",
+          "id": "prt_e20894ad6001UUFIbqv6mXWL4M",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "reasoning",
+          "text": "Now let me look at the remaining directory structures and files I haven't explored yet, like the openspec config, .openspec.yaml, the .claude, .entire directories, and any other relevant files.",
+          "time": {
+            "start": 1778662329050,
+            "end": 1778662349410
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Now let me look at the remaining directory structures and files I haven't explored yet, like the openspec config, .openspec.yaml, the .claude, .entire directories, and any other relevant files.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e20894ada001pQFJJt9s2EFTtx",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_5e78100dbc47439a958464f2",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/config.yaml"
+            },
+            "output": "<path>/project/openspec/config.yaml</path>\n<type>file</type>\n<content>\n1: schema: spec-driven\n2: \n3: # Project context (optional)\n4: # This is shown to AI when creating artifacts.\n5: # Add your tech stack, conventions, style guides, domain knowledge, etc.\n6: # Example:\n7: #   context: |\n8: #     Tech stack: TypeScript, React, Node.js\n9: #     We use conventional commits\n10: #     Domain: e-commerce platform\n11: \n12: # Per-artifact rules (optional)\n13: # Add custom rules for specific artifacts.\n14: # Example:\n15: #   rules:\n16: #     proposal:\n17: #       - Keep proposals under 500 words\n18: #       - Always include a \"Non-goals\" section\n19: #     tasks:\n20: #       - Break tasks into chunks of max 2 hours\n\n(End of file - total 20 lines)\n</content>",
+            "metadata": {
+              "preview": "schema: spec-driven\n\n# Project context (optional)\n# This is shown to AI when creating artifacts.\n# Add your tech stack, conventions, style guides, domain knowledge, etc.\n# Example:\n#   context: |\n#     Tech stack: TypeScript, React, Node.js\n#     We use conventional commits\n#     Domain: e-commerce platform\n\n# Per-artifact rules (optional)\n# Add custom rules for specific artifacts.\n# Example:\n#   rules:\n#     proposal:\n#       - Keep proposals under 500 words\n#       - Always include a \"Non-goals\" section\n#     tasks:\n#       - Break tasks into chunks of max 2 hours",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/config.yaml",
+            "time": {
+              "start": 1778662333692,
+              "end": 1778662333712
+            }
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Now let me look at the remaining directory structures and files I haven't explored yet, like the openspec config, .openspec.yaml, the .claude, .entire directories, and any other relevant files.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e20895b79001wLXOcVpEyCDC0e",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_1ab5ac9d823847d194f1c916",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/.openspec.yaml"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/.openspec.yaml</path>\n<type>file</type>\n<content>\n1: schema: spec-driven\n2: created: 2026-05-13\n\n(End of file - total 2 lines)\n</content>",
+            "metadata": {
+              "preview": "schema: spec-driven\ncreated: 2026-05-13",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/.openspec.yaml",
+            "time": {
+              "start": 1778662334993,
+              "end": 1778662335019
+            }
+          },
+          "id": "prt_e20896003001HOJSRc2ts3nvJ3",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_538e84a376294102b263cf55",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/specs"
+            },
+            "output": "<path>/project/openspec/specs</path>\n<type>directory</type>\n<entries>\n\n\n(0 entries)\n</entries>",
+            "metadata": {
+              "preview": "",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/specs",
+            "time": {
+              "start": 1778662335869,
+              "end": 1778662335884
+            }
+          },
+          "id": "prt_e208963d70019L4ebWfcg91y1i",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_1fd8cda2c47e4a0db1066e71",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes"
+            },
+            "output": "<path>/project/openspec/changes</path>\n<type>directory</type>\n<entries>\narchive/\nproject-health-dashboard/\n\n(2 entries)\n</entries>",
+            "metadata": {
+              "preview": "archive/\nproject-health-dashboard/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes",
+            "time": {
+              "start": 1778662336654,
+              "end": 1778662336672
+            }
+          },
+          "id": "prt_e20896735001PWllTecHFvbjyk",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_94b475fc93534b10ae2b9c81",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard</path>\n<type>directory</type>\n<entries>\n.openspec.yaml\ndesign.md\nproposal.md\nspecs/\ntasks.md\n\n(5 entries)\n</entries>",
+            "metadata": {
+              "preview": ".openspec.yaml\ndesign.md\nproposal.md\nspecs/\ntasks.md",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard",
+            "time": {
+              "start": 1778662337987,
+              "end": 1778662338002
+            }
+          },
+          "id": "prt_e20896b27001o97r6mT1n5KsFp",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_265599793c9c477cacf3ef7c",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/specs"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/specs</path>\n<type>directory</type>\n<entries>\ndashboard-ui/\ndata-ingestion/\nmetrics-aggregation/\nsprint-integration/\n\n(4 entries)\n</entries>",
+            "metadata": {
+              "preview": "dashboard-ui/\ndata-ingestion/\nmetrics-aggregation/\nsprint-integration/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/specs",
+            "time": {
+              "start": 1778662338673,
+              "end": 1778662338689
+            }
+          },
+          "id": "prt_e20896ea8001uHKo5VoTuqA55z",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_934256f91d2a4256986c3281",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.claude"
+            },
+            "output": "<path>/project/.claude</path>\n<type>directory</type>\n<entries>\ncommands/\nskills/\n\n(2 entries)\n</entries>",
+            "metadata": {
+              "preview": "commands/\nskills/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".claude",
+            "time": {
+              "start": 1778662339574,
+              "end": 1778662339591
+            }
+          },
+          "id": "prt_e2089730d0012agDSypixBtfn2",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_b1377454ea254f798f3b738f",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.entire"
+            },
+            "output": "<path>/project/.entire</path>\n<type>directory</type>\n<entries>\n.gitignore\nlogs/\nmetadata/\nsettings.json\ntmp/\n\n(5 entries)\n</entries>",
+            "metadata": {
+              "preview": ".gitignore\nlogs/\nmetadata/\nsettings.json\ntmp/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".entire",
+            "time": {
+              "start": 1778662342964,
+              "end": 1778662342982
+            }
+          },
+          "id": "prt_e20897682001vhLQFEqEP0yZZ6",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_96ec6cea21ed4bae94fc317a",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.vscode/settings.json"
+            },
+            "output": "<path>/project/.vscode/settings.json</path>\n<type>file</type>\n<content>\n1: {\n2:     \"go.goroot\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/installs/go/1.25.5\",\n3:     \"debug.javascript.defaultRuntimeExecutable\": {\n4:         \"pwa-node\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/shims/node\"\n5:     },\n6:     \"python.defaultInterpreterPath\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/installs/python/3.12/bin/python\",\n7:     \"go.alternateTools\": {\n8:         \"go\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/shims/go\",\n9:         \"gopls\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/shims/gopls\"\n10:     }\n11: }\n\n(End of file - total 11 lines)\n</content>",
+            "metadata": {
+              "preview": "{\n    \"go.goroot\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/installs/go/1.25.5\",\n    \"debug.javascript.defaultRuntimeExecutable\": {\n        \"pwa-node\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/shims/node\"\n    },\n    \"python.defaultInterpreterPath\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/installs/python/3.12/bin/python\",\n    \"go.alternateTools\": {\n        \"go\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/shims/go\",\n        \"gopls\": \"/home/thorsten.merten@canonical.com/snap/code/235/.local/share/mise/shims/gopls\"\n    }\n}",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".vscode/settings.json",
+            "time": {
+              "start": 1778662343971,
+              "end": 1778662343997
+            }
+          },
+          "id": "prt_e2089831e001O6HuzdMVb2W62V",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_aaaebe075578432891ef3b8b",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.workshop/entire"
+            },
+            "output": "<path>/project/.workshop/entire</path>\n<type>directory</type>\n<entries>\nhooks/\nsdk.yaml\n\n(2 entries)\n</entries>",
+            "metadata": {
+              "preview": "hooks/\nsdk.yaml",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".workshop/entire",
+            "time": {
+              "start": 1778662344775,
+              "end": 1778662344790
+            }
+          },
+          "id": "prt_e208986df001TbTjEeh9cpaRpF",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_25c587e35fc9456d8bad5e1f",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.workshop/pi"
+            },
+            "output": "<path>/project/.workshop/pi</path>\n<type>directory</type>\n<entries>\nhooks/\nsdk.yaml\n\n(2 entries)\n</entries>",
+            "metadata": {
+              "preview": "hooks/\nsdk.yaml",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".workshop/pi",
+            "time": {
+              "start": 1778662345610,
+              "end": 1778662345626
+            }
+          },
+          "id": "prt_e20898a10001zL0TjRlMrEJSO5",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_3035eccbe1cc4ff1b50d82d7",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/package.json"
+            },
+            "output": "<path>/project/.opencode/package.json</path>\n<type>file</type>\n<content>\n1: {\n2:   \"dependencies\": {\n3:     \"@opencode-ai/plugin\": \"1.14.37\"\n4:   }\n5: }\n\n(End of file - total 5 lines)\n</content>",
+            "metadata": {
+              "preview": "{\n  \"dependencies\": {\n    \"@opencode-ai/plugin\": \"1.14.37\"\n  }\n}",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/package.json",
+            "time": {
+              "start": 1778662346625,
+              "end": 1778662346648
+            }
+          },
+          "id": "prt_e20898d4c00110plbFzRylXC6M",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_f64513f3f8fb4b0b8e533ab1",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/commands"
+            },
+            "output": "<path>/project/.opencode/commands</path>\n<type>directory</type>\n<entries>\nopsx-apply.md\nopsx-archive.md\nopsx-explore.md\nopsx-propose.md\n\n(4 entries)\n</entries>",
+            "metadata": {
+              "preview": "opsx-apply.md\nopsx-archive.md\nopsx-explore.md\nopsx-propose.md",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/commands",
+            "time": {
+              "start": 1778662347578,
+              "end": 1778662347594
+            }
+          },
+          "id": "prt_e208990f8001xuh28ZRoPGgYU1",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_f9c4dfe47aae42b79de34458",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/plugins"
+            },
+            "output": "<path>/project/.opencode/plugins</path>\n<type>directory</type>\n<entries>\nentire.ts\n\n(1 entries)\n</entries>",
+            "metadata": {
+              "preview": "entire.ts",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/plugins",
+            "time": {
+              "start": 1778662348540,
+              "end": 1778662348554
+            }
+          },
+          "id": "prt_e20899529001lXr5PqwAAR47Ru",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_642f8741b7d445cbba4d85ae",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/skills"
+            },
+            "output": "<path>/project/.opencode/skills</path>\n<type>directory</type>\n<entries>\ngrill-me/\nopenspec-apply-change/\nopenspec-archive-change/\nopenspec-explore/\nopenspec-propose/\n\n(5 entries)\n</entries>",
+            "metadata": {
+              "preview": "grill-me/\nopenspec-apply-change/\nopenspec-archive-change/\nopenspec-explore/\nopenspec-propose/",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/skills",
+            "time": {
+              "start": 1778662349339,
+              "end": 1778662349355
+            }
+          },
+          "id": "prt_e2089985f0013iebWv7iNW757c",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-finish",
+          "tokens": {
+            "total": 15971,
+            "input": 15348,
+            "output": 579,
+            "reasoning": 44,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "cost": 0.02887356,
+          "id": "prt_e20899a9e001FGxXsIwgm8lfnG",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20893cad001EaWVXVqE3eKpnt"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e2088b7d3001AmVPlrZ2WKMWuD",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.03123126,
+        "tokens": {
+          "total": 17479,
+          "input": 17009,
+          "output": 440,
+          "reasoning": 30,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "modelID": "deepseek/deepseek-v4-pro",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1778662349525,
+          "completed": 1778662386395
+        },
+        "finish": "tool-calls",
+        "id": "msg_e20899ad50011q0NhKC1NAJGeK",
+        "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb"
+      },
+      "parts": [
+        {
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-start",
+          "id": "prt_e2089a5df001xJ7yyvpJsyppU2",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "reasoning",
+          "text": "Let me now check if there's a tasks.md file and look at the archive directory, plus any other files I haven't seen yet.",
+          "time": {
+            "start": 1778662352364,
+            "end": 1778662386251
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me now check if there's a tasks.md file and look at the archive directory, plus any other files I haven't seen yet.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e2089a5ec001SRodWqrjMLSVD1",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_a867c873c23c47dbb3c07c50",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/project-health-dashboard/tasks.md"
+            },
+            "output": "<path>/project/openspec/changes/project-health-dashboard/tasks.md</path>\n<type>file</type>\n<content>\n1: ## 1. Foundation & Data Layer\n2: \n3: - [ ] 1.1 Create project module structure (ingestion, aggregation, dashboard)\n4: - [ ] 1.2 Define `raw_events` table schema with UUID PK, source, event_type, external_id, timestamp, ingested_at, actor, project, data (JSONB)\n5: - [ ] 1.3 Create indexes on `raw_events`: `(source, timestamp)`, `actor`, `project`\n6: - [ ] 1.4 Define `sprints` table schema with id, name, project, start_date, end_date, state\n7: - [ ] 1.5 Define configuration schema for providers (type, credentials, projects/repos, mapping configs)\n8: - [ ] 1.6 Define identity mapping schema (linking identities across GitHub, Jira, and future systems)\n9: \n10: ## 2. Provider Interface & Configuration\n11: \n12: - [ ] 2.1 Define `DataSourceProvider` interface with `fetchCommits`, `fetchPullRequests`, `fetchIssues`, `fetchSprints`, `healthCheck`\n13: - [ ] 2.2 Define typed event models (`RawCommitEvent`, `RawPREvent`, `RawIssueEvent`, `SprintDefinition`)\n14: - [ ] 2.3 Implement `DataSourceRegistry` that loads providers from configuration\n15: - [ ] 2.4 Implement configuration loader (YAML/JSON file or env-based) for provider credentials and settings\n16: \n17: ## 3. GitHub Provider\n18: \n19: - [ ] 3.1 Implement GitHub API client with authenticated requests (token-based)\n20: - [ ] 3.2 Implement `fetchCommits(since)` — query commits endpoint, paginate, return `RawCommitEvent[]`\n21: - [ ] 3.3 Implement `fetchPullRequests(since)` — query PRs endpoint with state, paginate, include `additions`, `deletions`, `reviewers` in data payload\n22: - [ ] 3.4 Implement `fetchIssues(since)` — query issues endpoint excluding PRs, paginate, include labels and state in data payload\n23: - [ ] 3.5 Implement `healthCheck()` — verify API token validity and repository access\n24: - [ ] 3.6 Implement `fetchSprints()` returning empty (GitHub has no sprints)\n25: - [ ] 3.7 Handle GitHub API rate limits with retry-after headers\n26: \n27: ## 4. Jira Provider\n28: \n29: - [ ] 4.1 Implement Jira API client with authenticated requests (basic auth or OAuth)\n30: - [ ] 4.2 Implement `fetchIssues(since)` — query JQL with updated >= since, paginate, include issue_type, story_points, status, labels in data payload\n31: - [ ] 4.3 Implement `fetchSprints()` — query board sprints endpoint, return `SprintDefinition[]`\n32: - [ ] 4.4 Implement `healthCheck()` — verify API credentials and project/board access\n33: - [ ] 4.5 Implement `fetchCommits()` returning empty (Jira has no commits)\n34: - [ ] 4.6 Implement `fetchPullRequests()` returning empty (Jira has no PRs)\n35: \n36: ## 5. Ingestion Scheduler\n37: \n38: - [ ] 5.1 Implement incremental ingestion logic: determine `since` from the most recent `ingested_at` per source+event_type\n39: - [ ] 5.2 Implement backfill logic: when no prior events exist, fetch from configurable lookback window (default 90 days)\n40: - [ ] 5.3 Implement deduplication: on `external_id` conflict for same source+event_type, upsert (UPDATE existing)\n41: - [ ] 5.4 Implement scheduler loop that triggers all configured providers on a configurable interval (default 15 min)\n42: - [ ] 5.5 Implement per-provider error isolation — one provider failing does not halt others\n43: - [ ] 5.6 Implement retry logic with exponential backoff (3 attempts) for transient API failures\n44: - [ ] 5.7 Add structured logging for ingestion runs (start, success, failure per provider+event_type)\n45: \n46: ## 6. Sprint Storage & API\n47: \n48: - [ ] 6.1 Implement sprint upsert logic from Jira provider output into `sprints` table\n49: - [ ] 6.2 Implement `GET /api/sprints?project=<key>` endpoint returning sprints ordered by end_date desc\n50: - [ ] 6.3 Add active sprint detection and \"(active)\" flag in API response\n51: \n52: ## 7. Aggregation Layer — Core\n53: \n54: - [ ] 7.1 Implement timeframe resolver — normalize `{date_range}` and `{sprint_id}` into start/end timestamps\n55: - [ ] 7.2 Implement issue type normalizer — map GitHub labels and Jira issue types to `bug | feature | maintenance | other` using configurable per-project mapping\n56: - [ ] 7.3 Implement person identity resolver — apply identity mapping to collapse multi-system identities into a single person identifier\n57: - [ ] 7.4 Implement PR size classifier — categorize PRs as small (<100 LOC), medium (100-500), large (>500) based on additions+deletions\n58: - [ ] 7.5 Implement internal/external classifier — classify actors based on configured team members list\n59: \n60: ## 8. Aggregation Layer — Metrics\n61: \n62: - [ ] 8.1 Compute commit count per project and per person for a given timeframe\n63: - [ ] 8.2 Compute PR count with LOC added/removed per project and per person\n64: - [ ] 8.3 Compute issues opened vs resolved per project and per person (unified across GitHub + Jira)\n65: - [ ] 8.4 Compute internal vs external contribution ratio\n66: - [ ] 8.5 Compute cycle time: for each merged PR, time from earliest associated commit to merge date; produce median, p50, p90\n67: - [ ] 8.6 Compute PR review turnaround: for each merged PR, time from opened to first review; produce median, p50, p90\n68: - [ ] 8.7 Compute issue type breakdown (bug / feature / maintenance / other) with unified counts\n69: - [ ] 8.8 Compute PR size distribution (small / medium / large counts and percentages)\n70: - [ ] 8.9 Compute review distribution matrix: for each reviewer, count reviews per author\n71: \n72: ## 9. Aggregation API Endpoints\n73: \n74: - [ ] 9.1 Implement `GET /api/metrics/contribution-volume` — returns commits, PRs+LOC, issues opened/resolved, internal/external ratio, PRs per person\n75: - [ ] 9.2 Implement `GET /api/metrics/velocity` — returns cycle time and PR review turnaround distributions\n76: - [ ] 9.3 Implement `GET /api/metrics/composition` — returns issue type breakdown and PR size distribution\n77: - [ ] 9.4 Implement `GET /api/metrics/collaboration` — returns review distribution matrix\n78: - [ ] 9.5 Implement `GET /api/metrics/sprint-burndown` — returns sprint burndown data (committed vs completed, carried over)\n79: - [ ] 9.6 Support common query params across all endpoints: `from`, `to`, `sprint_id`, `projects[]`, `actors[]`\n80: - [ ] 9.7 Support per-source breakdown in responses (show total + per-source detail for drill-down)\n81: \n82: ## 10. Aggregation Layer — Caching\n83: \n84: - [ ] 10.1 Implement cache key generation from query parameters (timeframe + filters)\n85: - [ ] 10.2 Implement TTL-based cache store (in-memory for v1) with 5-minute TTL\n86: - [ ] 10.3 Implement cache invalidation triggered after each successful ingestion cycle\n87: - [ ] 10.4 Add cache hit/miss metrics to logging\n88: \n89: ## 11. Dashboard — Shell & Timeframe Selector\n90: \n91: - [ ] 11.1 Create dashboard page shell with header and metric section layout\n92: - [ ] 11.2 Implement shared timeframe state that propagates changes to all metric components\n93: - [ ] 11.3 Implement relative timeframe presets (Last 7d, 30d, 90d, This month, This quarter, This year)\n94: - [ ] 11.4 Implement absolute date range picker (start date → end date calendar inputs)\n95: - [ ] 11.5 Implement sprint picker dropdown populated from `GET /api/sprints`\n96: - [ ] 11.6 Display active sprint prominently with \"(active)\" badge in sprint picker\n97: - [ ] 11.7 Default timeframe: active sprint if available, otherwise \"Last 30 days\"\n98: \n99: ## 12. Dashboard — Filters & View Toggle\n100: \n101: - [ ] 12.1 Implement project multi-select filter fetching available projects from API\n102: - [ ] 12.2 Implement \"Project view\" / \"People view\" toggle\n103: - [ ] 12.3 Wire filter and view toggle changes to trigger metric re-fetches\n104: \n105: ## 13. Dashboard — Contribution Volume Section\n106: \n107: - [ ] 13.1 Implement commit count chart (bar/line chart over timeframe)\n108: - [ ] 13.2 Implement PR count chart with LOC added/removed bars (stacked positive/negative)\n109: - [ ] 13.3 Implement internal vs external ratio display (pie or donut chart)\n110: - [ ] 13.4 Implement PRs per person table (Project view: per-project breakdown; People view: per-person across all projects)\n111: - [ ] 13.5 Implement issues opened vs resolved chart (grouped bar: opened + resolved per period)\n112: \n113: ## 14. Dashboard — Velocity & Throughput Section\n114: \n115: - [ ] 14.1 Implement cycle time distribution chart (histogram or box plot with p50/p90 markers)\n116: - [ ] 14.2 Implement PR review turnaround distribution chart (histogram with p50/p90 markers)\n117: \n118: ## 15. Dashboard — Quality & Composition Section\n119: \n120: - [ ] 15.1 Implement issue type breakdown chart (stacked bar or donut: bug / feature / maintenance / other)\n121: - [ ] 15.2 Implement per-source hover breakdown on issue type chart (show GitHub vs Jira within each type)\n122: - [ ] 15.3 Implement PR size distribution chart (bar chart: small / medium / large with counts and percentages)\n123: \n124: ## 16. Dashboard — Collaboration Section\n125: \n126: - [ ] 16.1 Implement review distribution matrix (table or heatmap: reviewers as rows, authors as columns, counts as cells)\n127: \n128: ## 17. Dashboard — Drill-down & Raw Data\n129: \n130: - [ ] 17.1 Implement drill-down on issue counts: click to expand per-source breakdown (GitHub vs Jira)\n131: - [ ] 17.2 Implement drill-down on issue type segments: show source-native labels alongside normalized type\n132: - [ ] 17.3 Implement raw event list view: filtered table showing raw_events rows for a given drill-down selection\n133: \n134: ## 18. Dashboard — Loading, Error & Empty States\n135: \n136: - [ ] 18.1 Implement skeleton/spinner loading state for each metric component\n137: - [ ] 18.2 Implement error state with error message and retry button per component\n138: - [ ] 18.3 Implement empty state (\"No data for this period\") per component\n139: - [ ] 18.4 Ensure error in one component does not affect rendering of other components\n140: \n141: ## 19. Dashboard — Settings Panel\n142: \n143: - [ ] 19.1 Implement settings panel with show/hide toggles for each metric section\n144: - [ ] 19.2 Persist layout preferences locally (localStorage)\n145: \n146: ## 20. Integration & Polish\n147: \n148: - [ ] 20.1 Add sprint burndown chart to the dashboard (simple committed-vs-completed bar with carried-over indicator)\n149: - [ ] 20.2 Add sprint burndown fallback message when story points are unavailable (\"Story points not configured — showing issue count\")\n150: - [ ] 20.3 End-to-end integration test: scheduled ingestion → data stored → API returns metrics → dashboard renders\n151: - [ ] 20.4 Document provider interface and configuration format for future Launchpad integration\n152: - [ ] 20.5 Run lint and typecheck, fix any issues\n\n(End of file - total 152 lines)\n</content>",
+            "metadata": {
+              "preview": "## 1. Foundation & Data Layer\n\n- [ ] 1.1 Create project module structure (ingestion, aggregation, dashboard)\n- [ ] 1.2 Define `raw_events` table schema with UUID PK, source, event_type, external_id, timestamp, ingested_at, actor, project, data (JSONB)\n- [ ] 1.3 Create indexes on `raw_events`: `(source, timestamp)`, `actor`, `project`\n- [ ] 1.4 Define `sprints` table schema with id, name, project, start_date, end_date, state\n- [ ] 1.5 Define configuration schema for providers (type, credentials, projects/repos, mapping configs)\n- [ ] 1.6 Define identity mapping schema (linking identities across GitHub, Jira, and future systems)\n\n## 2. Provider Interface & Configuration\n\n- [ ] 2.1 Define `DataSourceProvider` interface with `fetchCommits`, `fetchPullRequests`, `fetchIssues`, `fetchSprints`, `healthCheck`\n- [ ] 2.2 Define typed event models (`RawCommitEvent`, `RawPREvent`, `RawIssueEvent`, `SprintDefinition`)\n- [ ] 2.3 Implement `DataSourceRegistry` that loads providers from configuration\n- [ ] 2.4 Implement configuration loader (YAML/JSON file or env-based) for provider credentials and settings\n\n## 3. GitHub Provider\n\n- [ ] 3.1 Implement GitHub API client with authenticated requests (token-based)\n- [ ] 3.2 Implement `fetchCommits(since)` — query commits endpoint, paginate, return `RawCommitEvent[]`",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/project-health-dashboard/tasks.md",
+            "time": {
+              "start": 1778662365750,
+              "end": 1778662365763
+            }
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me now check if there's a tasks.md file and look at the archive directory, plus any other files I haven't seen yet.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e2089da2d001CQVSAiO914XBsM",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_e10b200285044eb6815c2116",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/openspec/changes/archive"
+            },
+            "output": "<path>/project/openspec/changes/archive</path>\n<type>directory</type>\n<entries>\n\n\n(0 entries)\n</entries>",
+            "metadata": {
+              "preview": "",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "openspec/changes/archive",
+            "time": {
+              "start": 1778662367197,
+              "end": 1778662367204
+            }
+          },
+          "id": "prt_e2089dfcd001Fud09KluHKeYnV",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_bed84eb333a940619a23f7f0",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project",
+              "pattern": "**/*.py"
+            },
+            "output": "No files found",
+            "metadata": {
+              "count": 0,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662369054,
+              "end": 1778662369075
+            }
+          },
+          "id": "prt_e2089e70d001EVyNWEi60fOlmZ",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_b77b4b0c399e40f29c00b45b",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project",
+              "pattern": "**/*.ts"
+            },
+            "output": "/project/.opencode/plugins/entire.ts",
+            "metadata": {
+              "count": 1,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662370814,
+              "end": 1778662370832
+            }
+          },
+          "id": "prt_e2089edec0011kQw2exYwRsSRg",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_678359ecebb64510857a6f06",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project",
+              "pattern": "**/*.js"
+            },
+            "output": "No files found",
+            "metadata": {
+              "count": 0,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662372602,
+              "end": 1778662372618
+            }
+          },
+          "id": "prt_e2089f4ea0015Dq0o794smuEzR",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_337ab37abdcd413da7fb10c2",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project",
+              "pattern": "**/*.json"
+            },
+            "output": "/project/.vscode/settings.json\n/project/.opencode/package-lock.json\n/project/.opencode/package.json\n/project/.entire/settings.json",
+            "metadata": {
+              "count": 4,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662374721,
+              "end": 1778662374743
+            }
+          },
+          "id": "prt_e2089fd2e00173GtEJxwtkb2Hv",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_c6817a271175478ebf2d8772",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project",
+              "pattern": "**/*.yaml"
+            },
+            "output": "/project/workshop.yaml\n/project/openspec/changes/project-health-dashboard/.openspec.yaml\n/project/openspec/config.yaml\n/project/.workshop/entire/sdk.yaml\n/project/.workshop/pi/sdk.yaml",
+            "metadata": {
+              "count": 5,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662376658,
+              "end": 1778662376682
+            }
+          },
+          "id": "prt_e208a04b8001mMTe1V8cMqWab3",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_f7eb9d5b49704712af12c12b",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project",
+              "pattern": "**/*.yml"
+            },
+            "output": "No files found",
+            "metadata": {
+              "count": 0,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662384037,
+              "end": 1778662384056
+            }
+          },
+          "id": "prt_e208a2192001aCN1Aqdftj8vcX",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "call_1f0761b85b434e7994dab893",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project",
+              "pattern": "**/requirements*.txt"
+            },
+            "output": "No files found",
+            "metadata": {
+              "count": 0,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1778662386002,
+              "end": 1778662386023
+            }
+          },
+          "id": "prt_e208a2941001XsijgB9e6M4h1R",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-finish",
+          "tokens": {
+            "total": 17479,
+            "input": 17009,
+            "output": 440,
+            "reasoning": 30,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "cost": 0.03123126,
+          "id": "prt_e208a2aa1001jgloeyCFK7B16t",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e20899ad50011q0NhKC1NAJGeK"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e2088b7d3001AmVPlrZ2WKMWuD",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.0133197,
+        "tokens": {
+          "total": 21430,
+          "input": 5029,
+          "output": 627,
+          "reasoning": 30,
+          "cache": {
+            "write": 0,
+            "read": 15744
+          }
+        },
+        "modelID": "deepseek/deepseek-v4-pro",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1778662386407,
+          "completed": 1778662414976
+        },
+        "finish": "tool-calls",
+        "id": "msg_e208a2ae7001bB3EdDEL9mflu8",
+        "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb"
+      },
+      "parts": [
+        {
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-start",
+          "id": "prt_e208a3a91001JNy3FING3ThgIr",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "reasoning",
+          "text": "Let me check the remaining files I haven't read yet - the SDK yaml files, the entire settings/plugin, and the opencode skills.",
+          "time": {
+            "start": 1778662390423,
+            "end": 1778662414881
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me check the remaining files I haven't read yet - the SDK yaml files, the entire settings/plugin, and the opencode skills.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e208a3a9700110srbfGVRa8nmM",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_3290947a41cb4c508a980277",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.workshop/entire/sdk.yaml"
+            },
+            "output": "<path>/project/.workshop/entire/sdk.yaml</path>\n<type>file</type>\n<content>\n1: # For details: https://canonical-workshop.readthedocs-hosted.com/latest/explanation/sdks/sdks/#sketch-sdk\n2: name: entire\n3: plugs:\n4: # Use this configuration to mount a host directory to the workshop\n5: # models:\n6: #   interface: mount\n7: #   workshop-target: /home/workshop/models\n8: slots:\n9: \n10: # Use this configuration to expose a port, then add a corresponding system SDK plug\n11: # More details: https://canonical-workshop.readthedocs-hosted.com/latest/how-to/customize-workshops/forward-ports/\n12: # my-web-server:\n13: #   interface: tunnel\n14: #   endpoint: 8080\n\n(End of file - total 14 lines)\n</content>",
+            "metadata": {
+              "preview": "# For details: https://canonical-workshop.readthedocs-hosted.com/latest/explanation/sdks/sdks/#sketch-sdk\nname: entire\nplugs:\n# Use this configuration to mount a host directory to the workshop\n# models:\n#   interface: mount\n#   workshop-target: /home/workshop/models\nslots:\n\n# Use this configuration to expose a port, then add a corresponding system SDK plug\n# More details: https://canonical-workshop.readthedocs-hosted.com/latest/how-to/customize-workshops/forward-ports/\n# my-web-server:\n#   interface: tunnel\n#   endpoint: 8080",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".workshop/entire/sdk.yaml",
+            "time": {
+              "start": 1778662393038,
+              "end": 1778662393052
+            }
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me check the remaining files I haven't read yet - the SDK yaml files, the entire settings/plugin, and the opencode skills.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e208a420f001UlQ23SNrgdTcah",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_4d26671cab4348069b9f6613",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.workshop/pi/sdk.yaml"
+            },
+            "output": "<path>/project/.workshop/pi/sdk.yaml</path>\n<type>file</type>\n<content>\n1: # For details: https://canonical-workshop.readthedocs-hosted.com/latest/explanation/sdks/sdks/#sketch-sdk\n2: name: pi\n3: plugs:\n4:   # Use this configuration to mount a host directory to the workshop\n5:   pi-config:\n6:     interface: mount\n7:     workshop-target: /home/workshop/.pi\n8: slots:\n9: \n10: # Use this configuration to expose a port, then add a corresponding system SDK plug\n11: # More details: https://canonical-workshop.readthedocs-hosted.com/latest/how-to/customize-workshops/forward-ports/\n12: # my-web-server:\n13: #   interface: tunnel\n14: #   endpoint: 8080\n\n(End of file - total 14 lines)\n</content>",
+            "metadata": {
+              "preview": "# For details: https://canonical-workshop.readthedocs-hosted.com/latest/explanation/sdks/sdks/#sketch-sdk\nname: pi\nplugs:\n  # Use this configuration to mount a host directory to the workshop\n  pi-config:\n    interface: mount\n    workshop-target: /home/workshop/.pi\nslots:\n\n# Use this configuration to expose a port, then add a corresponding system SDK plug\n# More details: https://canonical-workshop.readthedocs-hosted.com/latest/how-to/customize-workshops/forward-ports/\n# my-web-server:\n#   interface: tunnel\n#   endpoint: 8080",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".workshop/pi/sdk.yaml",
+            "time": {
+              "start": 1778662394279,
+              "end": 1778662394292
+            }
+          },
+          "id": "prt_e208a4691001lHPneroQn4I565",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_bb149dd4b04d4b39b5ac2b4a",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.workshop/entire/hooks"
+            },
+            "output": "<path>/project/.workshop/entire/hooks</path>\n<type>directory</type>\n<entries>\nsetup-base\nsetup-project\n\n(2 entries)\n</entries>",
+            "metadata": {
+              "preview": "setup-base\nsetup-project",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".workshop/entire/hooks",
+            "time": {
+              "start": 1778662395180,
+              "end": 1778662395190
+            }
+          },
+          "id": "prt_e208a4bc1001DHCb7l9ahou0z1",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_b0441e0097ab4149b8768ceb",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.workshop/pi/hooks"
+            },
+            "output": "<path>/project/.workshop/pi/hooks</path>\n<type>directory</type>\n<entries>\nsetup-base\nsetup-project\n\n(2 entries)\n</entries>",
+            "metadata": {
+              "preview": "setup-base\nsetup-project",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".workshop/pi/hooks",
+            "time": {
+              "start": 1778662396113,
+              "end": 1778662396117
+            }
+          },
+          "id": "prt_e208a4f5e001YNSbM3aaojkGfw",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_1dd4c095570e4ad6a7f17415",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.entire/settings.json"
+            },
+            "output": "<path>/project/.entire/settings.json</path>\n<type>file</type>\n<content>\n1: {\n2:   \"enabled\": true,\n3:   \"telemetry\": false\n4: }\n\n(End of file - total 4 lines)\n</content>",
+            "metadata": {
+              "preview": "{\n  \"enabled\": true,\n  \"telemetry\": false\n}",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".entire/settings.json",
+            "time": {
+              "start": 1778662396929,
+              "end": 1778662396939
+            }
+          },
+          "id": "prt_e208a529a001HXQeHLzdLyFX0Y",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_bc5b8284643c4286bad1884d",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/plugins/entire.ts"
+            },
+            "output": "<path>/project/.opencode/plugins/entire.ts</path>\n<type>file</type>\n<content>\n1: // Entire CLI plugin for OpenCode\n2: // Auto-generated by `entire enable --agent opencode`\n3: // Do not edit manually — changes will be overwritten on next install.\n4: // Requires Bun runtime (used by OpenCode's plugin system for loading ESM plugins).\n5: import type { Plugin } from \"@opencode-ai/plugin\"\n6: \n7: export const EntirePlugin: Plugin = async ({ directory }) => {\n8:   const ENTIRE_CMD = 'entire'\n9:   // Track seen user messages to fire turn-start only once per message\n10:   const seenUserMessages = new Set<string>()\n11:   // Track current session ID for message events (which don't include sessionID)\n12:   let currentSessionID: string | null = null\n13:   // Track the model used by the most recent assistant message\n14:   let currentModel: string | null = null\n15:   // In-memory store for message metadata (role, tokens, etc.)\n16:   const messageStore = new Map<string, any>()\n17: \n18:   /**\n19:    * Build the shell command for a hook invocation.\n20:    * Uses sh -c so that shell command substitution in ENTIRE_CMD\n21:    * (e.g., $(git rev-parse --show-toplevel) for local-dev) is interpreted.\n22:    */\n23:   function hookCmd(hookName: string): string[] {\n24:     if (ENTIRE_CMD !== \"entire\") {\n25:       return [\"sh\", \"-c\", `${ENTIRE_CMD} hooks opencode ${hookName}`]\n26:     }\n27:     return [\"sh\", \"-c\", `if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks opencode ${hookName}`]\n28:   }\n29: \n30:   /**\n31:    * Pipe JSON payload to an entire hooks command (async).\n32:    * Errors are logged but never thrown — plugin failures must not crash OpenCode.\n33:    */\n34:   async function callHook(hookName: string, payload: Record<string, unknown>) {\n35:     try {\n36:       const json = JSON.stringify(payload)\n37:       const proc = Bun.spawn(hookCmd(hookName), {\n38:         cwd: directory,\n39:         stdin: new Blob([json + \"\\n\"]),\n40:         stdout: \"ignore\",\n41:         stderr: \"ignore\",\n42:       })\n43:       await proc.exited\n44:     } catch {\n45:       // Silently ignore — plugin failures must not crash OpenCode\n46:     }\n47:   }\n48: \n49:   /**\n50:    * Synchronous variant for hooks that must complete before subsequent agent work\n51:    * or process exit. `turn-start` must finish initializing session state before a\n52:    * fast mid-turn commit can hit git hooks, and `turn-end` / `session-end` must\n53:    * finish before `opencode run` tears down its event loop.\n54:    */\n55:   function callHookSync(hookName: string, payload: Record<string, unknown>) {\n56:     try {\n57:       const json = JSON.stringify(payload)\n58:       Bun.spawnSync(hookCmd(hookName), {\n59:         cwd: directory,\n60:         stdin: new TextEncoder().encode(json + \"\\n\"),\n61:         stdout: \"ignore\",\n62:         stderr: \"ignore\",\n63:       })\n64:     } catch {\n65:       // Silently ignore — plugin failures must not crash OpenCode\n66:     }\n67:   }\n68: \n69:   function resetSessionTracking(sessionID: string) {\n70:     if (currentSessionID === sessionID) {\n71:       return false\n72:     }\n73:     seenUserMessages.clear()\n74:     messageStore.clear()\n75:     currentModel = null\n76:     currentSessionID = sessionID\n77:     return true\n78:   }\n79: \n80:   return {\n81:     event: async ({ event }) => {\n82:       try {\n83:         switch (event.type) {\n84:           case \"session.created\": {\n85:             const session = (event as any).properties?.info\n86:             if (!session?.id) break\n87:             // Reset per-session tracking state when switching sessions.\n88:             if (resetSessionTracking(session.id)) {\n89:               const json = JSON.stringify({\n90:                 session_id: session.id,\n91:               })\n92:               const proc = Bun.spawn(hookCmd(\"session-start\"), {\n93:                 cwd: directory,\n94:                 stdin: new Blob([json + \"\\n\"]),\n95:                 stdout: \"ignore\",\n96:                 stderr: \"ignore\",\n97:               })\n98:               await proc.exited\n99:             }\n100:             break\n101:           }\n102: \n103:           case \"message.updated\": {\n104:             const msg = (event as any).properties?.info\n105:             if (!msg) break\n106: \n107:             if (msg.sessionID && resetSessionTracking(msg.sessionID)) {\n108:               callHookSync(\"session-start\", {\n109:                 session_id: msg.sessionID,\n110:               })\n111:             }\n112: \n113:             // Store message metadata (role, time, tokens, etc.)\n114:             messageStore.set(msg.id, msg)\n115:             // Track model from assistant messages\n116:             if (msg.role === \"assistant\" && msg.modelID) {\n117:               currentModel = msg.modelID\n118:             }\n119: \n120:             // Fallback: some opencode run flows commit before any message.part.updated\n121:             // event is delivered for the user's prompt. Start the turn from the\n122:             // user message itself so git hooks see an ACTIVE session in time.\n123:             if (msg.role === \"user\" && !seenUserMessages.has(msg.id)) {\n124:               seenUserMessages.add(msg.id)\n125:               const sessionID = msg.sessionID ?? currentSessionID\n126:               if (sessionID) {\n127:                 callHookSync(\"turn-start\", {\n128:                   session_id: sessionID,\n129:                   prompt: \"\",\n130:                   model: currentModel ?? \"\",\n131:                 })\n132:               }\n133:             }\n134:             break\n135:           }\n136: \n137:           case \"message.part.updated\": {\n138:             const part = (event as any).properties?.part\n139:             if (!part?.messageID) break\n140: \n141:             // Fire turn-start on the first text part of a new user message\n142:             const msg = messageStore.get(part.messageID)\n143:             if (msg?.role === \"user\" && part.type === \"text\" && !seenUserMessages.has(msg.id)) {\n144:               seenUserMessages.add(msg.id)\n145:               const sessionID = msg.sessionID ?? currentSessionID\n146:               if (sessionID) {\n147:                 callHookSync(\"turn-start\", {\n148:                   session_id: sessionID,\n149:                   prompt: part.text ?? \"\",\n150:                   model: currentModel ?? \"\",\n151:                 })\n152:               }\n153:             }\n154:             break\n155:           }\n156: \n157:           case \"session.status\": {\n158:             // session.status fires in both TUI and non-interactive (run) mode.\n159:             // session.idle is deprecated and not reliably emitted in run mode.\n160:             const props = (event as any).properties\n161:             if (props?.status?.type !== \"idle\") break\n162:             const sessionID = props?.sessionID ?? currentSessionID\n163:             if (!sessionID) break\n164:             // Use sync variant: `opencode run` exits on the same idle event,\n165:             // so an async hook would be killed before completing.\n166:             callHookSync(\"turn-end\", {\n167:               session_id: sessionID,\n168:               model: currentModel ?? \"\",\n169:             })\n170:             break\n171:           }\n172: \n173:           case \"session.compacted\": {\n174:             const sessionID = (event as any).properties?.sessionID\n175:             if (!sessionID) break\n176:             await callHook(\"compaction\", {\n177:               session_id: sessionID,\n178:             })\n179:             break\n180:           }\n181: \n182:           case \"session.deleted\": {\n183:             const session = (event as any).properties?.info\n184:             if (!session?.id) break\n185:             seenUserMessages.clear()\n186:             messageStore.clear()\n187:             currentSessionID = null\n188:             // Use sync variant: session-end may fire during shutdown.\n189:             callHookSync(\"session-end\", {\n190:               session_id: session.id,\n191:             })\n192:             break\n193:           }\n194: \n195:           case \"server.instance.disposed\": {\n196:             // Fires when OpenCode shuts down (TUI close or `opencode run` exit).\n197:             // session.deleted only fires on explicit user deletion, not on quit,\n198:             // so this is the only reliable way to end sessions on exit.\n199:             if (!currentSessionID) break\n200:             const sessionID = currentSessionID\n201:             seenUserMessages.clear()\n202:             messageStore.clear()\n203:             currentSessionID = null\n204:             // Use sync variant: this is the last event before process exit.\n205:             callHookSync(\"session-end\", {\n206:               session_id: sessionID,\n207:             })\n208:             break\n209:           }\n210:         }\n211:       } catch {\n212:         // Silently ignore — plugin failures must not crash OpenCode\n213:       }\n214:     },\n215:   }\n216: }\n\n(End of file - total 216 lines)\n</content>",
+            "metadata": {
+              "preview": "// Entire CLI plugin for OpenCode\n// Auto-generated by `entire enable --agent opencode`\n// Do not edit manually — changes will be overwritten on next install.\n// Requires Bun runtime (used by OpenCode's plugin system for loading ESM plugins).\nimport type { Plugin } from \"@opencode-ai/plugin\"\n\nexport const EntirePlugin: Plugin = async ({ directory }) => {\n  const ENTIRE_CMD = 'entire'\n  // Track seen user messages to fire turn-start only once per message\n  const seenUserMessages = new Set<string>()\n  // Track current session ID for message events (which don't include sessionID)\n  let currentSessionID: string | null = null\n  // Track the model used by the most recent assistant message\n  let currentModel: string | null = null\n  // In-memory store for message metadata (role, tokens, etc.)\n  const messageStore = new Map<string, any>()\n\n  /**\n   * Build the shell command for a hook invocation.\n   * Uses sh -c so that shell command substitution in ENTIRE_CMD",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/plugins/entire.ts",
+            "time": {
+              "start": 1778662398058,
+              "end": 1778662398083
+            }
+          },
+          "id": "prt_e208a564c0015mu6obyVV7KJ6a",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_cac208a1f57f4607b7c10bfb",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/commands/opsx-propose.md"
+            },
+            "output": "<path>/project/.opencode/commands/opsx-propose.md</path>\n<type>file</type>\n<content>\n1: ---\n2: description: Propose a new change - create it and generate all artifacts in one step\n3: ---\n4: \n5: Propose a new change - create the change and generate all artifacts in one step.\n6: \n7: I'll create a change with artifacts:\n8: - proposal.md (what & why)\n9: - design.md (how)\n10: - tasks.md (implementation steps)\n11: \n12: When ready to implement, run /opsx-apply\n13: \n14: ---\n15: \n16: **Input**: The argument after `/opsx-propose` is the change name (kebab-case), OR a description of what the user wants to build.\n17: \n18: **Steps**\n19: \n20: 1. **If no input provided, ask what they want to build**\n21: \n22:    Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:\n23:    > \"What change do you want to work on? Describe what you want to build or fix.\"\n24: \n25:    From their description, derive a kebab-case name (e.g., \"add user authentication\" → `add-user-auth`).\n26: \n27:    **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.\n28: \n29: 2. **Create the change directory**\n30:    ```bash\n31:    openspec new change \"<name>\"\n32:    ```\n33:    This creates a scaffolded change at `openspec/changes/<name>/` with `.openspec.yaml`.\n34: \n35: 3. **Get the artifact build order**\n36:    ```bash\n37:    openspec status --change \"<name>\" --json\n38:    ```\n39:    Parse the JSON to get:\n40:    - `applyRequires`: array of artifact IDs needed before implementation (e.g., `[\"tasks\"]`)\n41:    - `artifacts`: list of all artifacts with their status and dependencies\n42: \n43: 4. **Create artifacts in sequence until apply-ready**\n44: \n45:    Use the **TodoWrite tool** to track progress through the artifacts.\n46: \n47:    Loop through artifacts in dependency order (artifacts with no pending dependencies first):\n48: \n49:    a. **For each artifact that is `ready` (dependencies satisfied)**:\n50:       - Get instructions:\n51:         ```bash\n52:         openspec instructions <artifact-id> --change \"<name>\" --json\n53:         ```\n54:       - The instructions JSON includes:\n55:         - `context`: Project background (constraints for you - do NOT include in output)\n56:         - `rules`: Artifact-specific rules (constraints for you - do NOT include in output)\n57:         - `template`: The structure to use for your output file\n58:         - `instruction`: Schema-specific guidance for this artifact type\n59:         - `outputPath`: Where to write the artifact\n60:         - `dependencies`: Completed artifacts to read for context\n61:       - Read any completed dependency files for context\n62:       - Create the artifact file using `template` as the structure\n63:       - Apply `context` and `rules` as constraints - but do NOT copy them into the file\n64:       - Show brief progress: \"Created <artifact-id>\"\n65: \n66:    b. **Continue until all `applyRequires` artifacts are complete**\n67:       - After creating each artifact, re-run `openspec status --change \"<name>\" --json`\n68:       - Check if every artifact ID in `applyRequires` has `status: \"done\"` in the artifacts array\n69:       - Stop when all `applyRequires` artifacts are done\n70: \n71:    c. **If an artifact requires user input** (unclear context):\n72:       - Use **AskUserQuestion tool** to clarify\n73:       - Then continue with creation\n74: \n75: 5. **Show final status**\n76:    ```bash\n77:    openspec status --change \"<name>\"\n78:    ```\n79: \n80: **Output**\n81: \n82: After completing all artifacts, summarize:\n83: - Change name and location\n84: - List of artifacts created with brief descriptions\n85: - What's ready: \"All artifacts created! Ready for implementation.\"\n86: - Prompt: \"Run `/opsx-apply` to start implementing.\"\n87: \n88: **Artifact Creation Guidelines**\n89: \n90: - Follow the `instruction` field from `openspec instructions` for each artifact type\n91: - The schema defines what each artifact should contain - follow it\n92: - Read dependency artifacts for context before creating new ones\n93: - Use `template` as the structure for your output file - fill in its sections\n94: - **IMPORTANT**: `context` and `rules` are constraints for YOU, not content for the file\n95:   - Do NOT copy `<context>`, `<rules>`, `<project_context>` blocks into the artifact\n96:   - These guide what you write, but should never appear in the output\n97: \n98: **Guardrails**\n99: - Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`)\n100: - Always read dependency artifacts before creating a new one\n101: - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum\n102: - If a change with that name already exists, ask if user wants to continue it or create a new one\n103: - Verify each artifact file exists after writing before proceeding to next\n\n(End of file - total 103 lines)\n</content>",
+            "metadata": {
+              "preview": "---\ndescription: Propose a new change - create it and generate all artifacts in one step\n---\n\nPropose a new change - create the change and generate all artifacts in one step.\n\nI'll create a change with artifacts:\n- proposal.md (what & why)\n- design.md (how)\n- tasks.md (implementation steps)\n\nWhen ready to implement, run /opsx-apply\n\n---\n\n**Input**: The argument after `/opsx-propose` is the change name (kebab-case), OR a description of what the user wants to build.\n\n**Steps**\n\n1. **If no input provided, ask what they want to build**",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/commands/opsx-propose.md",
+            "time": {
+              "start": 1778662399140,
+              "end": 1778662399154
+            }
+          },
+          "id": "prt_e208a5aa700134oM6I3ejMsfRf",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_3246158ae0c144caa333433c",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/commands/opsx-apply.md"
+            },
+            "output": "<path>/project/.opencode/commands/opsx-apply.md</path>\n<type>file</type>\n<content>\n1: ---\n2: description: Implement tasks from an OpenSpec change (Experimental)\n3: ---\n4: \n5: Implement tasks from an OpenSpec change.\n6: \n7: **Input**: Optionally specify a change name (e.g., `/opsx-apply add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.\n8: \n9: **Steps**\n10: \n11: 1. **Select the change**\n12: \n13:    If a name is provided, use it. Otherwise:\n14:    - Infer from conversation context if the user mentioned a change\n15:    - Auto-select if only one active change exists\n16:    - If ambiguous, run `openspec list --json` to get available changes and use the **AskUserQuestion tool** to let the user select\n17: \n18:    Always announce: \"Using change: <name>\" and how to override (e.g., `/opsx-apply <other>`).\n19: \n20: 2. **Check status to understand the schema**\n21:    ```bash\n22:    openspec status --change \"<name>\" --json\n23:    ```\n24:    Parse the JSON to understand:\n25:    - `schemaName`: The workflow being used (e.g., \"spec-driven\")\n26:    - Which artifact contains the tasks (typically \"tasks\" for spec-driven, check status for others)\n27: \n28: 3. **Get apply instructions**\n29: \n30:    ```bash\n31:    openspec instructions apply --change \"<name>\" --json\n32:    ```\n33: \n34:    This returns:\n35:    - `contextFiles`: artifact ID -> array of concrete file paths (varies by schema)\n36:    - Progress (total, complete, remaining)\n37:    - Task list with status\n38:    - Dynamic instruction based on current state\n39: \n40:    **Handle states:**\n41:    - If `state: \"blocked\"` (missing artifacts): show message, suggest using `/opsx-continue`\n42:    - If `state: \"all_done\"`: congratulate, suggest archive\n43:    - Otherwise: proceed to implementation\n44: \n45: 4. **Read context files**\n46: \n47:    Read every file path listed under `contextFiles` from the apply instructions output.\n48:    The files depend on the schema being used:\n49:    - **spec-driven**: proposal, specs, design, tasks\n50:    - Other schemas: follow the contextFiles from CLI output\n51: \n52: 5. **Show current progress**\n53: \n54:    Display:\n55:    - Schema being used\n56:    - Progress: \"N/M tasks complete\"\n57:    - Remaining tasks overview\n58:    - Dynamic instruction from CLI\n59: \n60: 6. **Implement tasks (loop until done or blocked)**\n61: \n62:    For each pending task:\n63:    - Show which task is being worked on\n64:    - Make the code changes required\n65:    - Keep changes minimal and focused\n66:    - Mark task complete in the tasks file: `- [ ]` → `- [x]`\n67:    - Continue to next task\n68: \n69:    **Pause if:**\n70:    - Task is unclear → ask for clarification\n71:    - Implementation reveals a design issue → suggest updating artifacts\n72:    - Error or blocker encountered → report and wait for guidance\n73:    - User interrupts\n74: \n75: 7. **On completion or pause, show status**\n76: \n77:    Display:\n78:    - Tasks completed this session\n79:    - Overall progress: \"N/M tasks complete\"\n80:    - If all done: suggest archive\n81:    - If paused: explain why and wait for guidance\n82: \n83: **Output During Implementation**\n84: \n85: ```\n86: ## Implementing: <change-name> (schema: <schema-name>)\n87: \n88: Working on task 3/7: <task description>\n89: [...implementation happening...]\n90: ✓ Task complete\n91: \n92: Working on task 4/7: <task description>\n93: [...implementation happening...]\n94: ✓ Task complete\n95: ```\n96: \n97: **Output On Completion**\n98: \n99: ```\n100: ## Implementation Complete\n101: \n102: **Change:** <change-name>\n103: **Schema:** <schema-name>\n104: **Progress:** 7/7 tasks complete ✓\n105: \n106: ### Completed This Session\n107: - [x] Task 1\n108: - [x] Task 2\n109: ...\n110: \n111: All tasks complete! You can archive this change with `/opsx-archive`.\n112: ```\n113: \n114: **Output On Pause (Issue Encountered)**\n115: \n116: ```\n117: ## Implementation Paused\n118: \n119: **Change:** <change-name>\n120: **Schema:** <schema-name>\n121: **Progress:** 4/7 tasks complete\n122: \n123: ### Issue Encountered\n124: <description of the issue>\n125: \n126: **Options:**\n127: 1. <option 1>\n128: 2. <option 2>\n129: 3. Other approach\n130: \n131: What would you like to do?\n132: ```\n133: \n134: **Guardrails**\n135: - Keep going through tasks until done or blocked\n136: - Always read context files before starting (from the apply instructions output)\n137: - If task is ambiguous, pause and ask before implementing\n138: - If implementation reveals issues, pause and suggest artifact updates\n139: - Keep code changes minimal and scoped to each task\n140: - Update task checkbox immediately after completing each task\n141: - Pause on errors, blockers, or unclear requirements - don't guess\n142: - Use contextFiles from CLI output, don't assume specific file names\n143: \n144: **Fluid Workflow Integration**\n145: \n146: This skill supports the \"actions on a change\" model:\n147: \n148: - **Can be invoked anytime**: Before all artifacts are done (if tasks exist), after partial implementation, interleaved with other actions\n149: - **Allows artifact updates**: If implementation reveals design issues, suggest updating artifacts - not phase-locked, work fluidly\n\n(End of file - total 149 lines)\n</content>",
+            "metadata": {
+              "preview": "---\ndescription: Implement tasks from an OpenSpec change (Experimental)\n---\n\nImplement tasks from an OpenSpec change.\n\n**Input**: Optionally specify a change name (e.g., `/opsx-apply add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.\n\n**Steps**\n\n1. **Select the change**\n\n   If a name is provided, use it. Otherwise:\n   - Infer from conversation context if the user mentioned a change\n   - Auto-select if only one active change exists\n   - If ambiguous, run `openspec list --json` to get available changes and use the **AskUserQuestion tool** to let the user select\n\n   Always announce: \"Using change: <name>\" and how to override (e.g., `/opsx-apply <other>`).\n\n2. **Check status to understand the schema**",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/commands/opsx-apply.md",
+            "time": {
+              "start": 1778662400279,
+              "end": 1778662400287
+            }
+          },
+          "id": "prt_e208a5e5800109Dh3Mk6RrGaA3",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_36fd4c7dd6ae41bfae725404",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/commands/opsx-archive.md"
+            },
+            "output": "<path>/project/.opencode/commands/opsx-archive.md</path>\n<type>file</type>\n<content>\n1: ---\n2: description: Archive a completed change in the experimental workflow\n3: ---\n4: \n5: Archive a completed change in the experimental workflow.\n6: \n7: **Input**: Optionally specify a change name after `/opsx-archive` (e.g., `/opsx-archive add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.\n8: \n9: **Steps**\n10: \n11: 1. **If no change name provided, prompt for selection**\n12: \n13:    Run `openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.\n14: \n15:    Show only active changes (not already archived).\n16:    Include the schema used for each change if available.\n17: \n18:    **IMPORTANT**: Do NOT guess or auto-select a change. Always let the user choose.\n19: \n20: 2. **Check artifact completion status**\n21: \n22:    Run `openspec status --change \"<name>\" --json` to check artifact completion.\n23: \n24:    Parse the JSON to understand:\n25:    - `schemaName`: The workflow being used\n26:    - `artifacts`: List of artifacts with their status (`done` or other)\n27: \n28:    **If any artifacts are not `done`:**\n29:    - Display warning listing incomplete artifacts\n30:    - Prompt user for confirmation to continue\n31:    - Proceed if user confirms\n32: \n33: 3. **Check task completion status**\n34: \n35:    Read the tasks file (typically `tasks.md`) to check for incomplete tasks.\n36: \n37:    Count tasks marked with `- [ ]` (incomplete) vs `- [x]` (complete).\n38: \n39:    **If incomplete tasks found:**\n40:    - Display warning showing count of incomplete tasks\n41:    - Prompt user for confirmation to continue\n42:    - Proceed if user confirms\n43: \n44:    **If no tasks file exists:** Proceed without task-related warning.\n45: \n46: 4. **Assess delta spec sync state**\n47: \n48:    Check for delta specs at `openspec/changes/<name>/specs/`. If none exist, proceed without sync prompt.\n49: \n50:    **If delta specs exist:**\n51:    - Compare each delta spec with its corresponding main spec at `openspec/specs/<capability>/spec.md`\n52:    - Determine what changes would be applied (adds, modifications, removals, renames)\n53:    - Show a combined summary before prompting\n54: \n55:    **Prompt options:**\n56:    - If changes needed: \"Sync now (recommended)\", \"Archive without syncing\"\n57:    - If already synced: \"Archive now\", \"Sync anyway\", \"Cancel\"\n58: \n59:    If user chooses sync, use Task tool (subagent_type: \"general-purpose\", prompt: \"Use Skill tool to invoke openspec-sync-specs for change '<name>'. Delta spec analysis: <include the analyzed delta spec summary>\"). Proceed to archive regardless of choice.\n60: \n61: 5. **Perform the archive**\n62: \n63:    Create the archive directory if it doesn't exist:\n64:    ```bash\n65:    mkdir -p openspec/changes/archive\n66:    ```\n67: \n68:    Generate target name using current date: `YYYY-MM-DD-<change-name>`\n69: \n70:    **Check if target already exists:**\n71:    - If yes: Fail with error, suggest renaming existing archive or using different date\n72:    - If no: Move the change directory to archive\n73: \n74:    ```bash\n75:    mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>\n76:    ```\n77: \n78: 6. **Display summary**\n79: \n80:    Show archive completion summary including:\n81:    - Change name\n82:    - Schema that was used\n83:    - Archive location\n84:    - Spec sync status (synced / sync skipped / no delta specs)\n85:    - Note about any warnings (incomplete artifacts/tasks)\n86: \n87: **Output On Success**\n88: \n89: ```\n90: ## Archive Complete\n91: \n92: **Change:** <change-name>\n93: **Schema:** <schema-name>\n94: **Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/\n95: **Specs:** ✓ Synced to main specs\n96: \n97: All artifacts complete. All tasks complete.\n98: ```\n99: \n100: **Output On Success (No Delta Specs)**\n101: \n102: ```\n103: ## Archive Complete\n104: \n105: **Change:** <change-name>\n106: **Schema:** <schema-name>\n107: **Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/\n108: **Specs:** No delta specs\n109: \n110: All artifacts complete. All tasks complete.\n111: ```\n112: \n113: **Output On Success With Warnings**\n114: \n115: ```\n116: ## Archive Complete (with warnings)\n117: \n118: **Change:** <change-name>\n119: **Schema:** <schema-name>\n120: **Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/\n121: **Specs:** Sync skipped (user chose to skip)\n122: \n123: **Warnings:**\n124: - Archived with 2 incomplete artifacts\n125: - Archived with 3 incomplete tasks\n126: - Delta spec sync was skipped (user chose to skip)\n127: \n128: Review the archive if this was not intentional.\n129: ```\n130: \n131: **Output On Error (Archive Exists)**\n132: \n133: ```\n134: ## Archive Failed\n135: \n136: **Change:** <change-name>\n137: **Target:** openspec/changes/archive/YYYY-MM-DD-<name>/\n138: \n139: Target archive directory already exists.\n140: \n141: **Options:**\n142: 1. Rename the existing archive\n143: 2. Delete the existing archive if it's a duplicate\n144: 3. Wait until a different date to archive\n145: ```\n146: \n147: **Guardrails**\n148: - Always prompt for change selection if not provided\n149: - Use artifact graph (openspec status --json) for completion checking\n150: - Don't block archive on warnings - just inform and confirm\n151: - Preserve .openspec.yaml when moving to archive (it moves with the directory)\n152: - Show clear summary of what happened\n153: - If sync is requested, use the Skill tool to invoke `openspec-sync-specs` (agent-driven)\n154: - If delta specs exist, always run the sync assessment and show the combined summary before prompting\n\n(End of file - total 154 lines)\n</content>",
+            "metadata": {
+              "preview": "---\ndescription: Archive a completed change in the experimental workflow\n---\n\nArchive a completed change in the experimental workflow.\n\n**Input**: Optionally specify a change name after `/opsx-archive` (e.g., `/opsx-archive add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.\n\n**Steps**\n\n1. **If no change name provided, prompt for selection**\n\n   Run `openspec list --json` to get available changes. Use the **AskUserQuestion tool** to let the user select.\n\n   Show only active changes (not already archived).\n   Include the schema used for each change if available.\n\n   **IMPORTANT**: Do NOT guess or auto-select a change. Always let the user choose.\n\n2. **Check artifact completion status**",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/commands/opsx-archive.md",
+            "time": {
+              "start": 1778662404661,
+              "end": 1778662404671
+            }
+          },
+          "id": "prt_e208a706d001IQYaKf20n890CK",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_5a14ce4419ce4b59907238e2",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/commands/opsx-explore.md"
+            },
+            "output": "<path>/project/.opencode/commands/opsx-explore.md</path>\n<type>file</type>\n<content>\n1: ---\n2: description: Enter explore mode - think through ideas, investigate problems, clarify requirements\n3: ---\n4: \n5: Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.\n6: \n7: **IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first and create a change proposal. You MAY create OpenSpec artifacts (proposals, designs, specs) if the user asks—that's capturing thinking, not implementing.\n8: \n9: **This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.\n10: \n11: **Input**: The argument after `/opsx-explore` is whatever the user wants to think about. Could be:\n12: - A vague idea: \"real-time collaboration\"\n13: - A specific problem: \"the auth system is getting unwieldy\"\n14: - A change name: \"add-dark-mode\" (to explore in context of that change)\n15: - A comparison: \"postgres vs sqlite for this\"\n16: - Nothing (just enter explore mode)\n17: \n18: ---\n19: \n20: ## The Stance\n21: \n22: - **Curious, not prescriptive** - Ask questions that emerge naturally, don't follow a script\n23: - **Open threads, not interrogations** - Surface multiple interesting directions and let the user follow what resonates. Don't funnel them through a single path of questions.\n24: - **Visual** - Use ASCII diagrams liberally when they'd help clarify thinking\n25: - **Adaptive** - Follow interesting threads, pivot when new information emerges\n26: - **Patient** - Don't rush to conclusions, let the shape of the problem emerge\n27: - **Grounded** - Explore the actual codebase when relevant, don't just theorize\n28: \n29: ---\n30: \n31: ## What You Might Do\n32: \n33: Depending on what the user brings, you might:\n34: \n35: **Explore the problem space**\n36: - Ask clarifying questions that emerge from what they said\n37: - Challenge assumptions\n38: - Reframe the problem\n39: - Find analogies\n40: \n41: **Investigate the codebase**\n42: - Map existing architecture relevant to the discussion\n43: - Find integration points\n44: - Identify patterns already in use\n45: - Surface hidden complexity\n46: \n47: **Compare options**\n48: - Brainstorm multiple approaches\n49: - Build comparison tables\n50: - Sketch tradeoffs\n51: - Recommend a path (if asked)\n52: \n53: **Visualize**\n54: ```\n55: ┌─────────────────────────────────────────┐\n56: │     Use ASCII diagrams liberally        │\n57: ├─────────────────────────────────────────┤\n58: │                                         │\n59: │      ┌────────┐         ┌────────┐      │\n60: │      │ State  │────────▶│ State  │      │\n61: │      │   A    │         │   B    │      │\n62: │      └────────┘         └────────┘      │\n63: │                                         │\n64: │   System diagrams, state machines,      │\n65: │   data flows, architecture sketches,    │\n66: │   dependency graphs, comparison tables  │\n67: │                                         │\n68: └─────────────────────────────────────────┘\n69: ```\n70: \n71: **Surface risks and unknowns**\n72: - Identify what could go wrong\n73: - Find gaps in understanding\n74: - Suggest spikes or investigations\n75: \n76: ---\n77: \n78: ## OpenSpec Awareness\n79: \n80: You have full context of the OpenSpec system. Use it naturally, don't force it.\n81: \n82: ### Check for context\n83: \n84: At the start, quickly check what exists:\n85: ```bash\n86: openspec list --json\n87: ```\n88: \n89: This tells you:\n90: - If there are active changes\n91: - Their names, schemas, and status\n92: - What the user might be working on\n93: \n94: If the user mentioned a specific change name, read its artifacts for context.\n95: \n96: ### When no change exists\n97: \n98: Think freely. When insights crystallize, you might offer:\n99: \n100: - \"This feels solid enough to start a change. Want me to create a proposal?\"\n101: - Or keep exploring - no pressure to formalize\n102: \n103: ### When a change exists\n104: \n105: If the user mentions a change or you detect one is relevant:\n106: \n107: 1. **Read existing artifacts for context**\n108:    - `openspec/changes/<name>/proposal.md`\n109:    - `openspec/changes/<name>/design.md`\n110:    - `openspec/changes/<name>/tasks.md`\n111:    - etc.\n112: \n113: 2. **Reference them naturally in conversation**\n114:    - \"Your design mentions using Redis, but we just realized SQLite fits better...\"\n115:    - \"The proposal scopes this to premium users, but we're now thinking everyone...\"\n116: \n117: 3. **Offer to capture when decisions are made**\n118: \n119:     | Insight Type               | Where to Capture               |\n120:     |----------------------------|--------------------------------|\n121:     | New requirement discovered | `specs/<capability>/spec.md` |\n122:     | Requirement changed        | `specs/<capability>/spec.md` |\n123:     | Design decision made       | `design.md`                  |\n124:     | Scope changed              | `proposal.md`                |\n125:     | New work identified        | `tasks.md`                   |\n126:     | Assumption invalidated     | Relevant artifact              |\n127: \n128:    Example offers:\n129:    - \"That's a design decision. Capture it in design.md?\"\n130:    - \"This is a new requirement. Add it to specs?\"\n131:    - \"This changes scope. Update the proposal?\"\n132: \n133: 4. **The user decides** - Offer and move on. Don't pressure. Don't auto-capture.\n134: \n135: ---\n136: \n137: ## What You Don't Have To Do\n138: \n139: - Follow a script\n140: - Ask the same questions every time\n141: - Produce a specific artifact\n142: - Reach a conclusion\n143: - Stay on topic if a tangent is valuable\n144: - Be brief (this is thinking time)\n145: \n146: ---\n147: \n148: ## Ending Discovery\n149: \n150: There's no required ending. Discovery might:\n151: \n152: - **Flow into a proposal**: \"Ready to start? I can create a change proposal.\"\n153: - **Result in artifact updates**: \"Updated design.md with these decisions\"\n154: - **Just provide clarity**: User has what they need, moves on\n155: - **Continue later**: \"We can pick this up anytime\"\n156: \n157: When things crystallize, you might offer a summary - but it's optional. Sometimes the thinking IS the value.\n158: \n159: ---\n160: \n161: ## Guardrails\n162: \n163: - **Don't implement** - Never write code or implement features. Creating OpenSpec artifacts is fine, writing application code is not.\n164: - **Don't fake understanding** - If something is unclear, dig deeper\n165: - **Don't rush** - Discovery is thinking time, not task time\n166: - **Don't force structure** - Let patterns emerge naturally\n167: - **Don't auto-capture** - Offer to save insights, don't just do it\n168: - **Do visualize** - A good diagram is worth many paragraphs\n169: - **Do explore the codebase** - Ground discussions in reality\n170: - **Do question assumptions** - Including the user's and your own\n\n(End of file - total 170 lines)\n</content>",
+            "metadata": {
+              "preview": "---\ndescription: Enter explore mode - think through ideas, investigate problems, clarify requirements\n---\n\nEnter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.\n\n**IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first and create a change proposal. You MAY create OpenSpec artifacts (proposals, designs, specs) if the user asks—that's capturing thinking, not implementing.\n\n**This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.\n\n**Input**: The argument after `/opsx-explore` is whatever the user wants to think about. Could be:\n- A vague idea: \"real-time collaboration\"\n- A specific problem: \"the auth system is getting unwieldy\"\n- A change name: \"add-dark-mode\" (to explore in context of that change)\n- A comparison: \"postgres vs sqlite for this\"\n- Nothing (just enter explore mode)\n\n---\n\n## The Stance",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/commands/opsx-explore.md",
+            "time": {
+              "start": 1778662406223,
+              "end": 1778662406234
+            }
+          },
+          "id": "prt_e208a760b001g1C4b08OApuoWQ",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_bc7a47dddd024c6593793cfa",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/skills/grill-me"
+            },
+            "output": "<path>/project/.opencode/skills/grill-me</path>\n<type>directory</type>\n<entries>\nSKILL.md\n\n(1 entries)\n</entries>",
+            "metadata": {
+              "preview": "SKILL.md",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/skills/grill-me",
+            "time": {
+              "start": 1778662407043,
+              "end": 1778662407050
+            }
+          },
+          "id": "prt_e208a79ce001WMQZsJGq4hLsXP",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_fb22d06c64de406eb7aa0cf3",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/skills/openspec-propose"
+            },
+            "output": "<path>/project/.opencode/skills/openspec-propose</path>\n<type>directory</type>\n<entries>\nSKILL.md\n\n(1 entries)\n</entries>",
+            "metadata": {
+              "preview": "SKILL.md",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/skills/openspec-propose",
+            "time": {
+              "start": 1778662408208,
+              "end": 1778662408214
+            }
+          },
+          "id": "prt_e208a7e12001HMTym6vv2rwdmn",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_fe0bab080aca494498543551",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/skills/openspec-apply-change"
+            },
+            "output": "<path>/project/.opencode/skills/openspec-apply-change</path>\n<type>directory</type>\n<entries>\nSKILL.md\n\n(1 entries)\n</entries>",
+            "metadata": {
+              "preview": "SKILL.md",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/skills/openspec-apply-change",
+            "time": {
+              "start": 1778662409631,
+              "end": 1778662409637
+            }
+          },
+          "id": "prt_e208a82f5001ZdpxVscVMih00g",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_ddc932aa6b434c68b3db20ac",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/skills/openspec-archive-change"
+            },
+            "output": "<path>/project/.opencode/skills/openspec-archive-change</path>\n<type>directory</type>\n<entries>\nSKILL.md\n\n(1 entries)\n</entries>",
+            "metadata": {
+              "preview": "SKILL.md",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/skills/openspec-archive-change",
+            "time": {
+              "start": 1778662413370,
+              "end": 1778662413378
+            }
+          },
+          "id": "prt_e208a877d001Etw3giJIPT53tU",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_87688923fac146e9943b8f78",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/.opencode/skills/openspec-explore"
+            },
+            "output": "<path>/project/.opencode/skills/openspec-explore</path>\n<type>directory</type>\n<entries>\nSKILL.md\n\n(1 entries)\n</entries>",
+            "metadata": {
+              "preview": "SKILL.md",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": ".opencode/skills/openspec-explore",
+            "time": {
+              "start": 1778662414755,
+              "end": 1778662414764
+            }
+          },
+          "id": "prt_e208a96e3001WMzMEpiB6vmrFu",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-finish",
+          "tokens": {
+            "total": 21430,
+            "input": 5029,
+            "output": 627,
+            "reasoning": 30,
+            "cache": {
+              "write": 0,
+              "read": 15744
+            }
+          },
+          "cost": 0.0133197,
+          "id": "prt_e208a9a530017c5Sq9E9zhvilI",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a2ae7001bB3EdDEL9mflu8"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e2088b7d3001AmVPlrZ2WKMWuD",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.02733018,
+        "tokens": {
+          "total": 32858,
+          "input": 9529,
+          "output": 2101,
+          "reasoning": 108,
+          "cache": {
+            "write": 0,
+            "read": 21120
+          }
+        },
+        "modelID": "deepseek/deepseek-v4-pro",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1778662414988,
+          "completed": 1778662516018
+        },
+        "finish": "stop",
+        "id": "msg_e208a9a8c001R2MrEmwoNMO36V",
+        "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb"
+      },
+      "parts": [
+        {
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-start",
+          "id": "prt_e208aab8b001coq7lKqQNZRCdS",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a9a8c001R2MrEmwoNMO36V"
+        },
+        {
+          "type": "reasoning",
+          "text": "Now I have a thorough understanding of the project. Let me compile a comprehensive summary.\n\nThis is a \"workshop\" container environment (Canonical Workshop) designed as a development environment. The project itself is called \"megademo\" and it's set up for spec-driven development using OpenSpec. The main content here is a design/planning stage for a \"project-health-dashboard\" feature - there's no actual application code yet (just specs, proposals, design docs, and a task list).\n\nLet me compile everything.",
+          "time": {
+            "start": 1778662419342,
+            "end": 1778662424220
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Now I have a thorough understanding of the project. Let me compile a comprehensive summary.\n\nThis is a \"workshop\" container environment (Canonical Workshop) designed as a development environment. The project itself is called \"megademo\" and it's set up for spec-driven development using OpenSpec. The main content here is a design/planning stage for a \"project-health-dashboard\" feature - there's no actual application code yet (just specs, proposals, design docs, and a task list).\n\nLet me compile everything.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_e208aab8e001SoLvEzS2XzVA7r",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a9a8c001R2MrEmwoNMO36V"
+        },
+        {
+          "type": "text",
+          "text": "Now I have a complete picture. Here is the comprehensive summary:\n\n---\n\n## Project Overview\n\n**Project name:** `megademo`\n\nThis is a **Canonical Workshop container environment** set up for **spec-driven development**. It is a greenfield project — there is **no application source code yet**. The project is entirely at the **design and planning stage**, with a single change proposal (`project-health-dashboard`) containing detailed specs, a design document, and a task breakdown. No implementation has begun.\n\n---\n\n## What the Project Does (Planned)\n\nThe planned feature is a **Project Health Dashboard** — a single web dashboard for engineering leads to understand project health and team productivity across multiple systems (GitHub and Jira). It will:\n\n- **Ingest data** from GitHub (commits, PRs, issues) and Jira (issues, sprints) on a scheduled basis\n- **Aggregate metrics** across systems, treating equivalent entities uniformly (e.g., GitHub issues and Jira issues)\n- **Display** a dashboard UI with Grafana-style timeframe selectors (relative presets, custom date ranges, sprint picker), project/people view toggles, and drill-down into per-system raw data\n- Be **extensible** for future data sources (e.g., Launchpad)\n\n---\n\n## Tech Stack\n\n| Layer | Technology (from design docs) |\n|---|---|\n| **Backend language** | TypeScript (inferred from TypeScript interface definitions in design.md) |\n| **Database** | PostgreSQL (inferred from SQL schema in design.md, with JSONB columns) |\n| **Storage** | `raw_events` table (UUID PK, JSONB data column) + `sprints` table |\n| **Frontend** | Undecided (React, Vue, or other — listed as an open question) |\n| **Scheduling** | Batch polling every ~15 min (cron or task-queue — undecided) |\n| **Caching** | In-memory TTL cache (5 minutes), invalidated after ingestion |\n| **External APIs** | GitHub API (token-based), Jira API (basic auth or OAuth) |\n| **Dev environment** | Ubuntu 24.04, Python 3.12, Node.js, Go 1.25.5, `uv` (Python package manager), VSCode |\n| **Agent tooling** | Claude Code (`claude`), OpenCode (`opencode`), Entire (`entire`), Project Pi (`pi`) |\n\n---\n\n## Spec / Proposal Content Summary\n\nAll spec and design content lives under `/project/openspec/changes/project-health-dashboard/`. This is a **spec-driven** workflow (schema: `spec-driven`), created on **2026-05-13**.\n\n### 1. Proposal (`proposal.md`) — 4 capabilities defined:\n- **`data-ingestion`** — Pull and store raw metrics from GitHub and Jira on a schedule, with extensible provider architecture\n- **`metrics-aggregation`** — Compute aggregated metrics per-project, per-person, per-timeframe across data sources\n- **`dashboard-ui`** — Display project health metrics with Grafana-style timeframe selectors, project/person toggles, and drill-down\n- **`sprint-integration`** — Jira sprints as a first-class timeframe reference\n\n### 2. Design (`design.md`) — 7 key decisions:\n1. **Provider Interface Pattern** — `DataSourceProvider` interface with `fetchCommits`, `fetchPullRequests`, `fetchIssues`, `fetchSprints`, `healthCheck`\n2. **Raw Event Storage** — All data in a `raw_events` table with JSONB for source-specific payloads\n3. **Aggregation Layer** — On-the-fly queries with 5-min TTL cache (not materialized views)\n4. **Cross-System Entity Normalization** — GitHub/Jira issues treated equivalently; configurable person identity mapping and issue type mapping\n5. **Timeframe System** — Unified `Timeframe` type supporting date ranges and sprints\n6. **Dashboard Component Architecture** — 4 metric sections: Contribution Volume, Velocity & Throughput, Quality & Composition, Collaboration\n7. **Future Launchpad Integration** — Provider interface already accommodates Launchpad MPs\n\n### 3. Specs (4 capability specs, 665 lines of requirements across files):\n\n| File | Capability | Requirements |\n|---|---|---|\n| `specs/data-ingestion/spec.md` | Data Ingestion | Provider interface, scheduled ingestion, raw event schema, sprint storage, provider config, error handling/retry |\n| `specs/metrics-aggregation/spec.md` | Metrics Aggregation | Unified issue aggregation, per-person contribution, PR/commit aggregation, velocity metrics, PR size distribution, review distribution matrix, internal/external ratio, aggregation API endpoints, caching with invalidation |\n| `specs/dashboard-ui/spec.md` | Dashboard UI | Timeframe selector, project filter, project/people view toggle, 4 metric sections, drill-down to per-system data, loading/error/empty states, settings panel |\n| `specs/sprint-integration/spec.md` | Sprint Integration | Sprint storage & API, sprint as first-class timeframe, active sprint detection, sprint-aware metrics (burndown, velocity, carry-over) |\n\n### 4. Tasks (`tasks.md`) — 20 task groups, ~152 total line items:\n1. Foundation & Data Layer (6 tasks)\n2. Provider Interface & Configuration (4 tasks)\n3. GitHub Provider (7 tasks)\n4. Jira Provider (6 tasks)\n5. Ingestion Scheduler (7 tasks)\n6. Sprint Storage & API (3 tasks)\n7. Aggregation Layer — Core (5 tasks)\n8. Aggregation Layer — Metrics (9 tasks)\n9. Aggregation API Endpoints (7 tasks)\n10. Aggregation Layer — Caching (4 tasks)\n11. Dashboard — Shell & Timeframe Selector (7 tasks)\n12. Dashboard — Filters & View Toggle (3 tasks)\n13. Dashboard — Contribution Volume Section (5 tasks)\n14. Dashboard — Velocity & Throughput Section (2 tasks)\n15. Dashboard — Quality & Composition Section (3 tasks)\n16. Dashboard — Collaboration Section (1 task)\n17. Dashboard — Drill-down & Raw Data (3 tasks)\n18. Dashboard — Loading, Error & Empty States (4 tasks)\n19. Dashboard — Settings Panel (2 tasks)\n20. Integration & Polish (5 tasks)\n\nNone of these tasks are currently checked off (`- [ ]`).\n\n---\n\n## Metrics Specifically Related to Team Mate Productivity\n\nFrom the proposal and specs, the following metrics are directly about individual/team productivity:\n\n- **PRs per team member** across all projects with LOC added/removed\n- **Issues opened vs. resolved** per person (across GitHub + Jira, unified view)\n- **Person identity mapping** across systems (GitHub username to Jira account ID)\n- **Per-person contribution aggregation** — commits, PRs, LOC, issues resolved regardless of source system\n- **Cycle time** (first commit to PR merge) and **PR review turnaround** (opened to first review)\n- **Internal vs. external contribution ratio**\n- **Review distribution matrix** — who reviews whose code (identifies review silos)\n- **People view** toggle that replaces per-project charts with a per-person contributions table\n\n---\n\n## Key File Paths\n\n| Path | Description |\n|---|---|\n| `/project/workshop.yaml` | Workshop container config (name: megademo, SDKs, actions) |\n| `/project/openspec/config.yaml` | OpenSpec project config (spec-driven schema) |\n| `/project/openspec/changes/project-health-dashboard/` | Root of the change |\n| `/project/openspec/changes/project-health-dashboard/.openspec.yaml` | Change metadata (created 2026-05-13) |\n| `/project/openspec/changes/project-health-dashboard/proposal.md` | Change proposal (what & why) |\n| `/project/openspec/changes/project-health-dashboard/design.md` | Technical design document (architecture decisions) |\n| `/project/openspec/changes/project-health-dashboard/tasks.md` | Implementation task list (152 items, none started) |\n| `/project/openspec/changes/project-health-dashboard/specs/data-ingestion/spec.md` | Data ingestion spec (67 lines, 6 requirements) |\n| `/project/openspec/changes/project-health-dashboard/specs/metrics-aggregation/spec.md` | Metrics aggregation spec (96 lines, 8 requirements) |\n| `/project/openspec/changes/project-health-dashboard/specs/dashboard-ui/spec.md` | Dashboard UI spec (99 lines, 9 requirements) |\n| `/project/openspec/changes/project-health-dashboard/specs/sprint-integration/spec.md` | Sprint integration spec (45 lines, 4 requirements) |\n| `/project/openspec/changes/archive/` | Archive directory (empty — no completed changes) |\n| `/project/.opencode/` | OpenCode agent config, plugins, commands, skills |\n| `/project/.workshop/` | Workshop SDK hooks for `entire` and `pi` tools |\n| `/project/.claude/` | Claude Code agent config |\n| `/project/.vscode/settings.json` | VSCode workspace settings |\n| `/project/.gitignore` | Git ignore (only `.workshop.lock`) |\n\n---\n\nThere are no `specs/` under `/project/openspec/specs/` (empty directory), meaning no capabilities have been formally adopted yet — they exist only as delta specs within the active change. There is also no application source code anywhere in the project (no `.py`, `.ts`, `.js` files outside the `.opencode/` plugin). The project is purely in the design/planning phase.",
+          "time": {
+            "start": 1778662424225,
+            "end": 1778662515957
+          },
+          "id": "prt_e208abea1001jO4tgg415JfC8C",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a9a8c001R2MrEmwoNMO36V"
+        },
+        {
+          "reason": "stop",
+          "snapshot": "e4b30fd3a954075401589a53aff38a73bec03eb9",
+          "type": "step-finish",
+          "tokens": {
+            "total": 32858,
+            "input": 9529,
+            "output": 2101,
+            "reasoning": 108,
+            "cache": {
+              "write": 0,
+              "read": 21120
+            }
+          },
+          "cost": 0.02733018,
+          "id": "prt_e208c2519001PXwQts6vz13nI6",
+          "sessionID": "ses_1df774840ffe0ZtpROSHyKxsLb",
+          "messageID": "msg_e208a9a8c001R2MrEmwoNMO36V"
+        }
+      ]
+    }
+  ]
+}

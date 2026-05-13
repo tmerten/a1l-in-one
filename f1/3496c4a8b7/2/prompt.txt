@@ -1,0 +1,11 @@
+Explore the codebase to understand what this project is about. Look for:
+1. README or any top-level documentation
+2. Any spec files, design docs, or proposal files (look for files matching *spec*, *proposal*, *design*, *plan*, *openspec* patterns)
+3. The overall project structure and tech stack
+4. Any UI-related code or plans
+
+Return a comprehensive summary of:
+- What the project does
+- The tech stack
+- Any spec/proposal content you find (especially related to metrics, team mate productivity, or UI)
+- Key file paths relevant to specs/designs
