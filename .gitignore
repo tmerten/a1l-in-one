@@ -8,3 +8,4 @@ project_health.db
 __pycache__/
 *.pyc
 package-lock.json
+.envrc
