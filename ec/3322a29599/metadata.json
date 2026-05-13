@@ -3,7 +3,7 @@
   "checkpoint_id": "ec3322a29599",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 0,
+  "checkpoints_count": 1,
   "files_touched": [
     "src/project_health/aggregation/queries.py",
     "tests/test_integration.py"
@@ -26,13 +26,19 @@
       "transcript": "/ec/3322a29599/2/full.jsonl",
       "content_hash": "/ec/3322a29599/2/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/ec/3322a29599/3/metadata.json",
+      "transcript": "/ec/3322a29599/3/full.jsonl",
+      "content_hash": "/ec/3322a29599/3/content_hash.txt",
+      "prompt": "/ec/3322a29599/3/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 0,
+    "input_tokens": 57679,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 0,
-    "output_tokens": 0,
-    "api_call_count": 0
+    "cache_read_tokens": 36864,
+    "output_tokens": 4601,
+    "api_call_count": 6
   }
 }
