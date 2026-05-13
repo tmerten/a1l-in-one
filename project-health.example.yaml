@@ -1,0 +1,46 @@
+# Project Health Dashboard — Example Configuration
+# Copy this file to project-health.yaml and fill in your values.
+
+team:
+  - name: Jane Doe
+    github: jdoe
+    jira: "557058:abc123-def456"
+  - name: Bob Johnson
+    github: bob-j
+    # No Jira identity for Bob in v1
+
+projects:
+  github:
+    - owner/repo-a
+    - owner/repo-b
+  jira:
+    - key: PROJ
+      board_id: 42
+
+bots:
+  github:
+    - dependabot[bot]
+    - renovate[bot]
+    - github-actions[bot]
+
+credentials:
+  github_token: ${GITHUB_TOKEN}
+  jira:
+    base_url: https://company.atlassian.net
+    email: user@example.com
+    api_token: ${JIRA_API_TOKEN}
+
+ingestion:
+  interval_minutes: 15
+  backfill_days: 90
+
+issue_type_mapping:
+  github:
+    bug: bug
+    enhancement: feature
+    documentation: maintenance
+  jira:
+    Bug: bug
+    Story: feature
+    Task: maintenance
+    "Sub-task": maintenance

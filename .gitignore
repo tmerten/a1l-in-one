@@ -2,3 +2,9 @@
 .vscode
 project-health.yaml
 node_modules
+.pi/
+project_health.db
+.venv
+__pycache__/
+*.pyc
+package-lock.json

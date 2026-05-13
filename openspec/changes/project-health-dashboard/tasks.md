@@ -142,65 +142,65 @@
 
 ## 17. Dashboard — Shell & Shared Header
 
-- [ ] 17.1 React app shell with tab navigation (Projects | People), shared header
-- [ ] 17.2 Generate frontend types via `openapi-typescript` from FastAPI OpenAPI schema; wire into TanStack Query hooks
-- [ ] 17.3 Shared timeframe state in URL search params; persists across tab switches
-- [ ] 17.4 Relative-preset selector (Last 7d, 30d, 90d, This month, This quarter, This year)
-- [ ] 17.5 Absolute date-range picker (start → end calendar)
-- [ ] 17.6 Sprint picker dropdown from `GET /api/sprints`; group by project when multiple projects active; "(active)" badge
-- [ ] 17.7 Default timeframe: active sprint from first YAML Jira project if any, else "Last 30 days"
-- [ ] 17.8 Project multi-select filter from YAML projects
-- [ ] 17.9 `SyncStatusBadge` — last-synced indicator per source with green/amber/red escalation; "Sync now" button calls `POST /api/sync/run`
+- [x] 17.1 React app shell with tab navigation (Projects | People), shared header
+- [x] 17.2 Generate frontend types via `openapi-typescript` from FastAPI OpenAPI schema; wire into TanStack Query hooks
+- [x] 17.3 Shared timeframe state in URL search params; persists across tab switches
+- [x] 17.4 Relative-preset selector (Last 7d, 30d, 90d, This month, This quarter, This year)
+- [x] 17.5 Absolute date-range picker (start → end calendar)
+- [x] 17.6 Sprint picker dropdown from `GET /api/sprints`; group by project when multiple projects active; "(active)" badge
+- [x] 17.7 Default timeframe: active sprint from first YAML Jira project if any, else "Last 30 days"
+- [x] 17.8 Project multi-select filter from YAML projects
+- [x] 17.9 `SyncStatusBadge` — last-synced indicator per source with green/amber/red escalation; "Sync now" button calls `POST /api/sync/run`
 
 ## 18. Dashboard — Projects Page
 
-- [ ] 18.1 Page layout with `SprintBurndown` (sprint-mode only) + four metric sections
-- [ ] 18.2 `SprintBurndown` — committed vs completed story points with carried-over count; fallback to issue count with note
-- [ ] 18.3 Contribution Volume: commit count chart, PR count chart with stacked `+N`/`−M` bars, internal-vs-external donut, per-project table, issues opened vs resolved grouped-bar chart
-- [ ] 18.4 Velocity & Throughput: cycle time distribution (histogram with p50/p90 markers), PR review turnaround distribution
-- [ ] 18.5 Quality & Composition: issue type breakdown (stacked bar or donut), PR size distribution (bar chart with counts and percentages); hover shows per-source breakdown
-- [ ] 18.6 Collaboration: review distribution matrix (heatmap or table)
+- [x] 18.1 Page layout with `SprintBurndown` (sprint-mode only) + four metric sections
+- [x] 18.2 `SprintBurndown` — committed vs completed story points with carried-over count; fallback to issue count with note
+- [x] 18.3 Contribution Volume: commit count chart, PR count chart with stacked `+N`/`−M` bars, internal-vs-external donut, per-project table, issues opened vs resolved grouped-bar chart
+- [x] 18.4 Velocity & Throughput: cycle time distribution (histogram with p50/p90 markers), PR review turnaround distribution
+- [x] 18.5 Quality & Composition: issue type breakdown (stacked bar or donut), PR size distribution (bar chart with counts and percentages); hover shows per-source breakdown
+- [x] 18.6 Collaboration: review distribution matrix (heatmap or table)
 
 ## 19. Dashboard — People Page
 
-- [ ] 19.1 Page layout: summary stats row + people table + per-person drill-down sections
-- [ ] 19.2 Summary stats: contributor count, median PRs, median issues resolved, median cycle time
-- [ ] 19.3 People table — sortable columns: Name, Commits, PRs, LOC (`+N / −M`), Issues Resolved, Median Cycle Time, Reviews, Comments, Comments/Review
-- [ ] 19.4 Inline background bars on numeric cells, scaled to column max
-- [ ] 19.5 Sparkline column driven by `/ts` endpoint for configured primary metric
-- [ ] 19.6 Outlier color encoding (green above median, red below) — toggleable
-- [ ] 19.7 Unmapped identities render as separate rows labeled by source (`GH: alice123`)
-- [ ] 19.8 Row selection → all sections below scope to that person; "Clear" returns to team view
-- [ ] 19.9 Per-person Contribution Volume, Velocity & Throughput, Quality & Composition sections
-- [ ] 19.10 Per-person Collaboration: reviews given with reviewee breakdown, time-series trend, review state breakdown
+- [x] 19.1 Page layout: summary stats row + people table + per-person drill-down sections
+- [x] 19.2 Summary stats: contributor count, median PRs, median issues resolved, median cycle time
+- [x] 19.3 People table — sortable columns: Name, Commits, PRs, LOC (`+N / −M`), Issues Resolved, Median Cycle Time, Reviews, Comments, Comments/Review
+- [x] 19.4 Inline background bars on numeric cells, scaled to column max
+- [x] 19.5 Sparkline column driven by `/ts` endpoint for configured primary metric
+- [x] 19.6 Outlier color encoding (green above median, red below) — toggleable
+- [x] 19.7 Unmapped identities render as separate rows labeled by source (`GH: alice123`)
+- [x] 19.8 Row selection → all sections below scope to that person; "Clear" returns to team view
+- [x] 19.9 Per-person Contribution Volume, Velocity & Throughput, Quality & Composition sections
+- [x] 19.10 Per-person Collaboration: reviews given with reviewee breakdown, time-series trend, review state breakdown
 
 ## 20. Dashboard — Drill-down & Raw Data
 
-- [ ] 20.1 Drill-down on issue counts: click expands per-source breakdown (GitHub vs Jira)
-- [ ] 20.2 Drill-down on issue type segments: source-native labels alongside normalized type
-- [ ] 20.3 Raw event list view: filtered table of `raw_events` for current drill-down
+- [x] 20.1 Drill-down on issue counts: click expands per-source breakdown (GitHub vs Jira)
+- [x] 20.2 Drill-down on issue type segments: source-native labels alongside normalized type
+- [x] 20.3 Raw event list view: filtered table of `raw_events` for current drill-down
 
 ## 21. Dashboard — Loading, Error, Empty States
 
-- [ ] 21.1 Skeleton / spinner state per metric component
-- [ ] 21.2 Per-component error state with retry button (errors in one component do not break others)
-- [ ] 21.3 "No data for this period" empty state per component and for People table
+- [x] 21.1 Skeleton / spinner state per metric component
+- [x] 21.2 Per-component error state with retry button (errors in one component do not break others)
+- [x] 21.3 "No data for this period" empty state per component and for People table
 
 ## 22. Dashboard — Settings Panel
 
-- [ ] 22.1 Show/hide toggle per metric section (shared across Projects and People)
-- [ ] 22.2 Outlier color encoding toggle
-- [ ] 22.3 Sparkline primary metric selector
-- [ ] 22.4 Persist preferences in `localStorage` (display-only; no team/identity edits in v1)
+- [x] 22.1 Show/hide toggle per metric section (shared across Projects and People)
+- [x] 22.2 Outlier color encoding toggle
+- [x] 22.3 Sparkline primary metric selector
+- [x] 22.4 Persist preferences in `localStorage` (display-only; no team/identity edits in v1)
 
 ## 23. Integration & Polish
 
-- [ ] 23.1 End-to-end test: scheduler tick → events stored → API returns metrics → dashboard renders
-- [ ] 23.2 CLI smoke test: `project-health backfill --since 7d` against a test fixture
-- [ ] 23.3 People page drill-down test: select person → scoped re-render → clear → team view
-- [ ] 23.4 Bot filter test: bot-authored PR exists in `raw_events` but absent from all human-metric responses
-- [ ] 23.5 Squash-merge test: PR-associated commits counted; squash commit on `main` not double-counted
-- [ ] 23.6 Cycle time test: PR with `created_at` and `merged_at` produces correct median/p50/p90
-- [ ] 23.7 Per-source cache invalidation test: GitHub ingestion does not invalidate Jira-only query results
-- [ ] 23.8 Document YAML config format and provider interface for future Launchpad integration
-- [ ] 23.9 Run `ruff check`, `mypy`, `pytest` and `tsc --noEmit` / `vite build`; fix issues
+- [x] 23.1 End-to-end test: scheduler tick → events stored → API returns metrics → dashboard renders
+- [x] 23.2 CLI smoke test: `project-health backfill --since 7d` against a test fixture
+- [x] 23.3 People page drill-down test: select person → scoped re-render → clear → team view
+- [x] 23.4 Bot filter test: bot-authored PR exists in `raw_events` but absent from all human-metric responses
+- [x] 23.5 Squash-merge test: PR-associated commits counted; squash commit on `main` not double-counted
+- [x] 23.6 Cycle time test: PR with `created_at` and `merged_at` produces correct median/p50/p90
+- [x] 23.7 Per-source cache invalidation test: GitHub ingestion does not invalidate Jira-only query results
+- [x] 23.8 Document YAML config format and provider interface for future Launchpad integration
+- [x] 23.9 Run `ruff check`, `mypy`, `pytest` and `tsc --noEmit` / `vite build`; fix issues
