@@ -23,14 +23,18 @@ The system SHALL treat sprints as equivalent to custom date ranges in all metric
 - **THEN** both queries return identical metric values for all aggregation endpoints
 
 ### Requirement: Active sprint detection
-The system SHALL identify the currently active sprint (if any) for each Jira project and surface it prominently in the sprint selector (e.g., "(active)" badge, default selection on dashboard load).
+The system SHALL identify the currently active sprint (if any) for each Jira project and surface it prominently in the sprint selector (e.g., "(active)" badge, default selection on dashboard load). When multiple Jira projects are configured and each has an active sprint, the picker SHALL group sprints by project, and the default selection SHALL be the active sprint of the first Jira project listed in the YAML `projects.jira` array.
 
 #### Scenario: Active sprint is the default timeframe
-- **WHEN** the dashboard loads and a sprint is currently active for the selected project
-- **THEN** the sprint selector defaults to the active sprint, labeled "Sprint 42 (active)"
+- **WHEN** the dashboard loads and a sprint is currently active for the first configured Jira project
+- **THEN** the sprint selector defaults to that active sprint, labeled "PROJ — Sprint 42 (active)"
+
+#### Scenario: Multiple active sprints grouped by project
+- **WHEN** two Jira projects are configured (`PROJ`, `BACK`) and each has an active sprint
+- **THEN** the sprint picker dropdown groups sprints under their project key, each active one labeled "(active)"
 
 #### Scenario: No active sprint falls back to relative preset
-- **WHEN** the dashboard loads and no sprint is currently active
+- **WHEN** the dashboard loads and no sprint is currently active for any configured Jira project
 - **THEN** the timeframe defaults to "Last 30 days"
 
 ### Requirement: Sprint-aware metric aggregation

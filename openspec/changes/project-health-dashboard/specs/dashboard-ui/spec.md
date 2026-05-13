@@ -26,6 +26,21 @@ The dashboard SHALL include a single timeframe selector that supports Grafana-st
 - **WHEN** the user picks "Sprint 42" from the sprint dropdown
 - **THEN** all metric components re-fetch data bounded by Sprint 42's start and end dates, and the timeframe selector displays "Sprint 42 (Jan 6 – Jan 20, 2025)"
 
+### Requirement: Sync status indicator and manual trigger
+The dashboard header SHALL display a per-source sync-freshness indicator showing the time since the last successful ingestion run for each configured source, with stale-state escalation: green when fresher than 1.5 × the configured ingestion interval, amber between 1.5 × and 3 ×, red beyond 3 × or when the last run failed. The indicator SHALL include a "Sync now" button that calls `POST /api/sync/run`. While a sync is in progress, the button SHALL display the in-flight status and be disabled until completion.
+
+#### Scenario: Indicator reflects freshness
+- **WHEN** GitHub was last synced 5 minutes ago and the configured interval is 15 minutes
+- **THEN** the GitHub indicator displays "Last synced 5m ago" in green
+
+#### Scenario: Indicator escalates on staleness
+- **WHEN** Jira's last successful run was 60 minutes ago and the interval is 15 minutes
+- **THEN** the Jira indicator displays in red
+
+#### Scenario: Manual sync button while busy
+- **WHEN** a GitHub ingestion run is in flight and the user clicks "Sync now"
+- **THEN** the button reads "Sync in progress" and is disabled until the run completes; clicking it during this state has no effect
+
 ### Requirement: Project filter
 The dashboard SHALL include a multi-select project filter in the shared header that allows users to view metrics for one, several, or all configured projects.
 
@@ -44,6 +59,14 @@ The dashboard SHALL include a multi-select project filter in the shared header t
 ### Requirement: Projects page — metric sections
 The Projects page SHALL display the four metric sections scoped to the selected timeframe and project filter: Contribution Volume, Velocity & Throughput, Quality & Composition, and Collaboration. When a sprint is selected, a sprint burndown chart SHALL appear above the metric sections.
 
+#### Scenario: All four metric sections render
+- **WHEN** the Projects tab loads with a date-range timeframe and at least one selected project
+- **THEN** the Contribution Volume, Velocity & Throughput, Quality & Composition, and Collaboration sections are visible in that order, each scoped to the timeframe and project filter
+
+#### Scenario: Burndown appears only when a sprint is selected
+- **WHEN** the user selects a sprint in the timeframe selector on the Projects tab
+- **THEN** a sprint burndown chart renders above the four metric sections; switching back to a date-range timeframe hides the burndown
+
 ### Requirement: People page — summary stats
 The People page SHALL display a thin summary row above the people table showing: number of contributors, median PRs, median issues resolved, and median cycle time — all scoped to the selected timeframe and project filter.
 
@@ -52,11 +75,15 @@ The People page SHALL display a thin summary row above the people table showing:
 - **THEN** the summary row displays all four values
 
 ### Requirement: People page — ranked table
-The People page SHALL display a sortable, ranked table of all contributors with columns: Name, Commits, PRs, LOC, Issues Resolved, Median Cycle Time, Reviews Given, Comments, Comments/Review. Each numeric cell SHALL include an inline background bar proportional to the column's maximum value for visual comparison.
+The People page SHALL display a sortable, ranked table of all contributors with columns: Name, Commits, PRs, LOC, Issues Resolved, Median Cycle Time, Reviews Given, Comments, Comments/Review. The LOC column SHALL render in a single cell as `+N / −M`, where `N` is total additions and `M` is total deletions across the person's merged PRs in the selected timeframe. Each numeric cell SHALL include an inline background bar proportional to the column's maximum value for visual comparison; for the LOC column, the bar SHALL be sized by `additions + deletions`.
 
 #### Scenario: People table renders with inline bars
 - **WHEN** Alice has 20 PRs and Bob has 5 PRs in the selected timeframe
 - **THEN** Alice's PR cell background bar is 100% width, Bob's is 25% width
+
+#### Scenario: LOC column renders additions and deletions
+- **WHEN** Alice has merged PRs totaling 245 additions and 67 deletions in the selected timeframe
+- **THEN** her LOC cell displays `+245 / −67`, and the inline bar is sized by `245 + 67 = 312`
 
 #### Scenario: People table is sortable
 - **WHEN** the user clicks the "PRs" column header
@@ -158,7 +185,7 @@ Every metric component SHALL handle loading, error, and empty states gracefully.
 - **THEN** the component displays an error message with a retry button, without affecting other metric components
 
 ### Requirement: Settings and configuration panel
-The dashboard SHALL include a settings panel where the user can configure which metric sections are visible (show/hide toggle per section), toggle outlier color encoding on/off, configure the primary metric for the People table sparkline column, and persist layout preferences locally.
+The dashboard SHALL include a settings panel for display preferences only. Users can configure which metric sections are visible (show/hide toggle per section), toggle outlier color encoding on/off, configure the primary metric for the People table sparkline column, and persist these preferences in `localStorage`. The settings panel SHALL NOT edit team membership, projects, credentials, or identity mappings in v1 — those live in the YAML config.
 
 #### Scenario: User hides a metric section
 - **WHEN** the user toggles off the "Collaboration" section in settings
