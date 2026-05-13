@@ -52,25 +52,21 @@ class AggregationQueries:
 
     async def contribution_volume(self, ctx: Timeframe) -> dict[str, Any]:
         """Commits, PRs, issues, internal/external ratio."""
-        # Filter out bots and apply timeframe
         bot_list = ",".join(f"'{b}'" for b in self._bots)
         bot_filter = f"AND actor NOT IN ({bot_list})" if bot_list else ""
-        proj_filter = self._project_filter(ctx)
-        actor_filter = self._actor_filter(ctx)
+        proj_clause, proj_params = self._project_filter(ctx)
+        actor_clause, actor_params = self._actor_filter(ctx)
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
 
-        # Commits (event_type = commit)
         commits_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
             WHERE source = 'github' AND event_type = 'commit'
             AND timestamp BETWEEN :start AND :end
-            {bot_filter} {proj_filter} {actor_filter}
+            {bot_filter} {proj_clause} {actor_clause}
         """
-        commits_result = await self._session.execute(
-            text(commits_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        commits_result = await self._session.execute(text(commits_sql), base_params)
         commits = commits_result.scalar() or 0
 
-        # PRs (merged only)
         prs_sql = f"""
             SELECT COUNT(*) as cnt,
                    COALESCE(SUM(CAST(json_extract(data, '$.additions') AS INTEGER)), 0) as adds,
@@ -79,42 +75,33 @@ class AggregationQueries:
             WHERE source = 'github' AND event_type = 'pull_request'
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
-            {bot_filter} {proj_filter} {actor_filter}
+            {bot_filter} {proj_clause} {actor_clause}
         """
-        prs_result = await self._session.execute(
-            text(prs_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        prs_result = await self._session.execute(text(prs_sql), base_params)
         pr_row = prs_result.mappings().fetchone()
         pr_count = pr_row["cnt"] if pr_row else 0
         additions = pr_row["adds"] if pr_row else 0
         deletions = pr_row["dels"] if pr_row else 0
 
-        # Issues opened
         issues_open_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
             WHERE event_type = 'issue'
             AND timestamp BETWEEN :start AND :end
-            {bot_filter} {proj_filter} {actor_filter}
+            {bot_filter} {proj_clause} {actor_clause}
         """
-        issues_open_result = await self._session.execute(
-            text(issues_open_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        issues_open_result = await self._session.execute(text(issues_open_sql), base_params)
         issues_opened = issues_open_result.scalar() or 0
 
-        # Issues resolved (closed_at present)
         issues_resolved_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
             WHERE event_type = 'issue'
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.closed_at') IS NOT NULL
-            {bot_filter} {proj_filter} {actor_filter}
+            {bot_filter} {proj_clause} {actor_clause}
         """
-        issues_resolved_result = await self._session.execute(
-            text(issues_resolved_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        issues_resolved_result = await self._session.execute(text(issues_resolved_sql), base_params)
         issues_resolved = issues_resolved_result.scalar() or 0
 
-        # Internal / external ratio
         internal_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
             WHERE source = 'github' AND event_type = 'pull_request'
@@ -125,11 +112,9 @@ class AggregationQueries:
                 JOIN persons p ON pi.person_id = p.id
                 WHERE pi.source = 'github'
             )
-            {proj_filter} {actor_filter}
+            {proj_clause} {actor_clause}
         """
-        internal_result = await self._session.execute(
-            text(internal_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        internal_result = await self._session.execute(text(internal_sql), base_params)
         internal_prs = internal_result.scalar() or 0
         ratio = internal_prs / pr_count if pr_count > 0 else 0.0
 
@@ -150,16 +135,19 @@ class AggregationQueries:
                     "deletions": deletions,
                 },
                 "jira": {
-                    "issues_opened": issues_opened - (0),  # approximate
-                    "issues_resolved": issues_resolved - (0),
+                    "issues_opened": issues_opened,
+                    "issues_resolved": issues_resolved,
                 },
             },
         }
 
     async def velocity(self, ctx: Timeframe) -> dict[str, Any]:
         """Cycle time and PR review turnaround distributions."""
-        # Cycle times for merged PRs
-        cycle_sql = """
+        proj_clause, proj_params = self._project_filter(ctx)
+        actor_clause, actor_params = self._actor_filter(ctx)
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+
+        cycle_sql = f"""
             SELECT
                 timestamp as created_at,
                 json_extract(data, '$.merged_at') as merged_at
@@ -167,10 +155,9 @@ class AggregationQueries:
             WHERE source = 'github' AND event_type = 'pull_request'
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
+            {proj_clause} {actor_clause}
         """
-        cycle_result = await self._session.execute(
-            text(cycle_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        cycle_result = await self._session.execute(text(cycle_sql), base_params)
 
         cycle_times = []
         for row in cycle_result.mappings().all():
@@ -189,7 +176,7 @@ class AggregationQueries:
                     pass
 
         # Review turnaround: PR created_at to first review
-        review_sql = """
+        review_sql = f"""
             SELECT
                 pr.timestamp as pr_created_at,
                 MIN(r.timestamp) as first_review
@@ -202,11 +189,10 @@ class AggregationQueries:
             )
             WHERE pr.source = 'github' AND pr.event_type = 'pull_request'
             AND pr.timestamp BETWEEN :start AND :end
+            {proj_clause}
             GROUP BY pr.external_id
         """
-        review_result = await self._session.execute(
-            text(review_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        review_result = await self._session.execute(text(review_sql), base_params)
         review_turnarounds = []
         for row in review_result.mappings().all():
             c_dt = _parse_dt(row["pr_created_at"])
@@ -246,15 +232,17 @@ class AggregationQueries:
 
     async def composition(self, ctx: Timeframe) -> dict[str, Any]:
         """Issue type breakdown and PR size distribution."""
-        # Issue types
-        issue_sql = """
+        proj_clause, proj_params = self._project_filter(ctx)
+        actor_clause, actor_params = self._actor_filter(ctx)
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+
+        issue_sql = f"""
             SELECT data FROM raw_events
             WHERE event_type = 'issue'
             AND timestamp BETWEEN :start AND :end
+            {proj_clause} {actor_clause}
         """
-        issue_result = await self._session.execute(
-            text(issue_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        issue_result = await self._session.execute(text(issue_sql), base_params)
         issue_types: dict[str, int] = {}
         for row in issue_result.mappings().all():
             data = row["data"]
@@ -265,16 +253,14 @@ class AggregationQueries:
             normalized = normalize_issue_type(source, raw_type, self._config)
             issue_types[normalized] = issue_types.get(normalized, 0) + 1
 
-        # PR sizes
-        pr_sql = """
+        pr_sql = f"""
             SELECT data FROM raw_events
             WHERE source = 'github' AND event_type = 'pull_request'
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
+            {proj_clause} {actor_clause}
         """
-        pr_result = await self._session.execute(
-            text(pr_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        pr_result = await self._session.execute(text(pr_sql), base_params)
         pr_sizes: dict[str, int] = {"small": 0, "medium": 0, "large": 0}
         for row in pr_result.mappings().all():
             data = row["data"]
@@ -293,15 +279,18 @@ class AggregationQueries:
 
     async def collaboration(self, ctx: Timeframe) -> dict[str, Any]:
         """Review distribution matrix and per-person review activity."""
-        review_sql = """
+        proj_clause, proj_params = self._project_filter(ctx)
+        actor_clause, actor_params = self._actor_filter(ctx)
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+
+        review_sql = f"""
             SELECT actor, json_extract(data, '$.pr_external_id') as pr_id
             FROM raw_events
             WHERE source = 'github' AND event_type = 'pull_request_review'
             AND timestamp BETWEEN :start AND :end
+            {proj_clause} {actor_clause}
         """
-        review_result = await self._session.execute(
-            text(review_sql), {"start": ctx.start, "end": ctx.end}
-        )
+        review_result = await self._session.execute(text(review_sql), base_params)
 
         # reviewer -> author -> count
         matrix: dict[str, dict[str, int]] = {}
@@ -409,6 +398,9 @@ class AggregationQueries:
         bucket_expr, bucket_size = self._bucket_sql(ctx)
         bot_list = ",".join(f"'{b}'" for b in self._bots)
         bot_filter = f"AND actor NOT IN ({bot_list})" if bot_list else ""
+        proj_clause, proj_params = self._project_filter(ctx)
+        actor_clause, actor_params = self._actor_filter(ctx)
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
 
         sql = f"""
             SELECT
@@ -418,11 +410,11 @@ class AggregationQueries:
                 COUNT(CASE WHEN event_type = 'issue' THEN 1 END) as issues
             FROM raw_events
             WHERE timestamp BETWEEN :start AND :end
-            {bot_filter}
+            {bot_filter} {proj_clause} {actor_clause}
             GROUP BY bucket
             ORDER BY bucket
         """
-        result = await self._session.execute(text(sql), {"start": ctx.start, "end": ctx.end})
+        result = await self._session.execute(text(sql), base_params)
         data = [
             {
                 "bucket": row.bucket,
@@ -434,6 +426,10 @@ class AggregationQueries:
 
     async def velocity_ts(self, ctx: Timeframe) -> dict[str, Any]:
         bucket_expr, bucket_size = self._bucket_sql(ctx)
+        proj_clause, proj_params = self._project_filter(ctx)
+        actor_clause, actor_params = self._actor_filter(ctx)
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+
         sql = f"""
             SELECT
                 {bucket_expr} as bucket,
@@ -444,10 +440,11 @@ class AggregationQueries:
             WHERE source = 'github' AND event_type = 'pull_request'
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
+            {proj_clause} {actor_clause}
             GROUP BY bucket
             ORDER BY bucket
         """
-        result = await self._session.execute(text(sql), {"start": ctx.start, "end": ctx.end})
+        result = await self._session.execute(text(sql), base_params)
         data = [
             {
                 "bucket": row.bucket,
@@ -463,6 +460,10 @@ class AggregationQueries:
 
     async def collaboration_ts(self, ctx: Timeframe) -> dict[str, Any]:
         bucket_expr, bucket_size = self._bucket_sql(ctx)
+        proj_clause, proj_params = self._project_filter(ctx)
+        actor_clause, actor_params = self._actor_filter(ctx)
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+
         sql = f"""
             SELECT
                 {bucket_expr} as bucket,
@@ -470,10 +471,11 @@ class AggregationQueries:
             FROM raw_events
             WHERE source = 'github' AND event_type = 'pull_request_review'
             AND timestamp BETWEEN :start AND :end
+            {proj_clause} {actor_clause}
             GROUP BY bucket
             ORDER BY bucket
         """
-        result = await self._session.execute(text(sql), {"start": ctx.start, "end": ctx.end})
+        result = await self._session.execute(text(sql), base_params)
         data = [
             {"bucket": row.bucket, "value": {"reviews": row.reviews}}
             for row in result.mappings().all()
@@ -484,10 +486,16 @@ class AggregationQueries:
     # Helpers
     # ------------------------------------------------------------------
 
-    def _project_filter(self, ctx: Timeframe) -> str:
-        """Not used directly in v1 SQL; projects are filtered in Python if needed."""
-        return ""
+    def _project_filter(self, ctx: Timeframe) -> tuple[str, dict[str, str]]:
+        if not ctx.projects:
+            return "", {}
+        params = {f"proj_{i}": p for i, p in enumerate(ctx.projects)}
+        placeholders = ", ".join(f":proj_{i}" for i in range(len(ctx.projects)))
+        return f"AND project IN ({placeholders})", params
 
-    def _actor_filter(self, ctx: Timeframe) -> str:
-        """Not used directly in v1 SQL; actors are filtered in Python if needed."""
-        return ""
+    def _actor_filter(self, ctx: Timeframe) -> tuple[str, dict[str, str]]:
+        if not ctx.actors:
+            return "", {}
+        params = {f"actor_{i}": a for i, a in enumerate(ctx.actors)}
+        placeholders = ", ".join(f":actor_{i}" for i in range(len(ctx.actors)))
+        return f"AND actor IN ({placeholders})", params

@@ -24,6 +24,8 @@ async def _resolve_timeframe(
     from_date: datetime | None,
     to_date: datetime | None,
     sprint_id: str | None,
+    projects: list[str] | None = None,
+    actors: list[str] | None = None,
 ) -> Timeframe:
     """Resolve sprint_id to date range if provided, else fall back to build_timeframe."""
     if sprint_id:
@@ -35,8 +37,10 @@ async def _resolve_timeframe(
                 start=sprint.start_date,
                 end=sprint.end_date,
                 sprint_id=sprint_id,
+                projects=projects,
+                actors=actors,
             )
-    return build_timeframe(from_date, to_date)
+    return build_timeframe(from_date, to_date, sprint_id, projects=projects, actors=actors)
 
 
 class ContributionVolumeResponse(BaseModel):
@@ -84,10 +88,12 @@ async def contribution_volume(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    projects: list[str] | None = Query(None),
+    actors: list[str] | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> ContributionVolumeResponse:
-    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
     queries = AggregationQueries(session, config)
     result = await queries.contribution_volume(ctx)
     return ContributionVolumeResponse(**result)
@@ -98,10 +104,12 @@ async def velocity(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    projects: list[str] | None = Query(None),
+    actors: list[str] | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> VelocityResponse:
-    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
     queries = AggregationQueries(session, config)
     result = await queries.velocity(ctx)
     return VelocityResponse(**result)
@@ -112,10 +120,12 @@ async def composition(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    projects: list[str] | None = Query(None),
+    actors: list[str] | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> CompositionResponse:
-    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
     queries = AggregationQueries(session, config)
     result = await queries.composition(ctx)
     return CompositionResponse(**result)
@@ -126,10 +136,12 @@ async def collaboration(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    projects: list[str] | None = Query(None),
+    actors: list[str] | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> CollaborationResponse:
-    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
     queries = AggregationQueries(session, config)
     result = await queries.collaboration(ctx)
     return CollaborationResponse(**result)
@@ -163,10 +175,12 @@ async def contribution_volume_ts(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    projects: list[str] | None = Query(None),
+    actors: list[str] | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
     queries = AggregationQueries(session, config)
     result = await queries.contribution_volume_ts(ctx)
     return TimeSeriesResponse(**result)
@@ -177,10 +191,12 @@ async def velocity_ts(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    projects: list[str] | None = Query(None),
+    actors: list[str] | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
     queries = AggregationQueries(session, config)
     result = await queries.velocity_ts(ctx)
     return TimeSeriesResponse(**result)
@@ -191,10 +207,12 @@ async def collaboration_ts(
     from_date: datetime | None = Query(None, alias="from"),
     to_date: datetime | None = Query(None, alias="to"),
     sprint_id: str | None = Query(None),
+    projects: list[str] | None = Query(None),
+    actors: list[str] | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
 ) -> TimeSeriesResponse:
-    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id)
+    ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
     queries = AggregationQueries(session, config)
     result = await queries.collaboration_ts(ctx)
     return TimeSeriesResponse(**result)

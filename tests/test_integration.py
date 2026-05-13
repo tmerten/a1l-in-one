@@ -239,3 +239,31 @@ async def test_sprint_timeframe_resolution(db_session: AsyncSession, minimal_con
     assert ctx.start == sprint_start
     assert ctx.end == sprint_end
     assert ctx.sprint_id == "sprint-42"
+
+
+@pytest.mark.asyncio
+async def test_project_filter_scopes_results(db_session: AsyncSession, minimal_config):
+    """contribution_volume with projects filter must only count events from those projects."""
+    writer = EventWriter(db_session)
+    now = datetime.now(timezone.utc)
+
+    for proj in ("repo-a", "repo-b"):
+        await writer.write_pull_requests("github", [
+            RawPREvent(
+                external_id=f"PR-{proj}",
+                timestamp=now,
+                actor="alice",
+                project=proj,
+                data={"merged_at": now.isoformat(), "additions": 10, "deletions": 1},
+            )
+        ])
+
+    queries = AggregationQueries(db_session, minimal_config)
+    ctx = Timeframe(
+        kind="date_range",
+        start=now - timedelta(days=1),
+        end=now + timedelta(days=1),
+        projects=["repo-a"],
+    )
+    volume = await queries.contribution_volume(ctx)
+    assert volume["pull_requests"] == 1, "only repo-a's PR should be counted"

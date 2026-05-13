@@ -16,6 +16,8 @@ class Timeframe(BaseModel):
     start: datetime
     end: datetime
     sprint_id: str | None = None
+    projects: list[str] | None = None
+    actors: list[str] | None = None
 
 
 @dataclass
@@ -31,15 +33,26 @@ def build_timeframe(
     from_date: datetime | None = None,
     to_date: datetime | None = None,
     sprint_id: str | None = None,
+    projects: list[str] | None = None,
+    actors: list[str] | None = None,
 ) -> Timeframe:
     """Build a normalized timeframe from query params."""
     if from_date and to_date:
-        return Timeframe(kind="date_range", start=from_date, end=to_date)
-    now = datetime.now(UTC)  # was datetime.now(timezone.utc) — NameError
+        return Timeframe(
+            kind="date_range",
+            start=from_date,
+            end=to_date,
+            sprint_id=sprint_id,
+            projects=projects,
+            actors=actors,
+        )
+    now = datetime.now(UTC)
     return Timeframe(
         kind="date_range",
         start=now - timedelta(days=30),
         end=now,
+        projects=projects,
+        actors=actors,
     )
 
 
