@@ -52,11 +52,10 @@ class AggregationQueries:
 
     async def contribution_volume(self, ctx: Timeframe) -> dict[str, Any]:
         """Commits, PRs, issues, internal/external ratio."""
-        bot_list = ",".join(f"'{b}'" for b in self._bots)
-        bot_filter = f"AND actor NOT IN ({bot_list})" if bot_list else ""
+        bot_filter, bot_params = self._bot_filter()
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+        base_params = {"start": ctx.start, "end": ctx.end, **bot_params, **proj_params, **actor_params}
 
         commits_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
@@ -393,11 +392,10 @@ class AggregationQueries:
 
     async def contribution_volume_ts(self, ctx: Timeframe) -> dict[str, Any]:
         bucket_expr, bucket_size = self._bucket_sql(ctx)
-        bot_list = ",".join(f"'{b}'" for b in self._bots)
-        bot_filter = f"AND actor NOT IN ({bot_list})" if bot_list else ""
+        bot_filter, bot_params = self._bot_filter()
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+        base_params = {"start": ctx.start, "end": ctx.end, **bot_params, **proj_params, **actor_params}
 
         sql = f"""
             SELECT
@@ -482,6 +480,14 @@ class AggregationQueries:
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
+
+    def _bot_filter(self) -> tuple[str, dict[str, str]]:
+        """Return (SQL fragment, params) for excluding bot actors via named bind params."""
+        if not self._bots:
+            return "", {}
+        params = {f"bot_{i}": b for i, b in enumerate(self._bots)}
+        placeholders = ", ".join(f":bot_{i}" for i in range(len(self._bots)))
+        return f"AND actor NOT IN ({placeholders})", params
 
     def _project_filter(self, ctx: Timeframe) -> tuple[str, dict[str, str]]:
         if not ctx.projects:

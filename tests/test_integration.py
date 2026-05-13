@@ -311,3 +311,28 @@ async def test_collaboration_review_matrix(db_session: AsyncSession, minimal_con
     assert "bob" in result["review_matrix"]
     assert result["review_matrix"]["bob"].get("alice", 0) == 1
     assert result["per_person"]["bob"]["reviews"] == 1
+
+
+@pytest.mark.asyncio
+async def test_bot_filter_with_special_chars(db_session: AsyncSession, minimal_config):
+    """Bot names with SQL special characters must not break queries."""
+    from project_health.config.loader import Config
+    config_with_tricky_bot = Config.model_validate({
+        "credentials": {"github_token": "test"},
+        "bots": {"github": ["bot-with-apostrophe's"]},
+    })
+    writer = EventWriter(db_session)
+    now = datetime.now(timezone.utc)
+    await writer.write_pull_requests("github", [
+        RawPREvent(
+            external_id="PR-99",
+            timestamp=now,
+            actor="alice",
+            project="repo-a",
+            data={"merged_at": now.isoformat(), "additions": 1, "deletions": 0},
+        )
+    ])
+    queries = AggregationQueries(db_session, config_with_tricky_bot)
+    ctx = Timeframe(kind="date_range", start=now - timedelta(days=1), end=now + timedelta(days=1))
+    volume = await queries.contribution_volume(ctx)
+    assert volume["pull_requests"] == 1
