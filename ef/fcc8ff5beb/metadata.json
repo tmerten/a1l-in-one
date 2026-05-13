@@ -3,21 +3,36 @@
   "checkpoint_id": "effcc8ff5beb",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 1,
-  "files_touched": null,
+  "checkpoints_count": 26,
+  "files_touched": [
+    "openspec/changes/project-health-dashboard/.openspec.yaml",
+    "openspec/changes/project-health-dashboard/design.md",
+    "openspec/changes/project-health-dashboard/proposal.md",
+    "openspec/changes/project-health-dashboard/specs/dashboard-ui/spec.md",
+    "openspec/changes/project-health-dashboard/specs/data-ingestion/spec.md",
+    "openspec/changes/project-health-dashboard/specs/metrics-aggregation/spec.md",
+    "openspec/changes/project-health-dashboard/specs/sprint-integration/spec.md",
+    "openspec/changes/project-health-dashboard/tasks.md"
+  ],
   "sessions": [
     {
       "metadata": "/ef/fcc8ff5beb/0/metadata.json",
       "transcript": "/ef/fcc8ff5beb/0/full.jsonl",
       "content_hash": "/ef/fcc8ff5beb/0/content_hash.txt",
       "prompt": "/ef/fcc8ff5beb/0/prompt.txt"
+    },
+    {
+      "metadata": "/ef/fcc8ff5beb/1/metadata.json",
+      "transcript": "/ef/fcc8ff5beb/1/full.jsonl",
+      "content_hash": "/ef/fcc8ff5beb/1/content_hash.txt",
+      "prompt": "/ef/fcc8ff5beb/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 57679,
+    "input_tokens": 545996,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 36864,
-    "output_tokens": 4601,
-    "api_call_count": 6
+    "cache_read_tokens": 1110528,
+    "output_tokens": 24737,
+    "api_call_count": 55
   }
 }
