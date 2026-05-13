@@ -1,0 +1,22 @@
+The UI dev command binds only to localhost. I need it to bind to all interfaces. please change this. see @frontend/ 
+Called the Read tool with the following input: {"filePath":"/project/frontend/"}
+<path>/project/frontend/</path>
+<type>directory</type>
+<entries>
+.gitignore
+dist/
+eslint.config.js
+index.html
+node_modules/
+package-lock.json
+package.json
+public/
+README.md
+src/
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+
+(14 entries)
+</entries>
