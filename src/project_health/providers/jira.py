@@ -113,8 +113,11 @@ class JiraProvider:
                             state=sprint.get("state", "unknown"),
                         )
                     )
-            except Exception:
-                # Jira Agile API might not be available — degrade gracefully
+            except httpx.HTTPError as exc:
+                import logging
+                logging.getLogger(__name__).warning(
+                    "Sprint fetch failed for board %s: %s", proj.board_id, exc
+                )
                 continue
         return sprints
 

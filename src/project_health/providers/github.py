@@ -304,6 +304,10 @@ class GitHubProvider:
             # Rate limit handling
             remaining = resp.headers.get("X-RateLimit-Remaining")
             if remaining and int(remaining) == 0:
+                if attempt >= max_retries - 1:
+                    raise RuntimeError(
+                        f"GitHub rate limit exhausted after {max_retries} attempts"
+                    )
                 reset_at = int(resp.headers.get("X-RateLimit-Reset", time.time() + 60))
                 wait = max(0, reset_at - int(time.time()))
                 await asyncio.sleep(wait + 1)
