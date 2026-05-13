@@ -281,47 +281,44 @@ class AggregationQueries:
         """Review distribution matrix and per-person review activity."""
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+        params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
 
         review_sql = f"""
-            SELECT actor, json_extract(data, '$.pr_external_id') as pr_id
-            FROM raw_events
-            WHERE source = 'github' AND event_type = 'pull_request_review'
-            AND timestamp BETWEEN :start AND :end
+            SELECT
+                r.actor AS reviewer,
+                pr.actor AS author,
+                json_extract(r.data, '$.review_state') AS review_state,
+                COALESCE(CAST(json_extract(r.data, '$.comment_count') AS INTEGER), 0) AS comment_count
+            FROM raw_events r
+            JOIN raw_events pr ON (
+                pr.source = 'github'
+                AND pr.event_type = 'pull_request'
+                AND pr.external_id = json_extract(r.data, '$.pr_external_id')
+            )
+            WHERE r.source = 'github'
+            AND r.event_type = 'pull_request_review'
+            AND r.timestamp BETWEEN :start AND :end
+            AND r.actor != pr.actor
             {proj_clause} {actor_clause}
         """
-        review_result = await self._session.execute(text(review_sql), base_params)
+        result = await self._session.execute(text(review_sql), params)
+        rows = result.mappings().all()
 
-        # reviewer -> author -> count
         matrix: dict[str, dict[str, int]] = {}
-        # reviewer -> stats
         per_person: dict[str, dict[str, Any]] = {}
 
-        for row in review_result.mappings().all():
-            reviewer = row["actor"]
-            pr_id = row["pr_id"]
-            if not reviewer or not pr_id:
-                continue
-            # Find PR author
-            pr_sql = """
-                SELECT actor FROM raw_events
-                WHERE source = 'github' AND event_type = 'pull_request'
-                AND external_id = :pr_id
-            """
-            pr_result = await self._session.execute(text(pr_sql), {"pr_id": str(pr_id)})
-            pr_row = pr_result.mappings().fetchone()
-            author = pr_row["actor"] if pr_row else "unknown"
-            if reviewer == author:
+        for row in rows:
+            reviewer = row["reviewer"]
+            author = row["author"]
+            if not reviewer or not author:
                 continue
             matrix.setdefault(reviewer, {}).setdefault(author, 0)
             matrix[reviewer][author] += 1
-            per_person.setdefault(reviewer, {"reviews": 0, "comments": 0})
-            per_person[reviewer]["reviews"] += 1
+            stats = per_person.setdefault(reviewer, {"reviews": 0, "comments": 0})
+            stats["reviews"] += 1
+            stats["comments"] += row["comment_count"]
 
-        return {
-            "review_matrix": matrix,
-            "per_person": per_person,
-        }
+        return {"review_matrix": matrix, "per_person": per_person}
 
     async def sprint_burndown(self, sprint_id: str) -> dict[str, Any]:
         """Committed vs completed story points (or issue count fallback)."""

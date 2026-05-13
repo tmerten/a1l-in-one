@@ -277,3 +277,37 @@ async def test_sync_run_response_covers_all_targets():
     assert item.run_id == "abc"
     assert item.source == "github"
     assert item.event_type == "issue"
+
+
+@pytest.mark.asyncio
+async def test_collaboration_review_matrix(db_session: AsyncSession, minimal_config):
+    """Collaboration query must build the review matrix from a JOIN, not N+1 queries."""
+    writer = EventWriter(db_session)
+    now = datetime.now(timezone.utc)
+
+    await writer.write_pull_requests("github", [
+        RawPREvent(
+            external_id="PR-20",
+            timestamp=now,
+            actor="alice",
+            project="repo-a",
+            data={"merged_at": now.isoformat(), "additions": 5, "deletions": 1},
+        )
+    ])
+    from project_health.providers.protocol import RawReviewEvent
+    await writer.write_pull_request_reviews("github", [
+        RawReviewEvent(
+            external_id="REV-1",
+            timestamp=now,
+            actor="bob",
+            project="repo-a",
+            data={"review_state": "APPROVED", "comment_count": 2, "pr_external_id": "PR-20"},
+        )
+    ])
+
+    queries = AggregationQueries(db_session, minimal_config)
+    ctx = Timeframe(kind="date_range", start=now - timedelta(days=1), end=now + timedelta(days=1))
+    result = await queries.collaboration(ctx)
+    assert "bob" in result["review_matrix"]
+    assert result["review_matrix"]["bob"].get("alice", 0) == 1
+    assert result["per_person"]["bob"]["reviews"] == 1
