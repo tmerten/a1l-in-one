@@ -37,6 +37,7 @@ class SyncStatusResponse(BaseModel):
     sources: list[SyncStatusItem]
     cache_hits: int = 0
     cache_misses: int = 0
+    any_running: bool = False
 
 
 @router.post("/run", status_code=202)
@@ -130,9 +131,16 @@ async def sync_status() -> SyncStatusResponse:
                     events_count=run.events_count,
                 )
             )
+        running_result = await session.execute(
+            select(IngestionRun.source)
+            .where(IngestionRun.status == "running")
+            .limit(1)
+        )
+        any_running = running_result.scalar_one_or_none() is not None
     stats = cache.stats()
     return SyncStatusResponse(
         sources=sources,
         cache_hits=stats["hits"],
         cache_misses=stats["misses"],
+        any_running=any_running,
     )

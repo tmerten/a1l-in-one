@@ -9,6 +9,7 @@ type SyncStatus = {
     last_status: string
     events_count: number | null
   }>
+  any_running: boolean
 }
 
 function statusColor(state: string) {
@@ -18,16 +19,18 @@ function statusColor(state: string) {
 }
 
 export default function SyncStatusBadge({ status }: { status?: SyncStatus }) {
-  const [syncing, setSyncing] = useState(false)
+  const [clicking, setClicking] = useState(false)
   const queryClient = useQueryClient()
 
+  const isBusy = clicking || !!status?.any_running
+
   async function handleSyncNow() {
-    setSyncing(true)
+    setClicking(true)
     try {
       await postSyncRun()
       await queryClient.invalidateQueries({ queryKey: ['syncStatus'] })
     } finally {
-      setSyncing(false)
+      setClicking(false)
     }
   }
 
@@ -49,10 +52,10 @@ export default function SyncStatusBadge({ status }: { status?: SyncStatus }) {
       )}
       <button
         onClick={handleSyncNow}
-        disabled={syncing}
-        className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50 border border-blue-300 rounded px-2 py-0.5"
+        disabled={isBusy}
+        className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-300 rounded px-2 py-0.5"
       >
-        {syncing ? 'Syncing…' : 'Sync now'}
+        {isBusy ? 'Syncing…' : 'Sync now'}
       </button>
     </div>
   )

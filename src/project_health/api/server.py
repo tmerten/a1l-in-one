@@ -57,6 +57,14 @@ def build_app(config_path: Path) -> FastAPI:
     return app
 
 
+def create_app() -> FastAPI:
+    """Factory for uvicorn --reload mode; reads config path from PROJECT_HEALTH_CONFIG env var."""
+    import os
+
+    config_path = Path(os.environ.get("PROJECT_HEALTH_CONFIG", "./project-health.yaml"))
+    return build_app(config_path)
+
+
 async def start_server(config_path: Path, host: str, port: int) -> None:
     """Start the uvicorn server."""
     import uvicorn

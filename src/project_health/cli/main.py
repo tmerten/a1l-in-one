@@ -36,6 +36,36 @@ def serve(
 
 
 @app.command()
+def dev(
+    config: Path = typer.Option(
+        Path("./project-health.yaml"),
+        "--config",
+        "-c",
+        help="Path to YAML configuration file",
+        exists=True,
+        readable=True,
+    ),
+    host: str = typer.Option("0.0.0.0", "--host", help="Bind address"),
+    port: int = typer.Option(8000, "--port", "-p", help="HTTP port"),
+) -> None:
+    """Start the dashboard server with auto-reload (development mode)."""
+    import os
+
+    import uvicorn
+
+    os.environ["PROJECT_HEALTH_CONFIG"] = str(config.resolve())
+    uvicorn.run(
+        "project_health.api.server:create_app",
+        host=host,
+        port=port,
+        reload=True,
+        factory=True,
+        reload_dirs=[str(Path(__file__).parent.parent)],
+        log_level="info",
+    )
+
+
+@app.command()
 def backfill(
     config: Path = typer.Option(
         Path("./project-health.yaml"),

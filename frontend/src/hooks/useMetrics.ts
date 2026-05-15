@@ -2,7 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 import { getMetrics, getMetricsTs, getProjects, getSyncStatus, getSprints } from '../api/client'
 
 export function useSyncStatus() {
-  return useQuery({ queryKey: ['syncStatus'], queryFn: getSyncStatus })
+  return useQuery({
+    queryKey: ['syncStatus'],
+    queryFn: getSyncStatus,
+    refetchInterval: (query) => query.state.data?.any_running ? 2000 : false,
+  })
 }
 
 export function useSprints(project?: string) {

@@ -19,7 +19,13 @@ export async function postSyncRun(source?: string, eventType?: string) {
   const params = new URLSearchParams()
   if (source) params.set('source', source)
   if (eventType) params.set('event_type', eventType)
-  return fetchJson(`/sync/run?${params}`, { method: 'POST' })
+  const resp = await fetch(`${API_BASE}/sync/run?${params}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  })
+  if (resp.status === 409) return null  // already running — caller will poll
+  if (!resp.ok) throw new Error(`API error ${resp.status}: ${resp.statusText}`)
+  return resp.json()
 }
 
 export async function getSprints(project?: string) {
