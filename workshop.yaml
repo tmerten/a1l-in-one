@@ -25,12 +25,6 @@ sdks:
         interface: tunnel
         endpoint: localhost:5173 # port on the host
 actions:
-  install: |
-    pip install -r /project/requirements.txt "$@"
-
-  test: |
-    python -m pytest /project "$@"
-
   claude: |
     direnv exec /project claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions "$@"
 
