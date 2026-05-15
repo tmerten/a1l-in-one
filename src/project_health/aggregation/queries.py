@@ -175,6 +175,7 @@ class AggregationQueries:
                     pass
 
         # Review turnaround: PR created_at to first review
+        review_proj_clause, _ = self._project_filter(ctx, alias="pr")
         review_sql = f"""
             SELECT
                 pr.timestamp as pr_created_at,
@@ -188,7 +189,7 @@ class AggregationQueries:
             )
             WHERE pr.source = 'github' AND pr.event_type = 'pull_request'
             AND pr.timestamp BETWEEN :start AND :end
-            {proj_clause}
+            {review_proj_clause}
             GROUP BY pr.external_id
         """
         review_result = await self._session.execute(text(review_sql), base_params)
@@ -282,6 +283,8 @@ class AggregationQueries:
         actor_clause, actor_params = self._actor_filter(ctx)
         params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
 
+        review_proj_clause, _ = self._project_filter(ctx, alias="r")
+        review_actor_clause, _ = self._actor_filter(ctx, alias="r")
         review_sql = f"""
             SELECT
                 r.actor AS reviewer,
@@ -298,7 +301,7 @@ class AggregationQueries:
             AND r.event_type = 'pull_request_review'
             AND r.timestamp BETWEEN :start AND :end
             AND r.actor != pr.actor
-            {proj_clause} {actor_clause}
+            {review_proj_clause} {review_actor_clause}
         """
         result = await self._session.execute(text(review_sql), params)
         rows = result.mappings().all()
@@ -489,16 +492,18 @@ class AggregationQueries:
         placeholders = ", ".join(f":bot_{i}" for i in range(len(self._bots)))
         return f"AND actor NOT IN ({placeholders})", params
 
-    def _project_filter(self, ctx: Timeframe) -> tuple[str, dict[str, str]]:
+    def _project_filter(self, ctx: Timeframe, alias: str = "") -> tuple[str, dict[str, str]]:
         if not ctx.projects:
             return "", {}
+        col = f"{alias}.project" if alias else "project"
         params = {f"proj_{i}": p for i, p in enumerate(ctx.projects)}
         placeholders = ", ".join(f":proj_{i}" for i in range(len(ctx.projects)))
-        return f"AND project IN ({placeholders})", params
+        return f"AND {col} IN ({placeholders})", params
 
-    def _actor_filter(self, ctx: Timeframe) -> tuple[str, dict[str, str]]:
+    def _actor_filter(self, ctx: Timeframe, alias: str = "") -> tuple[str, dict[str, str]]:
         if not ctx.actors:
             return "", {}
+        col = f"{alias}.actor" if alias else "actor"
         params = {f"actor_{i}": a for i, a in enumerate(ctx.actors)}
         placeholders = ", ".join(f":actor_{i}" for i in range(len(ctx.actors)))
-        return f"AND actor IN ({placeholders})", params
+        return f"AND {col} IN ({placeholders})", params

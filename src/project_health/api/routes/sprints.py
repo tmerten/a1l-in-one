@@ -41,7 +41,9 @@ async def list_sprints(
     active_states = {"active", "future"}
     filtered = [
         row for row in rows
-        if row.state in active_states or row.end_date >= cutoff
+        if row.state in active_states or (
+            row.end_date if row.end_date.tzinfo else row.end_date.replace(tzinfo=UTC)
+        ) >= cutoff
     ]
 
     return [

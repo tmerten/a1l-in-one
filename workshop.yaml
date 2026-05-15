@@ -1,14 +1,14 @@
 name: megademo
 base: ubuntu@24.04
 sdks:
+  - name: direnvrc
   - name: uv
   - name: claude-code
   - name: opencode
   - name: vscode-remote
   - name: node
-  - name: project-pi
+  # - name: project-pi
   - name: project-entire
-  - name: system
     slots:
       backend:
         interface: tunnel
@@ -16,6 +16,7 @@ sdks:
       frontend:
         interface: tunnel
         endpoint: localhost:5173 # service in the workshop
+  - name: system
     plugs:
       backend:
         interface: tunnel
@@ -31,16 +32,25 @@ actions:
     python -m pytest /project "$@"
 
   claude: |
-    claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions "$@"
+    direnv exec /project claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions "$@"
 
   claude-auto: |
-    claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions --print "$@"
+    direnv exec /project claude --model ${CLAUDE_MODEL:-sonnet} --dangerously-skip-permissions --print "$@"
 
   opencode: |
-    opencode "$@"
+    direnv exec /project opencode "$@"
 
-  pi: |
-    pi "$@"
+  # uninstalled
+  # pi: |
+    # pi "$@"
 
   entire: |
     entire "$@"
+
+  # does not work
+  backend: |
+    /var/lib/workshop/sdk/uv/bin/uv run project-health serve
+
+  # does not work
+  frontend: |
+    cd frontend && npm run dev

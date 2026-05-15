@@ -59,6 +59,10 @@ class IngestionRunner:
         else:
             since = await self._derive_since(source, event_type)
 
+        # SQLite may return naive datetimes; ensure UTC for provider comparisons
+        if since.tzinfo is None:
+            since = since.replace(tzinfo=UTC)
+
         try:
             events = await self._fetch_with_retry(provider, event_type, since)
             count = await self._write_events(source, event_type, events)

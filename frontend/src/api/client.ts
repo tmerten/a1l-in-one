@@ -45,3 +45,8 @@ export async function getMetrics(endpoint: string, query: Record<string, string 
 export async function getMetricsTs(endpoint: string, query: Record<string, string | string[] | undefined>) {
   return fetchJson(`/metrics/${endpoint}/ts?${buildParams(query)}`)
 }
+
+export async function getProjects() {
+  return fetchJson('/projects')
+}
+

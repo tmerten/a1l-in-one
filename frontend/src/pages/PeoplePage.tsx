@@ -4,12 +4,27 @@ import { useContributionVolume, useVelocity, useCollaboration } from '../hooks/u
 import MetricCard from '../components/MetricCard'
 import SettingsPanel, { useSettings } from '../components/SettingsPanel'
 
+function median(values: number[]): number | null {
+  if (!values.length) return null
+  const sorted = [...values].sort((a, b) => a - b)
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid]
+}
+
+function outlierClass(value: number, med: number | null): string {
+  if (med === null || med === 0) return 'text-gray-600'
+  if (value > med * 1.5) return 'text-green-700 bg-green-50'
+  if (value < med * 0.5) return 'text-red-700 bg-red-50'
+  return 'text-gray-600'
+}
+
 export default function PeoplePage() {
   const [searchParams] = useSearchParams()
   const from = searchParams.get('from') ?? undefined
   const to = searchParams.get('to') ?? undefined
   const sprintId = searchParams.get('sprint_id') ?? undefined
-  const query = { from, to, sprint_id: sprintId }
+  const project = searchParams.get('projects') ?? undefined
+  const query = { from, to, sprint_id: sprintId, projects: project ? [project] : undefined }
 
   const { settings } = useSettings()
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
@@ -19,14 +34,21 @@ export default function PeoplePage() {
   const { data: collaboration, isLoading: colLoading } = useCollaboration(query)
 
   // Per-person query (actors filter) for selected person
-  const personQuery = selectedPerson
-    ? { ...query, actors: selectedPerson }
-    : undefined
-  const { data: personVolume, isLoading: pvLoading } = useContributionVolume(personQuery || {})
-  const { data: personVelocity, isLoading: pvelLoading } = useVelocity(personQuery || {})
+  const personQuery = { ...query, actors: selectedPerson || undefined }
+  const { data: personVolume, isLoading: pvLoading } = useContributionVolume(personQuery)
+  const { data: personVelocity, isLoading: pvelLoading } = useVelocity(personQuery)
 
   type PersonStats = { reviews: number; comments: number }
   const perPerson = (collaboration?.per_person || {}) as Record<string, PersonStats>
+
+  const allStats = Object.values(perPerson)
+  const medReviews = median(allStats.map(s => s.reviews))
+  const medComments = median(allStats.map(s => s.comments))
+  const medRatios = median(allStats.map(s => s.reviews > 0 ? s.comments / s.reviews : 0))
+
+  function cell(value: number, med: number | null): string {
+    return `px-4 py-2 text-right ${settings.outliers ? outlierClass(value, med) : 'text-gray-600'}`
+  }
 
   return (
     <div>
@@ -65,9 +87,9 @@ export default function PeoplePage() {
                   onClick={() => setSelectedPerson(name === selectedPerson ? null : name)}
                 >
                   <td className="px-4 py-2 font-medium text-gray-900">{name}</td>
-                  <td className="px-4 py-2 text-right text-gray-600">{stats.reviews}</td>
-                  <td className="px-4 py-2 text-right text-gray-600">{stats.comments}</td>
-                  <td className="px-4 py-2 text-right text-gray-600">
+                  <td className={cell(stats.reviews, medReviews)}>{stats.reviews}</td>
+                  <td className={cell(stats.comments, medComments)}>{stats.comments}</td>
+                  <td className={cell(stats.reviews > 0 ? stats.comments / stats.reviews : 0, medRatios)}>
                     {stats.reviews > 0 ? (stats.comments / stats.reviews).toFixed(1) : '—'}
                   </td>
                 </tr>

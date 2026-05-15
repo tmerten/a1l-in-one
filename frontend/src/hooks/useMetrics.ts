@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getMetrics, getMetricsTs, getSyncStatus, getSprints } from '../api/client'
+import { getMetrics, getMetricsTs, getProjects, getSyncStatus, getSprints } from '../api/client'
 
 export function useSyncStatus() {
   return useQuery({ queryKey: ['syncStatus'], queryFn: getSyncStatus })
@@ -7,6 +7,10 @@ export function useSyncStatus() {
 
 export function useSprints(project?: string) {
   return useQuery({ queryKey: ['sprints', project], queryFn: () => getSprints(project) })
+}
+
+export function useProjects() {
+  return useQuery({ queryKey: ['projects'], queryFn: getProjects })
 }
 
 export function useContributionVolume(query: Record<string, string | string[] | undefined>) {

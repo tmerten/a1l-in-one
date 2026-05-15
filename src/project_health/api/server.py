@@ -47,10 +47,11 @@ def build_app(config_path: Path) -> FastAPI:
     )
 
     # Register routers
-    from project_health.api.routes import metrics, sprints, sync
+    from project_health.api.routes import metrics, projects, sprints, sync
 
     app.include_router(sync.router, prefix="/api/sync", tags=["sync"])
     app.include_router(sprints.router, prefix="/api/sprints", tags=["sprints"])
+    app.include_router(projects.router, prefix="/api/projects", tags=["projects"])
     app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
 
     return app
