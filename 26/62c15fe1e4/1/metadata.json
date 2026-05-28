@@ -1,0 +1,113 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "2662c15fe1e4",
+  "session_id": "ses_1928f0a29ffexk5fBQegfpTaqy",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-28T15:53:14.754297784Z",
+  "branch": "main",
+  "checkpoints_count": 7,
+  "files_touched": [
+    "frontend/src/api/client.ts",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/components/DatasourceProjectFilter.tsx",
+    "frontend/src/hooks/useMetrics.ts",
+    "frontend/src/pages/PeoplePage.tsx",
+    "frontend/src/pages/ProjectsPage.tsx",
+    "openspec/changes/unified-contributions-view/.openspec.yaml",
+    "openspec/changes/unified-contributions-view/design.md",
+    "openspec/changes/unified-contributions-view/proposal.md",
+    "openspec/changes/unified-contributions-view/tasks.md",
+    "project-health.example.yaml",
+    "src/project_health/aggregation/queries.py",
+    "src/project_health/api/deps.py",
+    "src/project_health/api/routes/metrics.py",
+    "src/project_health/api/routes/persons.py",
+    "src/project_health/api/routes/projects.py",
+    "src/project_health/api/server.py",
+    "src/project_health/config/loader.py",
+    "src/project_health/ingestion/scheduler.py",
+    "src/project_health/providers/jira.py",
+    "src/project_health/providers/protocol.py",
+    "src/project_health/providers/registry.py",
+    "tests/test_unified_contributions.py"
+  ],
+  "agent": "OpenCode",
+  "model": "claude-opus-4.6",
+  "turn_id": "db414c7b4a89",
+  "token_usage": {
+    "input_tokens": 2592662,
+    "cache_creation_tokens": 413809,
+    "cache_read_tokens": 8626014,
+    "output_tokens": 24849,
+    "api_call_count": 158
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-28T15:53:14.719694757Z",
+    "agent_lines": 1860,
+    "agent_removed": 192,
+    "human_added": 10,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 1870,
+    "total_lines_changed": 2063,
+    "agent_percentage": 99.46679592825983,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 506,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 506,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1820,
+      "agent_lines_removed": 172
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1841,
+      "agent_lines_removed": 177
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1841,
+      "agent_lines_removed": 177
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 9,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1841,
+      "agent_lines_removed": 177,
+      "user_added_per_file": {
+        "src/project_health/providers/jira.py": 9
+      }
+    }
+  ]
+}
