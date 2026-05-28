@@ -51,9 +51,14 @@ class JiraProvider:
         events: list[RawIssueEvent] = []
         since_str = since.strftime("%Y-%m-%d %H:%M")
 
+        import logging
+        _logger = logging.getLogger(__name__)
+
         for proj in self._projects:
             jql = f'project = "{proj.key}" AND updated >= "{since_str}" ORDER BY updated DESC'
-            issues = await self._paginate(client, "/rest/api/2/search", jql=jql)
+            _logger.warning("Jira fetch_issues JQL: %s", jql)
+            issues = await self._paginate(client, "/rest/api/3/search/jql", jql=jql)
+            _logger.warning("Jira fetch_issues for %s: %d issues returned", proj.key, len(issues))
             for issue in issues:
                 fields = issue.get("fields", {})
                 created_ts = datetime.fromisoformat(
@@ -127,13 +132,13 @@ class JiraProvider:
     async def health_check(self) -> bool:
         client = await self._get_client()
         try:
-            resp = await client.get("/rest/api/2/myself")
+            resp = await client.get("/rest/api/3/myself")
             if resp.status_code == 200:
                 # Verify project access
                 if self._projects:
                     proj = self._projects[0]
                     proj_resp = await client.get(
-                        f'/rest/api/2/project/{proj.key}',
+                        f'/rest/api/3/project/{proj.key}',
                     )
                     return proj_resp.status_code == 200
                 return True
@@ -162,30 +167,38 @@ class JiraProvider:
         path: str,
         jql: str,
     ) -> list[dict[str, Any]]:
-        start_at = 0
+        import logging
+        _logger = logging.getLogger(__name__)
+
         max_results = 100
         all_issues: list[dict[str, Any]] = []
+        next_page_token: str | None = None
 
         while True:
-            resp = await client.get(
-                path,
-                params={
-                    "jql": jql,
-                    "startAt": str(start_at),
-                    "maxResults": str(max_results),
-                    "fields": "summary,issuetype,status,labels,created,updated,reporter,assignee,customfield_10016,description",
-                },
-            )
+            params: dict[str, str] = {
+                "jql": jql,
+                "maxResults": str(max_results),
+                "fields": "summary,issuetype,status,labels,created,updated,reporter,assignee,customfield_10016,description",
+            }
+            if next_page_token:
+                params["nextPageToken"] = next_page_token
+
+            resp = await client.get(path, params=params)
             if resp.status_code != 200:
+                _logger.warning("Jira API returned %d: %s", resp.status_code, resp.text[:500])
                 break
             data = resp.json()
             issues = data.get("issues", [])
             if not issues:
                 break
             all_issues.extend(issues)
-            if len(issues) < max_results:
+
+            # v3 /search/jql uses nextPageToken; v2 used startAt/total
+            if data.get("isLast", True):
                 break
-            start_at += max_results
+            next_page_token = data.get("nextPageToken")
+            if not next_page_token:
+                break
 
         return all_issues
 

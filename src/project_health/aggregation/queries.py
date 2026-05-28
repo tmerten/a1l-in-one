@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy import text
@@ -17,12 +17,12 @@ from project_health.aggregation.core import (
     resolve_bucket_size,
 )
 from project_health.config.loader import Config
+from project_health.providers.protocol import sources_for_event_type
 
-UTC = timezone.utc
+UTC = UTC
 
 
 def _parse_dt(value: object) -> datetime | None:
-    """Parse a datetime value from SQLite — returns UTC-aware datetime or None."""
     if value is None:
         return None
     if isinstance(value, datetime):
@@ -38,40 +38,81 @@ def _parse_dt(value: object) -> datetime | None:
         return None
 
 
+def _percentile(data: list[float], p: float) -> float | None:
+    if not data:
+        return None
+    s = sorted(data)
+    k = (len(s) - 1) * p
+    f = int(k)
+    c = f + 1
+    if c >= len(s):
+        return s[-1]
+    return s[f] + (s[c] - s[f]) * (k - f)
+
+
+def _median(data: list[float]) -> float | None:
+    return _percentile(data, 0.5)
+
+
 class AggregationQueries:
     """Execute aggregation queries against raw_events."""
 
-    def __init__(self, session: AsyncSession, config: Config) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        config: Config,
+        configured_sources: set[str] | None = None,
+    ) -> None:
         self._session = session
         self._config = config
         self._bots = get_bot_set(config)
+        self._configured_sources = configured_sources or {"github", "jira"}
 
-    # ------------------------------------------------------------------
-    # 13.1–13.11 Metric Queries
-    # ------------------------------------------------------------------
+    def _source_filter(
+        self,
+        event_type: str,
+        alias: str = "",
+        configured_sources: set[str] | None = None,
+    ) -> tuple[str, dict[str, str]]:
+        sources = sources_for_event_type(
+            event_type, configured_sources or self._configured_sources
+        )
+        if not sources:
+            return "AND 1=0", {}
+        col = f"{alias}.source" if alias else "source"
+        params = {f"src_{i}": s for i, s in enumerate(sorted(sources))}
+        placeholders = ", ".join(f":src_{i}" for i in range(len(sources)))
+        return f"AND {col} IN ({placeholders})", params
 
     async def contribution_volume(self, ctx: Timeframe) -> dict[str, Any]:
-        """Commits, PRs, issues, internal/external ratio."""
         bot_filter, bot_params = self._bot_filter()
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **bot_params, **proj_params, **actor_params}
 
+        commit_src, commit_src_params = self._source_filter("commit")
+        base_params = {
+            "start": ctx.start, "end": ctx.end,
+            **bot_params, **proj_params, **actor_params, **commit_src_params,
+        }
         commits_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
-            WHERE source = 'github' AND event_type = 'commit'
+            WHERE event_type = 'commit'
+            {commit_src}
             AND timestamp BETWEEN :start AND :end
             {bot_filter} {proj_clause} {actor_clause}
         """
         commits_result = await self._session.execute(text(commits_sql), base_params)
         commits = commits_result.scalar() or 0
 
+        pr_src, pr_src_params = self._source_filter("pull_request")
+        base_params.update(pr_src_params)
         prs_sql = f"""
             SELECT COUNT(*) as cnt,
                    COALESCE(SUM(CAST(json_extract(data, '$.additions') AS INTEGER)), 0) as adds,
                    COALESCE(SUM(CAST(json_extract(data, '$.deletions') AS INTEGER)), 0) as dels
             FROM raw_events
-            WHERE source = 'github' AND event_type = 'pull_request'
+            WHERE event_type = 'pull_request'
+            {pr_src}
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
             {bot_filter} {proj_clause} {actor_clause}
@@ -82,9 +123,12 @@ class AggregationQueries:
         additions = pr_row["adds"] if pr_row else 0
         deletions = pr_row["dels"] if pr_row else 0
 
+        issue_src, issue_src_params = self._source_filter("issue")
+        base_params.update(issue_src_params)
         issues_open_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
             WHERE event_type = 'issue'
+            {issue_src}
             AND timestamp BETWEEN :start AND :end
             {bot_filter} {proj_clause} {actor_clause}
         """
@@ -94,8 +138,11 @@ class AggregationQueries:
         issues_resolved_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
             WHERE event_type = 'issue'
+            {issue_src}
             AND timestamp BETWEEN :start AND :end
-            AND json_extract(data, '$.closed_at') IS NOT NULL
+            AND (json_extract(data, '$.closed_at') IS NOT NULL
+                 OR json_extract(data, '$.resolutiondate') IS NOT NULL
+                 OR LOWER(json_extract(data, '$.status')) IN ('done', 'closed', 'resolved', 'completed'))
             {bot_filter} {proj_clause} {actor_clause}
         """
         issues_resolved_result = await self._session.execute(text(issues_resolved_sql), base_params)
@@ -103,13 +150,14 @@ class AggregationQueries:
 
         internal_sql = f"""
             SELECT COUNT(*) as cnt FROM raw_events
-            WHERE source = 'github' AND event_type = 'pull_request'
+            WHERE event_type = 'pull_request'
+            {pr_src}
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
             AND actor IN (
-                SELECT external_id FROM person_identities pi
+                SELECT pi.external_id FROM person_identities pi
                 JOIN persons p ON pi.person_id = p.id
-                WHERE pi.source = 'github'
+                WHERE pi.source IN ({', '.join(f':src_{i}' for i in range(len(pr_src_params)))})
             )
             {proj_clause} {actor_clause}
         """
@@ -141,17 +189,18 @@ class AggregationQueries:
         }
 
     async def velocity(self, ctx: Timeframe) -> dict[str, Any]:
-        """Cycle time and PR review turnaround distributions."""
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+        pr_src, pr_src_params = self._source_filter("pull_request")
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params, **pr_src_params}
 
         cycle_sql = f"""
             SELECT
                 timestamp as created_at,
                 json_extract(data, '$.merged_at') as merged_at
             FROM raw_events
-            WHERE source = 'github' AND event_type = 'pull_request'
+            WHERE event_type = 'pull_request'
+            {pr_src}
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
             {proj_clause} {actor_clause}
@@ -174,20 +223,23 @@ class AggregationQueries:
                 except Exception:
                     pass
 
-        # Review turnaround: PR created_at to first review
         review_proj_clause, _ = self._project_filter(ctx, alias="pr")
+        review_src, review_src_params = self._source_filter("pull_request_review", alias="r")
+        pr_src2, pr_src_params2 = self._source_filter("pull_request", alias="pr")
+        base_params.update({**review_src_params, **pr_src_params2})
         review_sql = f"""
             SELECT
                 pr.timestamp as pr_created_at,
                 MIN(r.timestamp) as first_review
             FROM raw_events pr
             JOIN raw_events r ON (
-                r.source = 'github'
-                AND r.event_type = 'pull_request_review'
+                r.event_type = 'pull_request_review'
+                {review_src}
                 AND json_extract(r.data, '$.pr_external_id') = pr.external_id
                 AND r.actor != pr.actor
             )
-            WHERE pr.source = 'github' AND pr.event_type = 'pull_request'
+            WHERE pr.event_type = 'pull_request'
+            {pr_src2}
             AND pr.timestamp BETWEEN :start AND :end
             {review_proj_clause}
             GROUP BY pr.external_id
@@ -206,20 +258,6 @@ class AggregationQueries:
             except Exception:
                 pass
 
-        def _percentile(data: list[float], p: float) -> float | None:
-            if not data:
-                return None
-            s = sorted(data)
-            k = (len(s) - 1) * p
-            f = int(k)
-            c = f + 1
-            if c >= len(s):
-                return s[-1]
-            return s[f] + (s[c] - s[f]) * (k - f)
-
-        def _median(data: list[float]) -> float | None:
-            return _percentile(data, 0.5)
-
         return {
             "cycle_time_median": _median(cycle_times),
             "cycle_time_p50": _median(cycle_times),
@@ -231,14 +269,15 @@ class AggregationQueries:
         }
 
     async def composition(self, ctx: Timeframe) -> dict[str, Any]:
-        """Issue type breakdown and PR size distribution."""
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+        issue_src, issue_src_params = self._source_filter("issue")
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params, **issue_src_params}
 
         issue_sql = f"""
-            SELECT data FROM raw_events
+            SELECT data, source FROM raw_events
             WHERE event_type = 'issue'
+            {issue_src}
             AND timestamp BETWEEN :start AND :end
             {proj_clause} {actor_clause}
         """
@@ -246,16 +285,19 @@ class AggregationQueries:
         issue_types: dict[str, int] = {}
         for row in issue_result.mappings().all():
             data = row["data"]
+            source = row["source"]
             if isinstance(data, str):
                 data = json.loads(data)
             raw_type = data.get("issue_type") or data.get("labels", ["other"])[0]
-            source = "github" if "labels" in data else "jira"
             normalized = normalize_issue_type(source, raw_type, self._config)
             issue_types[normalized] = issue_types.get(normalized, 0) + 1
 
+        pr_src, pr_src_params = self._source_filter("pull_request")
+        base_params.update(pr_src_params)
         pr_sql = f"""
             SELECT data FROM raw_events
-            WHERE source = 'github' AND event_type = 'pull_request'
+            WHERE event_type = 'pull_request'
+            {pr_src}
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
             {proj_clause} {actor_clause}
@@ -278,13 +320,16 @@ class AggregationQueries:
         }
 
     async def collaboration(self, ctx: Timeframe) -> dict[str, Any]:
-        """Review distribution matrix and per-person review activity."""
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
         params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
 
         review_proj_clause, _ = self._project_filter(ctx, alias="r")
         review_actor_clause, _ = self._actor_filter(ctx, alias="r")
+        review_src, review_src_params = self._source_filter("pull_request_review", alias="r")
+        pr_src, pr_src_params = self._source_filter("pull_request", alias="pr")
+        params.update({**review_src_params, **pr_src_params})
+
         review_sql = f"""
             SELECT
                 r.actor AS reviewer,
@@ -293,12 +338,12 @@ class AggregationQueries:
                 COALESCE(CAST(json_extract(r.data, '$.comment_count') AS INTEGER), 0) AS comment_count
             FROM raw_events r
             JOIN raw_events pr ON (
-                pr.source = 'github'
-                AND pr.event_type = 'pull_request'
+                pr.event_type = 'pull_request'
+                {pr_src}
                 AND pr.external_id = json_extract(r.data, '$.pr_external_id')
             )
-            WHERE r.source = 'github'
-            AND r.event_type = 'pull_request_review'
+            WHERE r.event_type = 'pull_request_review'
+            {review_src}
             AND r.timestamp BETWEEN :start AND :end
             AND r.actor != pr.actor
             {review_proj_clause} {review_actor_clause}
@@ -323,8 +368,6 @@ class AggregationQueries:
         return {"review_matrix": matrix, "per_person": per_person}
 
     async def sprint_burndown(self, sprint_id: str) -> dict[str, Any]:
-        """Committed vs completed story points (or issue count fallback)."""
-        # Find sprint date range
         sprint_sql = """
             SELECT start_date, end_date FROM sprints WHERE id = :sprint_id
         """
@@ -336,7 +379,6 @@ class AggregationQueries:
         start = sprint_row["start_date"]
         end = sprint_row["end_date"]
 
-        # Get issues in sprint timeframe
         issue_sql = """
             SELECT data FROM raw_events
             WHERE event_type = 'issue' AND source = 'jira'
@@ -378,12 +420,312 @@ class AggregationQueries:
             "unit": "issues",
         }
 
-    # ------------------------------------------------------------------
-    # Time-series variants
-    # ------------------------------------------------------------------
+    async def list_persons(self, ctx: Timeframe) -> list[dict[str, Any]]:
+        bot_filter, bot_params = self._bot_filter()
+        proj_clause, proj_params = self._project_filter(ctx)
+
+        sql = """
+            SELECT
+                p.id as person_id,
+                p.display_name,
+                pi.source,
+                pi.external_id
+            FROM persons p
+            LEFT JOIN person_identities pi ON pi.person_id = p.id
+            WHERE p.active = 1
+            ORDER BY p.display_name
+        """
+        result = await self._session.execute(text(sql))
+        rows = result.mappings().all()
+
+        persons_map: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            pid = row["person_id"]
+            if pid not in persons_map:
+                persons_map[pid] = {
+                    "id": pid,
+                    "display_name": row["display_name"],
+                    "identities": [],
+                }
+            if row["source"] and row["external_id"]:
+                persons_map[pid]["identities"].append({
+                    "source": row["source"],
+                    "external_id": row["external_id"],
+                })
+
+        persons = list(persons_map.values())
+        for person in persons:
+            identity_pairs = [
+                (id_info["source"], id_info["external_id"])
+                for id_info in person["identities"]
+            ]
+            if not identity_pairs:
+                person["metrics"] = self._empty_person_metrics()
+                continue
+            metrics = await self._person_metrics(ctx, identity_pairs, bot_filter, bot_params, proj_clause, proj_params)
+            person["metrics"] = metrics
+
+        return persons
+
+    async def person_contributions(self, person_id: str, ctx: Timeframe) -> dict[str, Any] | None:
+        id_sql = """
+            SELECT p.id, p.display_name, pi.source, pi.external_id
+            FROM persons p
+            LEFT JOIN person_identities pi ON pi.person_id = p.id
+            WHERE p.id = :person_id AND p.active = 1
+        """
+        id_result = await self._session.execute(text(id_sql), {"person_id": person_id})
+        id_rows = id_result.mappings().all()
+        if not id_rows:
+            return None
+
+        display_name = id_rows[0]["display_name"]
+        identities = [
+            {"source": row["source"], "external_id": row["external_id"]}
+            for row in id_rows if row["source"] and row["external_id"]
+        ]
+
+        bot_filter, bot_params = self._bot_filter()
+        proj_clause, proj_params = self._project_filter(ctx)
+
+        contributions = await self._person_detail_contributions(
+            ctx, identities, bot_filter, bot_params, proj_clause, proj_params
+        )
+
+        return {
+            "person_id": person_id,
+            "display_name": display_name,
+            "identities": identities,
+            "timeframe": {"kind": ctx.kind, "start": ctx.start.isoformat(), "end": ctx.end.isoformat()},
+            "contributions": contributions,
+        }
+
+    async def _person_detail_contributions(
+        self,
+        ctx: Timeframe,
+        identities: list[dict[str, str]],
+        bot_filter: str,
+        bot_params: dict[str, str],
+        proj_clause: str,
+        proj_params: dict[str, str],
+    ) -> list[dict[str, Any]]:
+        if not identities:
+            return []
+
+        pair_params: dict[str, str] = {}
+        pair_clauses: list[str] = []
+        for i, (id_info) in enumerate(identities):
+            pair_params[f"ids_{i}"] = id_info["source"]
+            pair_params[f"idx_{i}"] = id_info["external_id"]
+            pair_clauses.append(f"(:ids_{i}, :idx_{i})")
+
+        identity_pairs_sql = ", ".join(pair_clauses)
+
+        sql = f"""
+            SELECT
+                source,
+                event_type,
+                project,
+                COUNT(*) as cnt,
+                COALESCE(SUM(CASE WHEN event_type = 'pull_request' AND json_extract(data, '$.merged_at') IS NOT NULL
+                    THEN CAST(json_extract(data, '$.additions') AS INTEGER) END), 0) as adds,
+                COALESCE(SUM(CASE WHEN event_type = 'pull_request' AND json_extract(data, '$.merged_at') IS NOT NULL
+                    THEN CAST(json_extract(data, '$.deletions') AS INTEGER) END), 0) as dels,
+                COALESCE(SUM(CASE WHEN event_type = 'issue' AND (
+                    json_extract(data, '$.closed_at') IS NOT NULL
+                    OR json_extract(data, '$.resolutiondate') IS NOT NULL
+                    OR LOWER(json_extract(data, '$.status')) IN ('done', 'closed', 'resolved', 'completed'))
+                    THEN 1 END), 0) as issues_resolved,
+                COALESCE(SUM(CASE WHEN event_type = 'issue' AND (
+                    json_extract(data, '$.closed_at') IS NULL
+                    AND json_extract(data, '$.resolutiondate') IS NULL
+                    AND LOWER(json_extract(data, '$.status')) NOT IN ('done', 'closed', 'resolved', 'completed'))
+                    THEN 1 END), 0) as issues_opened
+            FROM raw_events
+            WHERE (source, actor) IN ({identity_pairs_sql})
+            AND timestamp BETWEEN :start AND :end
+            {bot_filter} {proj_clause}
+            GROUP BY source, event_type, project
+        """
+        params = {"start": ctx.start, "end": ctx.end, **bot_params, **proj_params, **pair_params}
+        result = await self._session.execute(text(sql), params)
+        rows = result.mappings().all()
+
+        datasource_data: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            source = row["source"]
+            project = row["project"] or "unknown"
+            if source not in datasource_data:
+                datasource_data[source] = {"projects": {}}
+            ds = datasource_data[source]
+            if project not in ds["projects"]:
+                ds["projects"][project] = {
+                    "commits": 0,
+                    "pull_requests": 0,
+                    "pr_loc_added": 0,
+                    "pr_loc_removed": 0,
+                    "issues_resolved": 0,
+                    "issues_opened": 0,
+                    "reviews_given": 0,
+                }
+            proj_data = ds["projects"][project]
+            if row["event_type"] == "commit":
+                proj_data["commits"] = row["cnt"]
+            elif row["event_type"] == "pull_request":
+                proj_data["pull_requests"] = row["cnt"]
+                proj_data["pr_loc_added"] = row["adds"]
+                proj_data["pr_loc_removed"] = row["dels"]
+            elif row["event_type"] == "pull_request_review":
+                proj_data["reviews_given"] = row["cnt"]
+            elif row["event_type"] == "issue":
+                proj_data["issues_resolved"] = row["issues_resolved"]
+                proj_data["issues_opened"] = row["issues_opened"]
+
+        from project_health.providers.protocol import DatasourceRole
+
+        contributions = []
+        for source, data in datasource_data.items():
+            role = DatasourceRole.UMBRELLA if source == "jira" else DatasourceRole.CODE
+            projects_list = []
+            for proj_name, proj_metrics in data["projects"].items():
+                projects_list.append({"project": proj_name, **proj_metrics})
+            contributions.append({
+                "datasource": source,
+                "role": role.value,
+                "projects": projects_list,
+            })
+
+        return contributions
+
+    async def _person_metrics(
+        self,
+        ctx: Timeframe,
+        identity_pairs: list[tuple[str, str]],
+        bot_filter: str,
+        bot_params: dict[str, str],
+        proj_clause: str,
+        proj_params: dict[str, str],
+    ) -> dict[str, Any]:
+        pair_params: dict[str, str] = {}
+        pair_clauses: list[str] = []
+        for i, (source, ext_id) in enumerate(identity_pairs):
+            pair_params[f"ids_{i}"] = source
+            pair_params[f"idx_{i}"] = ext_id
+            pair_clauses.append(f"(:ids_{i}, :idx_{i})")
+        identity_pairs_sql = ", ".join(pair_clauses)
+
+        sql = f"""
+            SELECT
+                event_type,
+                source,
+                COUNT(*) as cnt,
+                COALESCE(SUM(CASE WHEN event_type = 'pull_request' AND json_extract(data, '$.merged_at') IS NOT NULL
+                    THEN CAST(json_extract(data, '$.additions') AS INTEGER) END), 0) as adds,
+                COALESCE(SUM(CASE WHEN event_type = 'pull_request' AND json_extract(data, '$.merged_at') IS NOT NULL
+                    THEN CAST(json_extract(data, '$.deletions') AS INTEGER) END), 0) as dels,
+                COALESCE(SUM(CASE WHEN event_type = 'issue' AND (
+                    json_extract(data, '$.closed_at') IS NOT NULL
+                    OR json_extract(data, '$.resolutiondate') IS NOT NULL
+                    OR LOWER(json_extract(data, '$.status')) IN ('done', 'closed', 'resolved', 'completed'))
+                    THEN 1 END), 0) as issues_resolved,
+                COALESCE(SUM(CASE WHEN event_type = 'issue' AND (
+                    json_extract(data, '$.closed_at') IS NULL
+                    AND json_extract(data, '$.resolutiondate') IS NULL
+                    AND LOWER(json_extract(data, '$.status')) NOT IN ('done', 'closed', 'resolved', 'completed'))
+                    THEN 1 END), 0) as issues_opened
+            FROM raw_events
+            WHERE (source, actor) IN ({identity_pairs_sql})
+            AND timestamp BETWEEN :start AND :end
+            {bot_filter} {proj_clause}
+            GROUP BY event_type, source
+        """
+        all_params = {"start": ctx.start, "end": ctx.end, **bot_params, **proj_params, **pair_params}
+        result = await self._session.execute(text(sql), all_params)
+        rows = result.mappings().all()
+
+        metrics = self._empty_person_metrics()
+        for row in rows:
+            et = row["event_type"]
+            source = row["source"]
+            if source not in metrics["sources"]:
+                metrics["sources"][source] = {}
+            src_metrics = metrics["sources"][source]
+
+            if et == "commit":
+                metrics["commits"] += row["cnt"]
+                src_metrics["commits"] = row["cnt"]
+            elif et == "pull_request":
+                metrics["prs_opened"] += row["cnt"]
+                prs_merged = row["cnt"]
+                metrics["prs_merged"] += prs_merged
+                metrics["pr_loc_added"] += row["adds"]
+                metrics["pr_loc_removed"] += row["dels"]
+                src_metrics["prs_merged"] = prs_merged
+                src_metrics["pr_loc_added"] = row["adds"]
+                src_metrics["pr_loc_removed"] = row["dels"]
+            elif et == "pull_request_review":
+                metrics["reviews_given"] += row["cnt"]
+                src_metrics["reviews_given"] = row["cnt"]
+            elif et == "issue":
+                metrics["issues_resolved"] += row["issues_resolved"]
+                metrics["issues_opened"] += row["issues_opened"]
+                src_metrics["issues_resolved"] = row["issues_resolved"]
+                src_metrics["issues_opened"] = row["issues_opened"]
+
+        cycle_sql = f"""
+            SELECT
+                timestamp as created_at,
+                json_extract(data, '$.merged_at') as merged_at
+            FROM raw_events
+            WHERE (source, actor) IN ({identity_pairs_sql})
+            AND event_type = 'pull_request'
+            AND timestamp BETWEEN :start AND :end
+            AND json_extract(data, '$.merged_at') IS NOT NULL
+            {proj_clause}
+        """
+        cycle_result = await self._session.execute(text(cycle_sql), all_params)
+        cycle_times = []
+        for row in cycle_result.mappings().all():
+            c_dt = _parse_dt(row["created_at"])
+            m_dt = _parse_dt(row["merged_at"])
+            if c_dt and m_dt:
+                hours = (m_dt - c_dt).total_seconds() / 3600
+                if hours > 0:
+                    cycle_times.append(hours)
+        metrics["median_cycle_time_hours"] = _median(cycle_times)
+
+        review_sql = f"""
+            SELECT COUNT(*) as reviews,
+                   COALESCE(SUM(CAST(json_extract(data, '$.comment_count') AS INTEGER)), 0) as comments
+            FROM raw_events
+            WHERE (source, actor) IN ({identity_pairs_sql})
+            AND event_type = 'pull_request_review'
+            AND timestamp BETWEEN :start AND :end
+            {proj_clause}
+        """
+        review_result = await self._session.execute(text(review_sql), all_params)
+        review_row = review_result.mappings().fetchone()
+        if review_row:
+            metrics["review_comments"] = review_row["comments"] or 0
+
+        return metrics
+
+    def _empty_person_metrics(self) -> dict[str, Any]:
+        return {
+            "commits": 0,
+            "prs_opened": 0,
+            "prs_merged": 0,
+            "pr_loc_added": 0,
+            "pr_loc_removed": 0,
+            "issues_resolved": 0,
+            "issues_opened": 0,
+            "reviews_given": 0,
+            "review_comments": 0,
+            "median_cycle_time_hours": None,
+            "sources": {},
+        }
 
     def _bucket_sql(self, ctx: Timeframe) -> tuple[str, str]:
-        """Return (bucket_expr, bucket_size) for SQLite strftime."""
         bucket = resolve_bucket_size(ctx.start, ctx.end)
         if bucket == "day":
             return ("strftime('%Y-%m-%d', timestamp)", "day")
@@ -426,7 +768,8 @@ class AggregationQueries:
         bucket_expr, bucket_size = self._bucket_sql(ctx)
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+        pr_src, pr_src_params = self._source_filter("pull_request")
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params, **pr_src_params}
 
         sql = f"""
             SELECT
@@ -435,7 +778,8 @@ class AggregationQueries:
                     (julianday(json_extract(data, '$.merged_at')) - julianday(timestamp)) * 24
                 ) as avg_cycle_hours
             FROM raw_events
-            WHERE source = 'github' AND event_type = 'pull_request'
+            WHERE event_type = 'pull_request'
+            {pr_src}
             AND timestamp BETWEEN :start AND :end
             AND json_extract(data, '$.merged_at') IS NOT NULL
             {proj_clause} {actor_clause}
@@ -460,14 +804,16 @@ class AggregationQueries:
         bucket_expr, bucket_size = self._bucket_sql(ctx)
         proj_clause, proj_params = self._project_filter(ctx)
         actor_clause, actor_params = self._actor_filter(ctx)
-        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params}
+        review_src, review_src_params = self._source_filter("pull_request_review")
+        base_params = {"start": ctx.start, "end": ctx.end, **proj_params, **actor_params, **review_src_params}
 
         sql = f"""
             SELECT
                 {bucket_expr} as bucket,
                 COUNT(*) as reviews
             FROM raw_events
-            WHERE source = 'github' AND event_type = 'pull_request_review'
+            WHERE event_type = 'pull_request_review'
+            {review_src}
             AND timestamp BETWEEN :start AND :end
             {proj_clause} {actor_clause}
             GROUP BY bucket
@@ -480,12 +826,7 @@ class AggregationQueries:
         ]
         return {"bucket_size": bucket_size, "data": data}
 
-    # ------------------------------------------------------------------
-    # Helpers
-    # ------------------------------------------------------------------
-
     def _bot_filter(self) -> tuple[str, dict[str, str]]:
-        """Return (SQL fragment, params) for excluding bot actors via named bind params."""
         if not self._bots:
             return "", {}
         params = {f"bot_{i}": b for i, b in enumerate(self._bots)}

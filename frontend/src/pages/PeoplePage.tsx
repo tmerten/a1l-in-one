@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useContributionVolume, useVelocity, useCollaboration } from '../hooks/useMetrics'
+import { usePersons, usePersonContributions } from '../hooks/useMetrics'
 import MetricCard from '../components/MetricCard'
 import SettingsPanel, { useSettings } from '../components/SettingsPanel'
 
@@ -18,37 +18,64 @@ function outlierClass(value: number, med: number | null): string {
   return 'text-gray-600'
 }
 
+type Identity = { source: string; external_id: string }
+type PersonMetrics = {
+  commits: number; prs_merged: number; pr_loc_added: number; pr_loc_removed: number;
+  issues_resolved: number; reviews_given: number; median_cycle_time_hours: number | null;
+  sources: Record<string, Record<string, number>>
+}
+type Person = { id: string; display_name: string; identities: Identity[]; metrics: PersonMetrics }
+
+type ProjectContribution = {
+  project: string; commits: number; pull_requests: number;
+  pr_loc_added: number; pr_loc_removed: number;
+  issues_resolved: number; issues_opened: number; reviews_given: number;
+}
+type DatasourceContribution = {
+  datasource: string; role: string; projects: ProjectContribution[]
+}
+
 export default function PeoplePage() {
   const [searchParams] = useSearchParams()
   const from = searchParams.get('from') ?? undefined
   const to = searchParams.get('to') ?? undefined
   const sprintId = searchParams.get('sprint_id') ?? undefined
-  const project = searchParams.get('projects') ?? undefined
-  const query = { from, to, sprint_id: sprintId, projects: project ? [project] : undefined }
+  const datasource = searchParams.get('datasource') ?? undefined
+  const project = searchParams.get('project') ?? undefined
+
+  const query: Record<string, string | string[] | undefined> = {
+    from, to, sprint_id: sprintId, datasource,
+    projects: project ? [project] : undefined,
+  }
 
   const { settings } = useSettings()
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
 
-  const { data: volume, isLoading: vLoading } = useContributionVolume(query)
-  const { data: velocity, isLoading: velLoading } = useVelocity(query)
-  const { data: collaboration, isLoading: colLoading } = useCollaboration(query)
+  const { data: personsData, isLoading: pLoading } = usePersons(query)
+  const { data: contributions, isLoading: cLoading } = usePersonContributions(selectedPerson || '', query)
 
-  // Per-person query (actors filter) for selected person
-  const personQuery = { ...query, actors: selectedPerson || undefined }
-  const { data: personVolume, isLoading: pvLoading } = useContributionVolume(personQuery)
-  const { data: personVelocity, isLoading: pvelLoading } = useVelocity(personQuery)
+  const persons: Person[] = personsData?.persons || []
+  const allCommits = persons.map(p => p.metrics.commits)
+  const allPRs = persons.map(p => p.metrics.prs_merged)
+  const allIssues = persons.map(p => p.metrics.issues_resolved)
+  const allCycleTimes = persons.map(p => p.metrics.median_cycle_time_hours).filter((v): v is number => v !== null)
 
-  type PersonStats = { reviews: number; comments: number }
-  const perPerson = (collaboration?.per_person || {}) as Record<string, PersonStats>
-
-  const allStats = Object.values(perPerson)
-  const medReviews = median(allStats.map(s => s.reviews))
-  const medComments = median(allStats.map(s => s.comments))
-  const medRatios = median(allStats.map(s => s.reviews > 0 ? s.comments / s.reviews : 0))
+  const medCommits = median(allCommits)
+  const medPRs = median(allPRs)
+  const medIssues = median(allIssues)
+  const medCycle = median(allCycleTimes)
 
   function cell(value: number, med: number | null): string {
     return `px-4 py-2 text-right ${settings.outliers ? outlierClass(value, med) : 'text-gray-600'}`
   }
+
+  const dsContributions: DatasourceContribution[] = contributions?.contributions || []
+  const totalCommits = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.commits, 0), 0)
+  const totalPRs = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.pull_requests, 0), 0)
+  const totalIssuesResolved = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.issues_resolved, 0), 0)
+  const totalReviews = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.reviews_given, 0), 0)
+  const totalLocAdded = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.pr_loc_added, 0), 0)
+  const totalLocRemoved = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.pr_loc_removed, 0), 0)
 
   return (
     <div>
@@ -60,10 +87,10 @@ export default function PeoplePage() {
       <section className="mb-6">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Summary</h3>
         <div className="grid grid-cols-4 gap-4">
-          <MetricCard title="Contributors" value={Object.keys(perPerson).length} loading={colLoading} />
-          <MetricCard title="Total PRs" value={volume?.pull_requests ?? 0} loading={vLoading} />
-          <MetricCard title="Issues Resolved" value={volume?.issues_resolved ?? 0} loading={vLoading} />
-          <MetricCard title="Median Cycle Time (hrs)" value={velocity?.cycle_time_median?.toFixed(1) ?? '—'} loading={velLoading} />
+          <MetricCard title="Contributors" value={persons.length} loading={pLoading} />
+          <MetricCard title="Total PRs Merged" value={persons.reduce((s, p) => s + p.metrics.prs_merged, 0)} loading={pLoading} />
+          <MetricCard title="Issues Resolved" value={persons.reduce((s, p) => s + p.metrics.issues_resolved, 0)} loading={pLoading} />
+          <MetricCard title="Median Cycle Time (hrs)" value={medCycle?.toFixed(1) ?? '—'} loading={pLoading} />
         </div>
       </section>
 
@@ -74,64 +101,136 @@ export default function PeoplePage() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-2 text-left font-medium text-gray-700">Name</th>
+                <th className="px-4 py-2 text-right font-medium text-gray-700">Commits</th>
+                <th className="px-4 py-2 text-right font-medium text-gray-700">PRs</th>
+                <th className="px-4 py-2 text-right font-medium text-gray-700">LOC (+N/−M)</th>
+                <th className="px-4 py-2 text-right font-medium text-gray-700">Issues Resolved</th>
                 <th className="px-4 py-2 text-right font-medium text-gray-700">Reviews</th>
-                <th className="px-4 py-2 text-right font-medium text-gray-700">Comments</th>
-                <th className="px-4 py-2 text-right font-medium text-gray-700">Comments/Review</th>
+                <th className="px-4 py-2 text-right font-medium text-gray-700">Cycle Time (hrs)</th>
               </tr>
             </thead>
             <tbody>
-              {Object.entries(perPerson).map(([name, stats]) => (
+              {persons.map((person) => (
                 <tr
-                  key={name}
-                  className={`border-t border-gray-100 cursor-pointer hover:bg-gray-50 ${selectedPerson === name ? 'bg-blue-50' : ''}`}
-                  onClick={() => setSelectedPerson(name === selectedPerson ? null : name)}
+                  key={person.id}
+                  className={`border-t border-gray-100 cursor-pointer hover:bg-gray-50 ${selectedPerson === person.id ? 'bg-blue-50' : ''}`}
+                  onClick={() => setSelectedPerson(person.id === selectedPerson ? null : person.id)}
+                  title={person.identities.map(i => `${i.source}: ${i.external_id}`).join('\n')}
                 >
-                  <td className="px-4 py-2 font-medium text-gray-900">{name}</td>
-                  <td className={cell(stats.reviews, medReviews)}>{stats.reviews}</td>
-                  <td className={cell(stats.comments, medComments)}>{stats.comments}</td>
-                  <td className={cell(stats.reviews > 0 ? stats.comments / stats.reviews : 0, medRatios)}>
-                    {stats.reviews > 0 ? (stats.comments / stats.reviews).toFixed(1) : '—'}
+                  <td className="px-4 py-2 font-medium text-gray-900">
+                    {person.display_name}
+                    <div className="flex gap-1 mt-0.5">
+                      {person.identities.map(i => (
+                        <span key={i.source} className={`inline-block px-1 py-0 rounded text-[10px] ${
+                          i.source === 'jira' ? 'bg-purple-100 text-purple-700' :
+                          i.source === 'launchpad' ? 'bg-orange-100 text-orange-700' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          {i.source === 'jira' ? 'J' : i.source === 'launchpad' ? 'LP' : 'GH'}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className={cell(person.metrics.commits, medCommits)}>{person.metrics.commits}</td>
+                  <td className={cell(person.metrics.prs_merged, medPRs)}>{person.metrics.prs_merged}</td>
+                  <td className="px-4 py-2 text-right text-gray-600">
+                    +{person.metrics.pr_loc_added.toLocaleString()} / −{person.metrics.pr_loc_removed.toLocaleString()}
+                  </td>
+                  <td className={cell(person.metrics.issues_resolved, medIssues)}>{person.metrics.issues_resolved}</td>
+                  <td className={cell(person.metrics.reviews_given, null)}>{person.metrics.reviews_given}</td>
+                  <td className="px-4 py-2 text-right text-gray-600">
+                    {person.metrics.median_cycle_time_hours?.toFixed(1) ?? '—'}
                   </td>
                 </tr>
               ))}
-              {colLoading && (
-                <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">Loading…</td></tr>
+              {pLoading && (
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400">Loading…</td></tr>
               )}
-              {!colLoading && Object.keys(perPerson).length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">No data for this period</td></tr>
+              {!pLoading && persons.length === 0 && (
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400">No data for this period</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        {selectedPerson && (
+        {selectedPerson && contributions && (
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-medium text-gray-900">{selectedPerson}</h4>
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium text-gray-900">
+                  {contributions.display_name}
+                </h4>
+                <div className="flex gap-1">
+                  {contributions.identities?.map((i: Identity) => (
+                    <span key={i.source} className={`inline-block px-1.5 py-0.5 rounded text-xs ${
+                      i.source === 'jira' ? 'bg-purple-100 text-purple-700' :
+                      i.source === 'launchpad' ? 'bg-orange-100 text-orange-700' :
+                      'bg-gray-100 text-gray-600'
+                    }`}>
+                      {i.source}: {i.external_id}
+                    </span>
+                  ))}
+                </div>
+              </div>
               <button onClick={() => setSelectedPerson(null)} className="text-sm text-blue-600 hover:underline">Clear</button>
             </div>
-            {settings.sections.volume && (
-              <div className="grid grid-cols-4 gap-4 mb-3">
-                <MetricCard title="Commits" value={personVolume?.commits ?? '—'} loading={pvLoading} />
-                <MetricCard title="PRs" value={personVolume?.pull_requests ?? '—'} loading={pvLoading} />
-                <MetricCard title="Issues Resolved" value={personVolume?.issues_resolved ?? '—'} loading={pvLoading} />
-                <MetricCard title="Cycle Time (hrs)" value={personVelocity?.cycle_time_median?.toFixed(1) ?? '—'} loading={pvelLoading} />
+
+            <div className="grid grid-cols-4 gap-4 mb-4">
+              <MetricCard title="Commits" value={totalCommits} loading={cLoading} />
+              <MetricCard title="PRs Merged" value={totalPRs} loading={cLoading} />
+              <MetricCard title="Issues Resolved" value={totalIssuesResolved} loading={cLoading} />
+              <MetricCard title="Reviews Given" value={totalReviews} loading={cLoading} />
+            </div>
+            {totalLocAdded > 0 && (
+              <div className="mb-4 text-xs text-gray-500">
+                +{totalLocAdded.toLocaleString()} / −{totalLocRemoved.toLocaleString()} lines
               </div>
             )}
-            {settings.sections.collaboration && (
-              <div className="grid grid-cols-3 gap-4">
-                <MetricCard title="Reviews Given" value={perPerson[selectedPerson]?.reviews ?? 0} />
-                <MetricCard title="Comments" value={perPerson[selectedPerson]?.comments ?? 0} />
-                <MetricCard
-                  title="Comments/Review"
-                  value={
-                    perPerson[selectedPerson]?.reviews > 0
-                      ? (perPerson[selectedPerson].comments / perPerson[selectedPerson].reviews).toFixed(1)
-                      : '—'
-                  }
-                />
+
+            {dsContributions.map((ds: DatasourceContribution) => (
+              <div key={ds.datasource} className="mb-4">
+                <h5 className="text-sm font-medium text-gray-800 mb-1">
+                  <span className={`inline-block px-1.5 py-0.5 rounded text-xs mr-1.5 ${
+                    ds.role === 'umbrella' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
+                  }`}>
+                    {ds.role === 'umbrella' ? 'Umbrella' : 'Code'}
+                  </span>
+                  {ds.datasource === 'jira' ? 'Jira' : ds.datasource === 'launchpad' ? 'Launchpad' : 'GitHub'}
+                </h5>
+                <div className="bg-white rounded border border-gray-200 overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-3 py-1.5 text-left font-medium text-gray-600">Project</th>
+                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">Commits</th>}
+                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">PRs</th>}
+                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">LOC</th>}
+                        <th className="px-3 py-1.5 text-right font-medium text-gray-600">Issues Resolved</th>
+                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">Reviews</th>}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ds.projects.map((p: ProjectContribution) => (
+                        <tr key={p.project} className="border-t border-gray-100">
+                          <td className="px-3 py-1.5 font-medium text-gray-700">{p.project}</td>
+                          {ds.role === 'code' && <td className="px-3 py-1.5 text-right text-gray-600">{p.commits}</td>}
+                          {ds.role === 'code' && <td className="px-3 py-1.5 text-right text-gray-600">{p.pull_requests}</td>}
+                          {ds.role === 'code' && (
+                            <td className="px-3 py-1.5 text-right text-gray-600">
+                              +{p.pr_loc_added.toLocaleString()} / −{p.pr_loc_removed.toLocaleString()}
+                            </td>
+                          )}
+                          <td className="px-3 py-1.5 text-right text-gray-600">{p.issues_resolved}</td>
+                          {ds.role === 'code' && <td className="px-3 py-1.5 text-right text-gray-600">{p.reviews_given}</td>}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            )}
+            ))}
+
+            {cLoading && <div className="text-center text-gray-400 py-4">Loading contributions…</div>}
           </div>
         )}
       </section>

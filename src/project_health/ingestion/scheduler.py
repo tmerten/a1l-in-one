@@ -92,8 +92,8 @@ class IngestionRunner:
         )
         last_run = result.scalar_one_or_none()
         if last_run is None:
-            # No prior successful run — default to 1 day to avoid massive backfill on first tick
-            return datetime.now(UTC) - timedelta(days=1)
+            # No prior successful run — default to 90 days to capture meaningful history
+            return datetime.now(UTC) - timedelta(days=90)
         return last_run.started_at
 
     async def _fetch_with_retry(
@@ -201,8 +201,9 @@ class SchedulerManager:
             providers.append(JiraProvider(self._config))
 
         for provider in providers:
-            self._locks[provider.id] = asyncio.Lock()
             for et in event_types:
+                lock_key = f"{provider.id}:{et}"
+                self._locks[lock_key] = asyncio.Lock()
                 job_id = f"{provider.id}:{et}"
                 self._scheduler.add_job(
                     self._run_job,
@@ -219,7 +220,8 @@ class SchedulerManager:
             self._scheduler.shutdown(wait=False)
 
     async def _run_job(self, provider: DataSourceProvider, event_type: str) -> None:
-        lock = self._locks.get(provider.id)
+        lock_key = f"{provider.id}:{event_type}"
+        lock = self._locks.get(lock_key)
         if lock is None:
             return
 

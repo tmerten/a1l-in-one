@@ -12,22 +12,25 @@ from project_health.config.loader import load_config
 from project_health.db.reconcile import reconcile_persons_from_config
 from project_health.db.session import get_session_maker
 from project_health.ingestion.scheduler import SchedulerManager
+from project_health.providers.registry import build_registry
 
 
 def build_app(config_path: Path) -> FastAPI:
     """Build the FastAPI application with lifespan management."""
+
     config = load_config(config_path)
     scheduler = SchedulerManager(config)
 
     @contextlib.asynccontextmanager
     async def lifespan(app: FastAPI):
-        # Startup: reconcile identities and start scheduler
+        registry = await build_registry(config)
+        app.state.registry = registry
+
         maker = get_session_maker()
         async with maker() as session:
             await reconcile_persons_from_config(session, config)
         scheduler.start()
         yield
-        # Shutdown
         scheduler.shutdown()
 
     app = FastAPI(
@@ -37,7 +40,6 @@ def build_app(config_path: Path) -> FastAPI:
     )
     app.state.config = config
 
-    # CORS for local dev (frontend on different port)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -46,13 +48,13 @@ def build_app(config_path: Path) -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Register routers
-    from project_health.api.routes import metrics, projects, sprints, sync
+    from project_health.api.routes import metrics, persons, projects, sprints, sync
 
     app.include_router(sync.router, prefix="/api/sync", tags=["sync"])
     app.include_router(sprints.router, prefix="/api/sprints", tags=["sprints"])
     app.include_router(projects.router, prefix="/api/projects", tags=["projects"])
     app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
+    app.include_router(persons.router, prefix="/api/persons", tags=["persons"])
 
     return app
 

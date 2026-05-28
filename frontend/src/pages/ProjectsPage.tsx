@@ -8,8 +8,11 @@ export default function ProjectsPage() {
   const from = searchParams.get('from') ?? undefined
   const to = searchParams.get('to') ?? undefined
   const sprintId = searchParams.get('sprint_id') ?? undefined
-  const project = searchParams.get('projects') ?? undefined
-  const query = { from, to, sprint_id: sprintId, projects: project ? [project] : undefined }
+  const datasource = searchParams.get('datasource') ?? undefined
+  const project = searchParams.get('project') ?? undefined
+  const legacyProject = searchParams.get('projects') ?? undefined
+  const effectiveProject = project || legacyProject
+  const query = { from, to, sprint_id: sprintId, projects: effectiveProject ? [effectiveProject] : undefined, datasource }
 
   const { settings } = useSettings()
 

@@ -1,11 +1,40 @@
-"""Provider interface protocol and event models."""
+"""Provider interface protocol, datasource models, and event models."""
 
 from __future__ import annotations
 
 from datetime import datetime
+from enum import StrEnum
 from typing import Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
+
+
+class DatasourceRole(StrEnum):
+    UMBRELLA = "umbrella"
+    CODE = "code"
+
+
+class Datasource(BaseModel):
+    id: str
+    role: DatasourceRole
+    display_name: str
+    projects: list[str] = Field(default_factory=list)
+    is_configured: bool = False
+
+
+SOURCE_CAPABILITIES: dict[str, set[str]] = {
+    "github": {"commit", "pull_request", "pull_request_review", "issue"},
+    "jira": {"issue", "sprint"},
+    "launchpad": {"pull_request", "pull_request_review", "commit", "issue"},
+}
+
+
+def sources_for_event_type(event_type: str, configured_sources: set[str]) -> set[str]:
+    return {
+        source
+        for source in configured_sources
+        if event_type in SOURCE_CAPABILITIES.get(source, set())
+    }
 
 
 class RawCommitEvent(BaseModel):

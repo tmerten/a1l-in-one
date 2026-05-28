@@ -41,6 +41,7 @@ class TeamMember(BaseModel):
     name: str = Field(..., description="Display name")
     github: str | None = Field(default=None, description="GitHub username")
     jira: str | None = Field(default=None, description="Jira accountId")
+    launchpad: str | None = Field(default=None, description="Launchpad username")
 
 
 class GithubProject(BaseModel):
@@ -56,6 +57,12 @@ class JiraProject(BaseModel):
     board_id: int = Field(..., description="Board ID for sprint integration")
 
 
+class LaunchpadProject(BaseModel):
+    """Launchpad project reference."""
+
+    name: str = Field(..., description="Launchpad project name")
+
+
 class JiraCredentials(BaseModel):
     """Jira API credentials."""
 
@@ -64,11 +71,18 @@ class JiraCredentials(BaseModel):
     api_token: str = Field(..., description="Jira API token")
 
 
+class LaunchpadCredentials(BaseModel):
+    """Launchpad API credentials."""
+
+    oauth_token: str = Field(..., description="Launchpad OAuth token")
+
+
 class Credentials(BaseModel):
     """API credentials with env-var resolution."""
 
     github_token: str = Field(..., description="GitHub personal access token")
     jira: JiraCredentials | None = Field(default=None)
+    launchpad: LaunchpadCredentials | None = Field(default=None)
 
 
 class IngestionSettings(BaseModel):
@@ -136,6 +150,7 @@ class ProjectsConfig(BaseModel):
 
     github: list[GithubProject] = Field(default_factory=list)
     jira: list[JiraProject] = Field(default_factory=list)
+    launchpad: list[LaunchpadProject] | None = Field(default=None)
 
     @field_validator("github", mode="before")
     @classmethod

@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { getMetrics, getMetricsTs, getProjects, getSyncStatus, getSprints } from '../api/client'
+import {
+  getMetrics, getMetricsTs, getProjects, getSyncStatus, getSprints,
+  getPersons, getPersonContributions,
+} from '../api/client'
 
 export function useSyncStatus() {
   return useQuery({
@@ -14,7 +17,7 @@ export function useSprints(project?: string) {
 }
 
 export function useProjects() {
-  return useQuery({ queryKey: ['projects'], queryFn: getProjects })
+  return useQuery({ queryKey: ['projects'], queryFn: () => getProjects() })
 }
 
 export function useContributionVolume(query: Record<string, string | string[] | undefined>) {
@@ -47,4 +50,16 @@ export function useVelocityTs(query: Record<string, string | undefined>) {
 
 export function useCollaborationTs(query: Record<string, string | undefined>) {
   return useQuery({ queryKey: ['metrics', 'collaboration-ts', query], queryFn: () => getMetricsTs('collaboration', query) })
+}
+
+export function usePersons(query: Record<string, string | string[] | undefined>) {
+  return useQuery({ queryKey: ['persons', query], queryFn: () => getPersons(query) })
+}
+
+export function usePersonContributions(personId: string, query: Record<string, string | string[] | undefined>) {
+  return useQuery({
+    queryKey: ['personContributions', personId, query],
+    queryFn: () => getPersonContributions(personId, query),
+    enabled: !!personId,
+  })
 }

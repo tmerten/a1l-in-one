@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from project_health.config.loader import Config
 from project_health.db.session import get_session_maker
+from project_health.providers.registry import DataSourceRegistry
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
@@ -21,3 +22,8 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 def get_config(request: Request) -> Config:
     """Return the app-level Config stored on app.state."""
     return request.app.state.config
+
+
+def get_registry(request: Request) -> DataSourceRegistry:
+    """Return the app-level DataSourceRegistry stored on app.state."""
+    return request.app.state.registry

@@ -23,7 +23,7 @@ export async function postSyncRun(source?: string, eventType?: string) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   })
-  if (resp.status === 409) return null  // already running — caller will poll
+  if (resp.status === 409) return null
   if (!resp.ok) throw new Error(`API error ${resp.status}: ${resp.statusText}`)
   return resp.json()
 }
@@ -52,7 +52,17 @@ export async function getMetricsTs(endpoint: string, query: Record<string, strin
   return fetchJson(`/metrics/${endpoint}/ts?${buildParams(query)}`)
 }
 
-export async function getProjects() {
-  return fetchJson('/projects')
+export async function getProjects(format?: string) {
+  const params = new URLSearchParams()
+  if (format) params.set('format', format)
+  const suffix = params.toString() ? `?${params}` : ''
+  return fetchJson(`/projects${suffix}`)
 }
 
+export async function getPersons(query: Record<string, string | string[] | undefined>) {
+  return fetchJson(`/persons?${buildParams(query)}`)
+}
+
+export async function getPersonContributions(personId: string, query: Record<string, string | string[] | undefined>) {
+  return fetchJson(`/persons/${personId}/contributions?${buildParams(query)}`)
+}

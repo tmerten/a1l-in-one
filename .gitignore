@@ -3,7 +3,7 @@
 project-health.yaml
 node_modules
 .pi/
-project_health.db
+*.db
 .venv
 __pycache__/
 *.pyc

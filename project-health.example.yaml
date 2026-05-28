@@ -16,6 +16,8 @@ projects:
   jira:
     - key: PROJ
       board_id: 42
+  # launchpad:
+  #   - name: my-project
 
 bots:
   github:
@@ -29,6 +31,8 @@ credentials:
     base_url: https://company.atlassian.net
     email: user@example.com
     api_token: ${JIRA_API_TOKEN}
+  # launchpad:
+  #   oauth_token: ${LAUNCHPAD_OAUTH_TOKEN}
 
 ingestion:
   interval_minutes: 15

@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useSyncStatus } from '../hooks/useMetrics'
 import TimeframeSelector from './TimeframeSelector'
-import ProjectFilter from './ProjectFilter'
+import DatasourceProjectFilter from './DatasourceProjectFilter'
 import SyncStatusBadge from './SyncStatusBadge'
 import { SettingsProvider } from './SettingsPanel'
 
@@ -46,7 +46,7 @@ export default function AppShell() {
           </div>
           <div className="mt-3 flex items-center gap-4 flex-wrap">
             <TimeframeSelector />
-            <ProjectFilter />
+            <DatasourceProjectFilter />
           </div>
         </div>
       </header>

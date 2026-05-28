@@ -12,9 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from project_health.aggregation.core import Timeframe, build_timeframe
 from project_health.aggregation.queries import AggregationQueries
-from project_health.api.deps import get_config, get_session
+from project_health.api.deps import get_config, get_registry, get_session
 from project_health.config.loader import Config
 from project_health.db.models import Sprint
+from project_health.providers.registry import DataSourceRegistry
 
 router = APIRouter()
 
@@ -27,7 +28,6 @@ async def _resolve_timeframe(
     projects: list[str] | None = None,
     actors: list[str] | None = None,
 ) -> Timeframe:
-    """Resolve sprint_id to date range if provided, else fall back to build_timeframe."""
     if sprint_id:
         result = await session.execute(select(Sprint).where(Sprint.id == sprint_id))
         sprint = result.scalar_one_or_none()
@@ -41,6 +41,13 @@ async def _resolve_timeframe(
                 actors=actors,
             )
     return build_timeframe(from_date, to_date, sprint_id, projects=projects, actors=actors)
+
+
+def _configured_sources(registry: DataSourceRegistry, datasource: str | None) -> set[str]:
+    sources = registry.configured_sources()
+    if datasource:
+        sources = sources & {datasource}
+    return sources
 
 
 class ContributionVolumeResponse(BaseModel):
@@ -90,11 +97,13 @@ async def contribution_volume(
     sprint_id: str | None = Query(None),
     projects: list[str] | None = Query(None),
     actors: list[str] | None = Query(None),
+    datasource: str | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> ContributionVolumeResponse:
     ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
-    queries = AggregationQueries(session, config)
+    queries = AggregationQueries(session, config, _configured_sources(registry, datasource))
     result = await queries.contribution_volume(ctx)
     return ContributionVolumeResponse(**result)
 
@@ -106,11 +115,13 @@ async def velocity(
     sprint_id: str | None = Query(None),
     projects: list[str] | None = Query(None),
     actors: list[str] | None = Query(None),
+    datasource: str | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> VelocityResponse:
     ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
-    queries = AggregationQueries(session, config)
+    queries = AggregationQueries(session, config, _configured_sources(registry, datasource))
     result = await queries.velocity(ctx)
     return VelocityResponse(**result)
 
@@ -122,11 +133,13 @@ async def composition(
     sprint_id: str | None = Query(None),
     projects: list[str] | None = Query(None),
     actors: list[str] | None = Query(None),
+    datasource: str | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> CompositionResponse:
     ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
-    queries = AggregationQueries(session, config)
+    queries = AggregationQueries(session, config, _configured_sources(registry, datasource))
     result = await queries.composition(ctx)
     return CompositionResponse(**result)
 
@@ -138,11 +151,13 @@ async def collaboration(
     sprint_id: str | None = Query(None),
     projects: list[str] | None = Query(None),
     actors: list[str] | None = Query(None),
+    datasource: str | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> CollaborationResponse:
     ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
-    queries = AggregationQueries(session, config)
+    queries = AggregationQueries(session, config, _configured_sources(registry, datasource))
     result = await queries.collaboration(ctx)
     return CollaborationResponse(**result)
 
@@ -157,8 +172,6 @@ async def sprint_burndown(
     result = await queries.sprint_burndown(sprint_id)
     return SprintBurndownResponse(**result)
 
-
-# Time-series variants
 
 class TimeSeriesPoint(BaseModel):
     bucket: str
@@ -177,11 +190,13 @@ async def contribution_volume_ts(
     sprint_id: str | None = Query(None),
     projects: list[str] | None = Query(None),
     actors: list[str] | None = Query(None),
+    datasource: str | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> TimeSeriesResponse:
     ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
-    queries = AggregationQueries(session, config)
+    queries = AggregationQueries(session, config, _configured_sources(registry, datasource))
     result = await queries.contribution_volume_ts(ctx)
     return TimeSeriesResponse(**result)
 
@@ -193,11 +208,13 @@ async def velocity_ts(
     sprint_id: str | None = Query(None),
     projects: list[str] | None = Query(None),
     actors: list[str] | None = Query(None),
+    datasource: str | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> TimeSeriesResponse:
     ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
-    queries = AggregationQueries(session, config)
+    queries = AggregationQueries(session, config, _configured_sources(registry, datasource))
     result = await queries.velocity_ts(ctx)
     return TimeSeriesResponse(**result)
 
@@ -209,10 +226,12 @@ async def collaboration_ts(
     sprint_id: str | None = Query(None),
     projects: list[str] | None = Query(None),
     actors: list[str] | None = Query(None),
+    datasource: str | None = Query(None),
     session: AsyncSession = Depends(get_session),
     config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> TimeSeriesResponse:
     ctx = await _resolve_timeframe(session, from_date, to_date, sprint_id, projects, actors)
-    queries = AggregationQueries(session, config)
+    queries = AggregationQueries(session, config, _configured_sources(registry, datasource))
     result = await queries.collaboration_ts(ctx)
     return TimeSeriesResponse(**result)
