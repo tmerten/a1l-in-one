@@ -1,0 +1,103 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "2662c15fe1e4",
+  "session_id": "ses_191b7e082ffefIbP7eQN0KtoUI",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-28T15:53:13.019028977Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "frontend/src/api/client.ts",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/hooks/useMetrics.ts",
+    "frontend/src/pages/PeoplePage.tsx",
+    "frontend/src/pages/ProjectsPage.tsx",
+    "project-health.example.yaml",
+    "src/project_health/aggregation/queries.py",
+    "src/project_health/api/deps.py",
+    "src/project_health/api/routes/metrics.py",
+    "src/project_health/api/routes/projects.py",
+    "src/project_health/api/server.py",
+    "src/project_health/config/loader.py",
+    "src/project_health/providers/protocol.py",
+    "src/project_health/providers/registry.py"
+  ],
+  "agent": "OpenCode",
+  "model": "claude-opus-4.6",
+  "turn_id": "ac0264e063e8",
+  "token_usage": {
+    "input_tokens": 6,
+    "cache_creation_tokens": 20455,
+    "cache_read_tokens": 15967,
+    "output_tokens": 1199,
+    "api_call_count": 4
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-28T15:53:13.006797544Z",
+    "agent_lines": 0,
+    "agent_removed": 1,
+    "human_added": 0,
+    "human_modified": 35,
+    "human_removed": 137,
+    "total_committed": 15,
+    "total_lines_changed": 193,
+    "agent_percentage": 0.5181347150259068,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1820,
+      "user_lines_removed": 172,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "frontend/src/api/client.ts": 13,
+        "frontend/src/components/AppShell.tsx": 3,
+        "frontend/src/components/DatasourceProjectFilter.tsx": 115,
+        "frontend/src/hooks/useMetrics.ts": 17,
+        "frontend/src/pages/PeoplePage.tsx": 157,
+        "frontend/src/pages/ProjectsPage.tsx": 5,
+        "openspec/changes/unified-contributions-view/.openspec.yaml": 2,
+        "openspec/changes/unified-contributions-view/design.md": 317,
+        "openspec/changes/unified-contributions-view/proposal.md": 89,
+        "openspec/changes/unified-contributions-view/tasks.md": 98,
+        "project-health.example.yaml": 4,
+        "src/project_health/aggregation/queries.py": 388,
+        "src/project_health/api/deps.py": 7,
+        "src/project_health/api/routes/metrics.py": 30,
+        "src/project_health/api/routes/persons.py": 141,
+        "src/project_health/api/routes/projects.py": 37,
+        "src/project_health/api/server.py": 7,
+        "src/project_health/config/loader.py": 15,
+        "src/project_health/providers/protocol.py": 30,
+        "src/project_health/providers/registry.py": 49,
+        "tests/test_unified_contributions.py": 296
+      },
+      "user_removed_per_file": {
+        "frontend/src/api/client.ts": 3,
+        "frontend/src/components/AppShell.tsx": 3,
+        "frontend/src/hooks/useMetrics.ts": 2,
+        "frontend/src/pages/PeoplePage.tsx": 58,
+        "frontend/src/pages/ProjectsPage.tsx": 2,
+        "src/project_health/aggregation/queries.py": 61,
+        "src/project_health/api/deps.py": 1,
+        "src/project_health/api/routes/metrics.py": 11,
+        "src/project_health/api/routes/projects.py": 13,
+        "src/project_health/api/server.py": 5,
+        "src/project_health/providers/protocol.py": 1,
+        "src/project_health/providers/registry.py": 12
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1820,
+      "agent_lines_removed": 172
+    }
+  ]
+}

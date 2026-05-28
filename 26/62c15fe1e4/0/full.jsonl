@@ -1,0 +1,484 @@
+{
+  "info": {
+    "id": "ses_191b7e082ffefIbP7eQN0KtoUI",
+    "slug": "curious-knight",
+    "projectID": "9f45355d0877ef58dc73b93be3e492ea509d0f8a",
+    "directory": "/project",
+    "path": "",
+    "parentID": "ses_1928f0a29ffexk5fBQegfpTaqy",
+    "title": "Find Jira ingestion code (@explore subagent)",
+    "agent": "explore",
+    "model": {
+      "id": "claude-opus-4.6",
+      "providerID": "github-copilot",
+      "variant": "default"
+    },
+    "version": "1.15.10",
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    },
+    "cost": 0,
+    "tokens": {
+      "input": 6,
+      "output": 1199,
+      "reasoning": 0,
+      "cache": {
+        "read": 15967,
+        "write": 20455
+      }
+    },
+    "permission": [
+      {
+        "permission": "todowrite",
+        "action": "deny",
+        "pattern": "*"
+      },
+      {
+        "permission": "task",
+        "action": "deny",
+        "pattern": "*"
+      }
+    ],
+    "time": {
+      "created": 1779966680957,
+      "updated": 1779966710728
+    }
+  },
+  "messages": [
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1779966680965
+        },
+        "tools": {
+          "todowrite": false,
+          "task": false
+        },
+        "agent": "explore",
+        "model": {
+          "providerID": "github-copilot",
+          "modelID": "claude-opus-4.6"
+        },
+        "summary": {
+          "diffs": []
+        },
+        "id": "msg_e6e481f83001RIL12wGoyxL5aF",
+        "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Find the Jira provider/ingestion code in the project. I need to understand how Jira data gets written to the raw_events table. Look for files related to Jira client, Jira ingestion, Jira sync, or Jira provider. Return the file paths and a brief summary of what each does, focusing on how/whether issues are written to raw_events.",
+          "id": "prt_e6e481f87002eI38lix26iumie",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e481f83001RIL12wGoyxL5aF"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e6e481f83001RIL12wGoyxL5aF",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 4888,
+          "input": 3,
+          "output": 109,
+          "reasoning": 0,
+          "cache": {
+            "write": 4776,
+            "read": 0
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1779966681041,
+          "completed": 1779966684356
+        },
+        "finish": "tool-calls",
+        "id": "msg_e6e481fd1001EXZE5CLK60mxcW",
+        "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI"
+      },
+      "parts": [
+        {
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-start",
+          "id": "prt_e6e482a40001nWFFtJ4J6L6RNw",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e481fd1001EXZE5CLK60mxcW"
+        },
+        {
+          "type": "tool",
+          "tool": "grep",
+          "callID": "toolu_bdrk_01DDKZMe7arWShnjDVWpumwY",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "jira",
+              "include": "*.py"
+            },
+            "output": "Found 75 matches\n/project/src/project_health/providers/protocol.py:\n  Line 27:     \"jira\": {\"issue\", \"sprint\"},\n\n  Line 95:     id: str  # \"github\", \"jira\", \"launchpad\"\n\n\n/project/src/project_health/aggregation/queries.py:\n  Line 69:         self._configured_sources = configured_sources or {\"github\", \"jira\"}\n\n  Line 182:                 \"jira\": {\n\n  Line 382:             WHERE event_type = 'issue' AND source = 'jira'\n\n  Line 580:             role = DatasourceRole.UMBRELLA if source == \"jira\" else DatasourceRole.CODE\n\n\n/project/src/project_health/providers/registry.py:\n  Line 41:     jira_configured = bool(config.projects.jira) and bool(config.credentials.jira)\n\n  Line 47:     if jira_configured:\n\n  Line 48:         from project_health.providers.jira import JiraProvider\n\n  Line 56:             id=\"jira\",\n\n  Line 59:             projects=[p.key for p in config.projects.jira],\n\n  Line 60:             is_configured=jira_configured,\n\n\n/project/tests/test_unified_contributions.py:\n  Line 43:             {\"name\": \"Alice\", \"github\": \"alice-gh\", \"jira\": \"alice-jira\"},\n\n  Line 48:             \"jira\": [{\"key\": \"PROJ\", \"board_id\": 42}],\n\n  Line 52:             \"jira\": {\n\n  Line 55:                 \"api_token\": \"jira_test\",\n\n  Line 83:     configured = {\"github\", \"jira\"}\n\n  Line 88:     assert issue_sources == {\"github\", \"jira\"}\n\n  Line 91:     assert sprint_sources == {\"jira\"}\n\n  Line 95:     configured = {\"github\", \"jira\", \"launchpad\"}\n\n  Line 103:     assert issue_sources == {\"github\", \"jira\", \"launchpad\"}\n\n  Line 112:     jira_ds = next(ds for ds in datasources if ds.id == \"jira\")\n\n  Line 113:     assert jira_ds.role == DatasourceRole.UMBRELLA\n\n  Line 114:     assert jira_ds.is_configured is True\n\n  Line 115:     assert \"PROJ\" in jira_ds.projects\n\n  Line 129:     ds2 = Datasource(id=\"jira\", role=DatasourceRole.UMBRELLA, display_name=\"Jira\", projects=[\"P\"], is_configured=True)\n\n  Line 133:     assert registry.configured_sources() == {\"github\", \"jira\"}\n\n  Line 153:     await writer.write_issues(\"jira\", [\n\n  Line 154:         RawIssueEvent(external_id=\"ISS-1\", timestamp=now, actor=\"alice-jira\", project=\"PROJ\",\n\n  Line 158:     queries = AggregationQueries(db_session, full_config, {\"github\", \"jira\"})\n\n  Line 217:     configured = {\"github\", \"jira\"}\n\n  Line 224:     assert \"jira\" not in params.values()\n\n  Line 226:     configured_with_lp = {\"github\", \"jira\", \"launchpad\"}\n\n  Line 231:     assert \"jira\" not in params2.values()\n\n  Line 248:     await writer.write_issues(\"jira\", [\n\n  Line 249:         RawIssueEvent(external_id=\"ISS-1\", timestamp=now, actor=\"alice-jira\", project=\"PROJ\",\n\n  Line 256:     queries = AggregationQueries(db_session, full_config, {\"github\", \"jira\"})\n\n  Line 264:     jira_contrib = next(c for c in result[\"contributions\"] if c[\"datasource\"] == \"jira\")\n\n  Line 265:     assert jira_contrib[\"role\"] == \"umbrella\"\n\n\n/project/src/project_health/config/loader.py:\n  Line 43:     jira: str | None = Field(default=None, description=\"Jira accountId\")\n\n  Line 84:     jira: JiraCredentials | None = Field(default=None)\n\n  Line 99:     jira: dict[str, str] = Field(default_factory=dict)\n\n  Line 131:         if self.projects.jira and (not self.credentials.jira):\n\n  Line 132:             raise ValueError(\"Jira projects configured but jira credentials are missing\")\n\n  Line 140:     def all_jira_projects(self) -> list[JiraProject]:\n\n  Line 141:         return self.projects.jira\n\n  Line 152:     jira: list[JiraProject] = Field(default_factory=list)\n\n\n/project/src/project_health/ingestion/scheduler.py:\n  Line 199:         if self._config.projects.jira:\n\n  Line 200:             from project_health.providers.jira import JiraProvider\n\n\n/project/src/project_health/providers/jira.py:\n  Line 23:     id = \"jira\"\n\n  Line 26:         self._creds = config.credentials.jira\n\n  Line 27:         self._projects = config.all_jira_projects\n\n\n/project/tests/test_integration.py:\n  Line 127:     cache.set(\"metrics\", {\"project\": \"PROJ\"}, {\"jira\"}, {\"issues\": 5})\n\n  Line 131:     val = cache.get(\"metrics\", {\"project\": \"PROJ\"}, {\"jira\"})\n\n  Line 135:     cache.invalidate_source(\"jira\")\n\n  Line 136:     val2 = cache.get(\"metrics\", {\"project\": \"PROJ\"}, {\"jira\"})\n\n\n/project/src/project_health/aggregation/core.py:\n  Line 86:     if source == \"jira\":\n\n  Line 87:         return mapping.jira.get(raw_type, \"other\")\n\n\n/project/tests/test_ingestion.py:\n  Line 40:     count = await writer.write_issues(\"jira\", events)\n\n  Line 45:     count2 = await writer.write_issues(\"jira\", events)\n\n  Line 66:     await writer.write_issues(\"jira\", events)\n\n  Line 74:     assert identity.source == \"jira\"\n\n\n/project/tests/test_db.py:\n  Line 29:             {\"name\": \"Bob\", \"github\": \"bob-gh\", \"jira\": \"123\"},\n\n  Line 47:     assert len(identities) == 3  # Alice(gh) + Bob(gh) + Bob(jira)\n\n\n/project/tests/test_config.py:\n  Line 17:     jira: \"12345\"\n\n  Line 22:   jira:\n\n  Line 28:   jira:\n\n  Line 42:     monkeypatch.setenv(\"JIRA_TOKEN\", \"jira_test_token\")\n\n  Line 47:     assert cfg.credentials.jira.api_token == \"jira_test_token\"\n\n  Line 74: def test_jira_without_creds_raises(monkeypatch, tmp_path: Path):\n\n  Line 78:   jira:\n\n  Line 86:     with pytest.raises(ValueError, match=\"jira credentials\"):\n\n\n/project/src/project_health/db/reconcile.py:\n  Line 88:     if member.jira:\n\n  Line 89:         result[\"jira\"] = member.jira\n\n\n/project/src/project_health/db/models.py:\n  Line 30:     source: Mapped[str] = mapped_column(String, nullable=False)  # \"github\", \"jira\"\n",
+            "metadata": {
+              "matches": 75,
+              "truncated": false
+            },
+            "title": "jira",
+            "time": {
+              "start": 1779966683907,
+              "end": 1779966683918
+            }
+          },
+          "id": "prt_e6e482a4200119yBQSDEZT3ofR",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e481fd1001EXZE5CLK60mxcW"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "toolu_bdrk_0176ZyadkHXLC5uKPTK6c6UD",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/*jira*"
+            },
+            "output": "/project/src/project_health/providers/jira.py",
+            "metadata": {
+              "count": 1,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1779966684298,
+              "end": 1779966684311
+            }
+          },
+          "id": "prt_e6e482b04001MFqaw1F0TV7rj0",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e481fd1001EXZE5CLK60mxcW"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-finish",
+          "tokens": {
+            "total": 4888,
+            "input": 3,
+            "output": 109,
+            "reasoning": 0,
+            "cache": {
+              "write": 4776,
+              "read": 0
+            }
+          },
+          "cost": 0,
+          "id": "prt_e6e482caa0014wt75tjndTuPVK",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e481fd1001EXZE5CLK60mxcW"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e6e481f83001RIL12wGoyxL5aF",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 6983,
+          "input": 1,
+          "output": 131,
+          "reasoning": 0,
+          "cache": {
+            "write": 6851,
+            "read": 0
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1779966684361,
+          "completed": 1779966688083
+        },
+        "finish": "tool-calls",
+        "id": "msg_e6e482cc9001ExadCLv8ydxMk5",
+        "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI"
+      },
+      "parts": [
+        {
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-start",
+          "id": "prt_e6e483784001y9BAJiExwA33fC",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e482cc9001ExadCLv8ydxMk5"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "toolu_bdrk_012bEPCoPyAmhQ82WPmrMnuJ",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/src/project_health/providers/jira.py"
+            },
+            "output": "<path>/project/src/project_health/providers/jira.py</path>\n<type>file</type>\n<content>\n1: \"\"\"Jira data source provider.\"\"\"\n2: \n3: from __future__ import annotations\n4: \n5: from datetime import datetime\n6: from typing import Any\n7: \n8: import httpx\n9: \n10: from project_health.config.loader import Config\n11: from project_health.providers.protocol import (\n12:     RawCommitEvent,\n13:     RawIssueEvent,\n14:     RawPREvent,\n15:     RawReviewEvent,\n16:     SprintDefinition,\n17: )\n18: \n19: \n20: class JiraProvider:\n21:     \"\"\"Jira REST API provider for issues and sprints.\"\"\"\n22: \n23:     id = \"jira\"\n24: \n25:     def __init__(self, config: Config) -> None:\n26:         self._creds = config.credentials.jira\n27:         self._projects = config.all_jira_projects\n28:         self._client: httpx.AsyncClient | None = None\n29: \n30:     async def _get_client(self) -> httpx.AsyncClient:\n31:         if self._client is None:\n32:             if self._creds is None:\n33:                 raise RuntimeError(\"Jira credentials not configured\")\n34:             auth = httpx.BasicAuth(self._creds.email, self._creds.api_token)\n35:             self._client = httpx.AsyncClient(\n36:                 base_url=self._creds.base_url.rstrip(\"/\"),\n37:                 auth=auth,\n38:                 headers={\n39:                     \"Accept\": \"application/json\",\n40:                     \"Content-Type\": \"application/json\",\n41:                 },\n42:                 timeout=httpx.Timeout(60.0),\n43:             )\n44:         return self._client\n45: \n46:     # ------------------------------------------------------------------\n47:     # 6.2 fetch_issues\n48:     # ------------------------------------------------------------------\n49:     async def fetch_issues(self, since: datetime) -> list[RawIssueEvent]:\n50:         client = await self._get_client()\n51:         events: list[RawIssueEvent] = []\n52:         since_str = since.strftime(\"%Y-%m-%d %H:%M\")\n53: \n54:         for proj in self._projects:\n55:             jql = f'project = \"{proj.key}\" AND updated >= \"{since_str}\" ORDER BY updated DESC'\n56:             issues = await self._paginate(client, \"/rest/api/2/search\", jql=jql)\n57:             for issue in issues:\n58:                 fields = issue.get(\"fields\", {})\n59:                 created_ts = datetime.fromisoformat(\n60:                     fields[\"created\"].replace(\"Z\", \"+00:00\")\n61:                 )\n62:                 events.append(\n63:                     RawIssueEvent(\n64:                         external_id=issue[\"key\"],\n65:                         timestamp=created_ts,\n66:                         actor=self._extract_actor(fields),\n67:                         project=proj.key,\n68:                         data={\n69:                             \"summary\": fields.get(\"summary\", \"\"),\n70:                             \"issue_type\": fields.get(\"issuetype\", {}).get(\"name\", \"\"),\n71:                             \"story_points\": self._extract_story_points(fields),\n72:                             \"status\": fields.get(\"status\", {}).get(\"name\", \"\"),\n73:                             \"labels\": fields.get(\"labels\", []),\n74:                             \"description\": self._extract_description(fields),\n75:                             \"updated\": fields.get(\"updated\"),\n76:                             \"resolutiondate\": fields.get(\"resolutiondate\"),\n77:                             \"assignee\": fields.get(\"assignee\", {}).get(\"accountId\")\n78:                                 if fields.get(\"assignee\")\n79:                                 else None,\n80:                         },\n81:                     )\n82:                 )\n83:         return events\n84: \n85:     # ------------------------------------------------------------------\n86:     # 6.3 fetch_sprints\n87:     # ------------------------------------------------------------------\n88:     async def fetch_sprints(self) -> list[SprintDefinition]:\n89:         client = await self._get_client()\n90:         sprints: list[SprintDefinition] = []\n91: \n92:         for proj in self._projects:\n93:             try:\n94:                 board_resp = await client.get(\n95:                     f\"/rest/agile/1.0/board/{proj.board_id}/sprint\",\n96:                     params={\"state\": \"active,future,closed\", \"maxResults\": \"100\"},\n97:                 )\n98:                 if board_resp.status_code != 200:\n99:                     continue\n100:                 data = board_resp.json()\n101:                 for sprint in data.get(\"values\", []):\n102:                     start = sprint.get(\"startDate\")\n103:                     end = sprint.get(\"endDate\")\n104:                     if not start or not end:\n105:                         continue\n106:                     sprints.append(\n107:                         SprintDefinition(\n108:                             id=str(sprint[\"id\"]),\n109:                             name=sprint[\"name\"],\n110:                             project=proj.key,\n111:                             start_date=datetime.fromisoformat(start.replace(\"Z\", \"+00:00\")),\n112:                             end_date=datetime.fromisoformat(end.replace(\"Z\", \"+00:00\")),\n113:                             state=sprint.get(\"state\", \"unknown\"),\n114:                         )\n115:                     )\n116:             except httpx.HTTPError as exc:\n117:                 import logging\n118:                 logging.getLogger(__name__).warning(\n119:                     \"Sprint fetch failed for board %s: %s\", proj.board_id, exc\n120:                 )\n121:                 continue\n122:         return sprints\n123: \n124:     # ------------------------------------------------------------------\n125:     # 6.4 health_check\n126:     # ------------------------------------------------------------------\n127:     async def health_check(self) -> bool:\n128:         client = await self._get_client()\n129:         try:\n130:             resp = await client.get(\"/rest/api/2/myself\")\n131:             if resp.status_code == 200:\n132:                 # Verify project access\n133:                 if self._projects:\n134:                     proj = self._projects[0]\n135:                     proj_resp = await client.get(\n136:                         f'/rest/api/2/project/{proj.key}',\n137:                     )\n138:                     return proj_resp.status_code == 200\n139:                 return True\n140:             return False\n141:         except Exception:\n142:             return False\n143: \n144:     # ------------------------------------------------------------------\n145:     # 6.5 Unsupported event types\n146:     # ------------------------------------------------------------------\n147:     async def fetch_commits(self, _since: datetime) -> list[RawCommitEvent]:\n148:         return []\n149: \n150:     async def fetch_pull_requests(self, _since: datetime) -> list[RawPREvent]:\n151:         return []\n152: \n153:     async def fetch_pull_request_reviews(self, _since: datetime) -> list[RawReviewEvent]:\n154:         return []\n155: \n156:     # ------------------------------------------------------------------\n157:     # Helpers\n158:     # ------------------------------------------------------------------\n159:     async def _paginate(\n160:         self,\n161:         client: httpx.AsyncClient,\n162:         path: str,\n163:         jql: str,\n164:     ) -> list[dict[str, Any]]:\n165:         start_at = 0\n166:         max_results = 100\n167:         all_issues: list[dict[str, Any]] = []\n168: \n169:         while True:\n170:             resp = await client.get(\n171:                 path,\n172:                 params={\n173:                     \"jql\": jql,\n174:                     \"startAt\": str(start_at),\n175:                     \"maxResults\": str(max_results),\n176:                     \"fields\": \"summary,issuetype,status,labels,created,updated,reporter,assignee,customfield_10016,description\",\n177:                 },\n178:             )\n179:             if resp.status_code != 200:\n180:                 break\n181:             data = resp.json()\n182:             issues = data.get(\"issues\", [])\n183:             if not issues:\n184:                 break\n185:             all_issues.extend(issues)\n186:             if len(issues) < max_results:\n187:                 break\n188:             start_at += max_results\n189: \n190:         return all_issues\n191: \n192:     def _extract_actor(self, fields: dict[str, Any]) -> str | None:\n193:         \"\"\"Extract actor from reporter or assignee.\"\"\"\n194:         reporter = fields.get(\"reporter\")\n195:         if reporter:\n196:             return reporter.get(\"accountId\")\n197:         assignee = fields.get(\"assignee\")\n198:         if assignee:\n199:             return assignee.get(\"accountId\")\n200:         return None\n201: \n202:     def _extract_story_points(self, fields: dict[str, Any]) -> float | None:\n203:         \"\"\"Extract story points from custom field.\"\"\"\n204:         # Jira often uses customfield_10016 for story points; try common fields\n205:         for key in (\"customfield_10016\", \"customfield_10004\", \"customfield_10000\"):\n206:             val = fields.get(key)\n207:             if val is not None and isinstance(val, (int, float)):\n208:                 return float(val)\n209:         return None\n210: \n211:     def _extract_description(self, fields: dict[str, Any]) -> str:\n212:         \"\"\"Extract plain-text description from Jira's ADF format.\"\"\"\n213:         desc = fields.get(\"description\")\n214:         if desc is None:\n215:             return \"\"\n216:         if isinstance(desc, str):\n217:             return desc\n218:         # Minimal ADF to text (v1)\n219:         if isinstance(desc, dict):\n220:             return desc.get(\"text\", \"\")\n221:         return \"\"\n\n(End of file - total 221 lines)\n</content>",
+            "metadata": {
+              "preview": "\"\"\"Jira data source provider.\"\"\"\n\nfrom __future__ import annotations\n\nfrom datetime import datetime\nfrom typing import Any\n\nimport httpx\n\nfrom project_health.config.loader import Config\nfrom project_health.providers.protocol import (\n    RawCommitEvent,\n    RawIssueEvent,\n    RawPREvent,\n    RawReviewEvent,\n    SprintDefinition,\n)\n\n\nclass JiraProvider:",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "src/project_health/providers/jira.py",
+            "time": {
+              "start": 1779966687208,
+              "end": 1779966687217
+            }
+          },
+          "id": "prt_e6e483786001lbXfQAM6lLnXpx",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e482cc9001ExadCLv8ydxMk5"
+        },
+        {
+          "type": "tool",
+          "tool": "grep",
+          "callID": "toolu_bdrk_01Vm1s6sVgXNk9ZmHUhH88Mp",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "write_issues|raw_events|RawIssueEvent",
+              "include": "*.py"
+            },
+            "output": "Found 67 matches\n/project/src/project_health/providers/protocol.py:\n  Line 70: class RawIssueEvent(BaseModel):\n\n  Line 109:     async def fetch_issues(self, since: datetime) -> list[RawIssueEvent]:\n\n\n/project/src/project_health/aggregation/queries.py:\n  Line 58:     \"\"\"Execute aggregation queries against raw_events.\"\"\"\n\n  Line 98:             SELECT COUNT(*) as cnt FROM raw_events\n\n  Line 113:             FROM raw_events\n\n  Line 129:             SELECT COUNT(*) as cnt FROM raw_events\n\n  Line 139:             SELECT COUNT(*) as cnt FROM raw_events\n\n  Line 150:             SELECT COUNT(*) as cnt FROM raw_events\n\n  Line 199:             FROM raw_events\n\n  Line 232:             FROM raw_events pr\n\n  Line 233:             JOIN raw_events r ON (\n\n  Line 276:             SELECT data, source FROM raw_events\n\n  Line 296:             SELECT data FROM raw_events\n\n  Line 337:             FROM raw_events r\n\n  Line 338:             JOIN raw_events pr ON (\n\n  Line 381:             SELECT data FROM raw_events\n\n  Line 536:             FROM raw_events\n\n  Line 622:             FROM raw_events\n\n  Line 665:             FROM raw_events\n\n  Line 686:             FROM raw_events\n\n  Line 737:             FROM raw_events\n\n  Line 766:             FROM raw_events\n\n  Line 800:             FROM raw_events\n\n\n/project/tests/test_unified_contributions.py:\n  Line 16:     Datasource, DatasourceRole, RawPREvent, RawCommitEvent, RawIssueEvent, RawReviewEvent,\n\n  Line 153:     await writer.write_issues(\"jira\", [\n\n  Line 154:         RawIssueEvent(external_id=\"ISS-1\", timestamp=now, actor=\"alice-jira\", project=\"PROJ\",\n\n  Line 248:     await writer.write_issues(\"jira\", [\n\n  Line 249:         RawIssueEvent(external_id=\"ISS-1\", timestamp=now, actor=\"alice-jira\", project=\"PROJ\",\n\n\n/project/src/project_health/ingestion/scheduler.py:\n  Line 150:             return await self._writer.write_issues(source, events)\n\n\n/project/src/project_health/providers/jira.py:\n  Line 13:     RawIssueEvent,\n\n  Line 49:     async def fetch_issues(self, since: datetime) -> list[RawIssueEvent]:\n\n  Line 51:         events: list[RawIssueEvent] = []\n\n  Line 63:                     RawIssueEvent(\n\n\n/project/src/project_health/providers/github.py:\n  Line 13:     RawIssueEvent,\n\n  Line 188:     async def fetch_issues(self, since: datetime) -> list[RawIssueEvent]:\n\n  Line 190:         events: list[RawIssueEvent] = []\n\n  Line 210:                     RawIssueEvent(\n\n\n/project/tests/test_integration.py:\n  Line 46:     \"\"\"Bot-authored PR exists in raw_events but absent from human metrics.\"\"\"\n\n  Line 79:     # Verify both in raw_events\n\n\n/project/tests/test_ingestion.py:\n  Line 14: from project_health.providers.protocol import RawIssueEvent\n\n  Line 32:         RawIssueEvent(\n\n  Line 40:     count = await writer.write_issues(\"jira\", events)\n\n  Line 45:     count2 = await writer.write_issues(\"jira\", events)\n\n  Line 58:         RawIssueEvent(\n\n  Line 66:     await writer.write_issues(\"jira\", events)\n\n\n/project/src/project_health/ingestion/writer.py:\n  Line 14:     RawIssueEvent,\n\n  Line 41:     async def write_issues(\n\n  Line 42:         self, source: str, events: list[RawIssueEvent]\n\n  Line 50:         events: list[RawCommitEvent | RawPREvent | RawReviewEvent | RawIssueEvent],\n\n\n/project/alembic/versions/20250513_100000_initial_schema.py:\n  Line 22:     # raw_events\n\n  Line 24:         \"raw_events\",\n\n  Line 35:     with op.batch_alter_table(\"raw_events\") as batch_op:\n\n  Line 36:         batch_op.create_unique_constraint(\"uq_raw_events_dedup\", [\"source\", \"event_type\", \"external_id\"])\n\n  Line 37:         batch_op.create_index(\"ix_raw_events_source_timestamp\", [\"source\", \"timestamp\"])\n\n  Line 38:         batch_op.create_index(\"ix_raw_events_actor\", [\"actor\"])\n\n  Line 39:         batch_op.create_index(\"ix_raw_events_project\", [\"project\"])\n\n  Line 97:     with op.batch_alter_table(\"raw_events\") as batch_op:\n\n  Line 98:         batch_op.drop_index(\"ix_raw_events_project\")\n\n  Line 99:         batch_op.drop_index(\"ix_raw_events_actor\")\n\n  Line 100:         batch_op.drop_index(\"ix_raw_events_source_timestamp\")\n\n  Line 101:         batch_op.drop_constraint(\"uq_raw_events_dedup\")\n\n  Line 102:     op.drop_table(\"raw_events\")\n\n\n/project/src/project_health/db/models.py:\n  Line 25:     __tablename__ = \"raw_events\"\n\n  Line 44:         UniqueConstraint(\"source\", \"event_type\", \"external_id\", name=\"uq_raw_events_dedup\"),\n\n  Line 45:         Index(\"ix_raw_events_source_timestamp\", \"source\", \"timestamp\"),\n\n  Line 46:         Index(\"ix_raw_events_actor\", \"actor\"),\n\n  Line 47:         Index(\"ix_raw_events_project\", \"project\"),\n",
+            "metadata": {
+              "matches": 67,
+              "truncated": false
+            },
+            "title": "write_issues|raw_events|RawIssueEvent",
+            "time": {
+              "start": 1779966688018,
+              "end": 1779966688044
+            }
+          },
+          "id": "prt_e6e4837ea001E1dJhFZsDhIULk",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e482cc9001ExadCLv8ydxMk5"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-finish",
+          "tokens": {
+            "total": 6983,
+            "input": 1,
+            "output": 131,
+            "reasoning": 0,
+            "cache": {
+              "write": 6851,
+              "read": 0
+            }
+          },
+          "cost": 0,
+          "id": "prt_e6e483b3f001g3o3uPbLDf1gFC",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e482cc9001ExadCLv8ydxMk5"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e6e481f83001RIL12wGoyxL5aF",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 11341,
+          "input": 1,
+          "output": 149,
+          "reasoning": 0,
+          "cache": {
+            "write": 6415,
+            "read": 4776
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1779966688089,
+          "completed": 1779966692785
+        },
+        "finish": "tool-calls",
+        "id": "msg_e6e483b590012drIVm6MPKsIgx",
+        "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI"
+      },
+      "parts": [
+        {
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-start",
+          "id": "prt_e6e484b0c001Nws8Cjp4XzSxV6",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e483b590012drIVm6MPKsIgx"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "toolu_bdrk_01QqxXj6tADggvVs9H7VDunV",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/src/project_health/ingestion/writer.py"
+            },
+            "output": "<path>/project/src/project_health/ingestion/writer.py</path>\n<type>file</type>\n<content>\n1: \"\"\"EventWriter — upserts raw events into the database.\"\"\"\n2: \n3: from __future__ import annotations\n4: \n5: from datetime import UTC, datetime\n6: \n7: from sqlalchemy import select\n8: from sqlalchemy.dialects.sqlite import insert\n9: from sqlalchemy.ext.asyncio import AsyncSession\n10: \n11: from project_health.db.models import PersonIdentity, RawEvent\n12: from project_health.providers.protocol import (\n13:     RawCommitEvent,\n14:     RawIssueEvent,\n15:     RawPREvent,\n16:     RawReviewEvent,\n17: )\n18: \n19: \n20: class EventWriter:\n21:     \"\"\"Writes raw events to the database with deduplication.\"\"\"\n22: \n23:     def __init__(self, session: AsyncSession) -> None:\n24:         self._session = session\n25: \n26:     async def write_commits(\n27:         self, source: str, events: list[RawCommitEvent]\n28:     ) -> int:\n29:         return await self._upsert_events(source, \"commit\", events)\n30: \n31:     async def write_pull_requests(\n32:         self, source: str, events: list[RawPREvent]\n33:     ) -> int:\n34:         return await self._upsert_events(source, \"pull_request\", events)\n35: \n36:     async def write_pull_request_reviews(\n37:         self, source: str, events: list[RawReviewEvent]\n38:     ) -> int:\n39:         return await self._upsert_events(source, \"pull_request_review\", events)\n40: \n41:     async def write_issues(\n42:         self, source: str, events: list[RawIssueEvent]\n43:     ) -> int:\n44:         return await self._upsert_events(source, \"issue\", events)\n45: \n46:     async def _upsert_events(\n47:         self,\n48:         source: str,\n49:         event_type: str,\n50:         events: list[RawCommitEvent | RawPREvent | RawReviewEvent | RawIssueEvent],\n51:     ) -> int:\n52:         \"\"\"Upsert events keyed on (source, event_type, external_id).\n53: \n54:         Also auto-discovers new (source, actor) identities as unmapped placeholders.\n55:         Returns the number of events written.\n56:         \"\"\"\n57:         if not events:\n58:             return 0\n59: \n60:         now = datetime.now(UTC)\n61:         written = 0\n62: \n63:         for ev in events:\n64:             # Auto-discovery: ensure person_identities placeholder for new actors\n65:             if ev.actor:\n66:                 await self._ensure_identity_placeholder(source, ev.actor)\n67: \n68:             # Build upsert via SQLite ON CONFLICT (simpler than dialect-specific)\n69:             stmt = (\n70:                 insert(RawEvent)\n71:                 .values(\n72:                     id=ev.external_id,  # Will be overridden by conflict handling\n73:                     source=source,\n74:                     event_type=event_type,\n75:                     external_id=ev.external_id,\n76:                     timestamp=ev.timestamp,\n77:                     ingested_at=now,\n78:                     actor=ev.actor,\n79:                     project=ev.project,\n80:                     data=ev.data,\n81:                 )\n82:                 .on_conflict_do_update(\n83:                     index_elements=[\"source\", \"event_type\", \"external_id\"],\n84:                     set_={\n85:                         \"timestamp\": ev.timestamp,\n86:                         \"ingested_at\": now,\n87:                         \"actor\": ev.actor,\n88:                         \"project\": ev.project,\n89:                         \"data\": ev.data,\n90:                     },\n91:                 )\n92:             )\n93:             await self._session.execute(stmt)\n94:             written += 1\n95: \n96:         await self._session.commit()\n97:         return written\n98: \n99:     async def _ensure_identity_placeholder(self, source: str, external_id: str) -> None:\n100:         \"\"\"Insert a person_identities row with person_id=NULL if not exists.\"\"\"\n101:         result = await self._session.execute(\n102:             select(PersonIdentity).where(\n103:                 PersonIdentity.source == source,\n104:                 PersonIdentity.external_id == external_id,\n105:             )\n106:         )\n107:         existing = result.scalar_one_or_none()\n108:         if existing is None:\n109:             placeholder = PersonIdentity(\n110:                 person_id=None,\n111:                 source=source,\n112:                 external_id=external_id,\n113:             )\n114:             self._session.add(placeholder)\n115:             await self._session.flush()\n\n(End of file - total 115 lines)\n</content>",
+            "metadata": {
+              "preview": "\"\"\"EventWriter — upserts raw events into the database.\"\"\"\n\nfrom __future__ import annotations\n\nfrom datetime import UTC, datetime\n\nfrom sqlalchemy import select\nfrom sqlalchemy.dialects.sqlite import insert\nfrom sqlalchemy.ext.asyncio import AsyncSession\n\nfrom project_health.db.models import PersonIdentity, RawEvent\nfrom project_health.providers.protocol import (\n    RawCommitEvent,\n    RawIssueEvent,\n    RawPREvent,\n    RawReviewEvent,\n)\n\n\nclass EventWriter:",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "src/project_health/ingestion/writer.py",
+            "time": {
+              "start": 1779966692207,
+              "end": 1779966692214
+            }
+          },
+          "id": "prt_e6e484b0d001f8Qcd4Gmrt4mMP",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e483b590012drIVm6MPKsIgx"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "toolu_bdrk_0159khz5zAwXopKR7vBytx5N",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/src/project_health/ingestion/scheduler.py",
+              "offset": 140,
+              "limit": 70
+            },
+            "output": "<path>/project/src/project_health/ingestion/scheduler.py</path>\n<type>file</type>\n<content>\n140:     async def _write_events(\n141:         self, source: str, event_type: str, events: list\n142:     ) -> int:\n143:         if event_type == \"commit\":\n144:             return await self._writer.write_commits(source, events)\n145:         if event_type == \"pull_request\":\n146:             return await self._writer.write_pull_requests(source, events)\n147:         if event_type == \"pull_request_review\":\n148:             return await self._writer.write_pull_request_reviews(source, events)\n149:         if event_type == \"issue\":\n150:             return await self._writer.write_issues(source, events)\n151:         if event_type == \"sprint\":\n152:             # Sprint definitions are written to sprints table via dedicated method\n153:             from project_health.db.models import Sprint\n154:             count = 0\n155:             for sp in events:\n156:                 await self._session.merge(\n157:                     Sprint(\n158:                         id=sp.id,\n159:                         name=sp.name,\n160:                         project=sp.project,\n161:                         start_date=sp.start_date,\n162:                         end_date=sp.end_date,\n163:                         state=sp.state,\n164:                     )\n165:                 )\n166:                 count += 1\n167:             await self._session.commit()\n168:             return count\n169:         return 0\n170: \n171: \n172: class SchedulerManager:\n173:     \"\"\"Manages APScheduler jobs for ingestion.\"\"\"\n174: \n175:     def __init__(self, config: Config) -> None:\n176:         self._config = config\n177:         self._scheduler: AsyncIOScheduler | None = None\n178:         self._locks: dict[str, asyncio.Lock] = {}\n179: \n180:     def start(self) -> None:\n181:         self._scheduler = AsyncIOScheduler()\n182:         self._scheduler.start()\n183: \n184:         # Register one job per (provider, event_type)\n185:         event_types = [\n186:             \"commit\",\n187:             \"pull_request\",\n188:             \"pull_request_review\",\n189:             \"issue\",\n190:             \"sprint\",\n191:         ]\n192:         interval = max(self._config.ingestion.interval_minutes, 1)\n193: \n194:         # Build providers list\n195:         providers: list[DataSourceProvider] = []\n196:         if self._config.projects.github:\n197:             from project_health.providers.github import GitHubProvider\n198:             providers.append(GitHubProvider(self._config))\n199:         if self._config.projects.jira:\n200:             from project_health.providers.jira import JiraProvider\n201:             providers.append(JiraProvider(self._config))\n202: \n203:         for provider in providers:\n204:             self._locks[provider.id] = asyncio.Lock()\n205:             for et in event_types:\n206:                 job_id = f\"{provider.id}:{et}\"\n207:                 self._scheduler.add_job(\n208:                     self._run_job,\n209:                     \"interval\",\n\n(Showing lines 140-209 of 264. Use offset=210 to continue.)\n</content>",
+            "metadata": {
+              "preview": "    async def _write_events(\n        self, source: str, event_type: str, events: list\n    ) -> int:\n        if event_type == \"commit\":\n            return await self._writer.write_commits(source, events)\n        if event_type == \"pull_request\":\n            return await self._writer.write_pull_requests(source, events)\n        if event_type == \"pull_request_review\":\n            return await self._writer.write_pull_request_reviews(source, events)\n        if event_type == \"issue\":\n            return await self._writer.write_issues(source, events)\n        if event_type == \"sprint\":\n            # Sprint definitions are written to sprints table via dedicated method\n            from project_health.db.models import Sprint\n            count = 0\n            for sp in events:\n                await self._session.merge(\n                    Sprint(\n                        id=sp.id,\n                        name=sp.name,",
+              "truncated": true,
+              "loaded": []
+            },
+            "title": "src/project_health/ingestion/scheduler.py",
+            "time": {
+              "start": 1779966692674,
+              "end": 1779966692686
+            }
+          },
+          "id": "prt_e6e484b710015O3Z6wJ5GHt42K",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e483b590012drIVm6MPKsIgx"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-finish",
+          "tokens": {
+            "total": 11341,
+            "input": 1,
+            "output": 149,
+            "reasoning": 0,
+            "cache": {
+              "write": 6415,
+              "read": 4776
+            }
+          },
+          "cost": 0,
+          "id": "prt_e6e484d9d001F9GXGzB2Lwaxe6",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e483b590012drIVm6MPKsIgx"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_e6e481f83001RIL12wGoyxL5aF",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 14415,
+          "input": 1,
+          "output": 810,
+          "reasoning": 0,
+          "cache": {
+            "write": 2413,
+            "read": 11191
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1779966692790,
+          "completed": 1779966709535
+        },
+        "finish": "stop",
+        "id": "msg_e6e484db6001eutnnrD8fhnu7g",
+        "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI"
+      },
+      "parts": [
+        {
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-start",
+          "id": "prt_e6e4857d9001X231a9hsLAi7kA",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e484db6001eutnnrD8fhnu7g"
+        },
+        {
+          "type": "text",
+          "text": "Here are the relevant files and a summary of how Jira data flows into the `raw_events` table:\n\n---\n\n## Files\n\n### 1. `/project/src/project_health/providers/jira.py`\n**Jira API client.** Contains `JiraProvider` which fetches issues via `/rest/api/2/search` (JQL-based, paginated) and sprints via the Agile API. `fetch_issues(since)` returns a list of `RawIssueEvent` objects with fields like external_id (issue key), timestamp (created date), actor (reporter accountId), project, and a `data` dict containing summary, issue_type, story_points, status, labels, description, updated, resolutiondate, and assignee.\n\n### 2. `/project/src/project_health/ingestion/writer.py`\n**Database writer with deduplication.** `EventWriter.write_issues(source, events)` calls `_upsert_events(\"jira\", \"issue\", events)` which performs a SQLite `INSERT ... ON CONFLICT DO UPDATE` into the `raw_events` table keyed on `(source, event_type, external_id)`. Each event is written with columns: source=\"jira\", event_type=\"issue\", external_id, timestamp, ingested_at, actor, project, data (JSON). It also auto-discovers new actor identities into `person_identities`.\n\n### 3. `/project/src/project_health/ingestion/scheduler.py`\n**Orchestrator.** `SchedulerManager` creates periodic APScheduler jobs for each provider+event_type pair. For Jira, it instantiates `JiraProvider` and schedules jobs for all event types (issues, sprints, etc.). The `IngestionRunner._write_events()` method dispatches to `writer.write_issues()` for event_type=\"issue\" and directly merges `Sprint` objects for sprints.\n\n### 4. `/project/src/project_health/db/models.py`\n**SQLAlchemy model.** `RawEvent` maps to the `raw_events` table with columns: id, source, event_type, external_id, timestamp, ingested_at, actor, project, data (JSON). Has a unique constraint on `(source, event_type, external_id)`.\n\n### 5. `/project/src/project_health/providers/protocol.py`\n**Data contracts.** Defines `RawIssueEvent` (Pydantic model with external_id, timestamp, actor, project, data) and the `DataSourceProvider` protocol that `JiraProvider` implements.\n\n### 6. `/project/src/project_health/providers/registry.py`\n**Provider registry.** Conditionally registers Jira as a configured datasource with role UMBRELLA if credentials and projects are present.\n\n---\n\n## Data Flow Summary\n\n1. **Scheduler** triggers `JiraProvider.fetch_issues(since)` periodically\n2. **JiraProvider** queries Jira REST API with JQL, paginates results, and maps each issue to a `RawIssueEvent`\n3. **EventWriter.write_issues(\"jira\", events)** upserts each event into `raw_events` using SQLite's `ON CONFLICT DO UPDATE` on the `(source, event_type, external_id)` unique constraint\n4. Sprints go to a separate `sprints` table (not `raw_events`)",
+          "time": {
+            "start": 1779966695388,
+            "end": 1779966708549
+          },
+          "id": "prt_e6e4857dc001Xg4Q2uGhPEJ59T",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e484db6001eutnnrD8fhnu7g"
+        },
+        {
+          "reason": "stop",
+          "snapshot": "1019cfc6070e886040ac69e1b826476340144fcc",
+          "type": "step-finish",
+          "tokens": {
+            "total": 14415,
+            "input": 1,
+            "output": 810,
+            "reasoning": 0,
+            "cache": {
+              "write": 2413,
+              "read": 11191
+            }
+          },
+          "cost": 0,
+          "id": "prt_e6e488f04001aANb1KHtGcLD2U",
+          "sessionID": "ses_191b7e082ffefIbP7eQN0KtoUI",
+          "messageID": "msg_e6e484db6001eutnnrD8fhnu7g"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "2662c15fe1e4",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "frontend/src/api/client.ts",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/hooks/useMetrics.ts",
+    "frontend/src/pages/PeoplePage.tsx",
+    "frontend/src/pages/ProjectsPage.tsx",
+    "project-health.example.yaml",
+    "src/project_health/aggregation/queries.py",
+    "src/project_health/api/deps.py",
+    "src/project_health/api/routes/metrics.py",
+    "src/project_health/api/routes/projects.py",
+    "src/project_health/api/server.py",
+    "src/project_health/config/loader.py",
+    "src/project_health/providers/protocol.py",
+    "src/project_health/providers/registry.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/26/62c15fe1e4/0/metadata.json",
+      "transcript": "/26/62c15fe1e4/0/full.jsonl",
+      "content_hash": "/26/62c15fe1e4/0/content_hash.txt",
+      "prompt": "/26/62c15fe1e4/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 6,
+    "cache_creation_tokens": 20455,
+    "cache_read_tokens": 15967,
+    "output_tokens": 1199,
+    "api_call_count": 4
+  }
+}

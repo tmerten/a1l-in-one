@@ -1,0 +1,1 @@
+Find the Jira provider/ingestion code in the project. I need to understand how Jira data gets written to the raw_events table. Look for files related to Jira client, Jira ingestion, Jira sync, or Jira provider. Return the file paths and a brief summary of what each does, focusing on how/whether issues are written to raw_events.
