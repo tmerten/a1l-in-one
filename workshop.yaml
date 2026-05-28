@@ -1,13 +1,14 @@
 name: megademo
 base: ubuntu@24.04
 sdks:
-  - name: direnvrc
+  - name: direnv
   - name: uv
   - name: claude-code
   - name: opencode
   - name: vscode-remote
   - name: node
-  # - name: project-pi
+  - name: pi-coding-agent
+    channel: latest/edge
   - name: project-entire
     slots:
       backend:
@@ -34,9 +35,8 @@ actions:
   opencode: |
     direnv exec /project opencode "$@"
 
-  # uninstalled
-  # pi: |
-    # pi "$@"
+  pi: |
+    pi "$@"
 
   entire: |
     entire "$@"

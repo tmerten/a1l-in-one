@@ -1,2 +1,0 @@
-# uv sync
-/var/lib/workshop/sdk/node/bin/npm install -g @earendil-works/pi-coding-agent
