@@ -1,6 +1,5 @@
-import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { usePersons, usePersonContributions } from '../hooks/useMetrics'
+import { useSearchParams, useNavigate } from 'react-router-dom'
+import { usePersons } from '../hooks/useMetrics'
 import MetricCard from '../components/MetricCard'
 import SettingsPanel, { useSettings } from '../components/SettingsPanel'
 
@@ -26,15 +25,6 @@ type PersonMetrics = {
 }
 type Person = { id: string; display_name: string; identities: Identity[]; metrics: PersonMetrics }
 
-type ProjectContribution = {
-  project: string; commits: number; pull_requests: number;
-  pr_loc_added: number; pr_loc_removed: number;
-  issues_resolved: number; issues_opened: number; reviews_given: number;
-}
-type DatasourceContribution = {
-  datasource: string; role: string; projects: ProjectContribution[]
-}
-
 export default function PeoplePage() {
   const [searchParams] = useSearchParams()
   const from = searchParams.get('from') ?? undefined
@@ -49,10 +39,9 @@ export default function PeoplePage() {
   }
 
   const { settings } = useSettings()
-  const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const { data: personsData, isLoading: pLoading } = usePersons(query)
-  const { data: contributions, isLoading: cLoading } = usePersonContributions(selectedPerson || '', query)
 
   const persons: Person[] = personsData?.persons || []
   const allCommits = persons.map(p => p.metrics.commits)
@@ -68,14 +57,6 @@ export default function PeoplePage() {
   function cell(value: number, med: number | null): string {
     return `px-4 py-2 text-right ${settings.outliers ? outlierClass(value, med) : 'text-gray-600'}`
   }
-
-  const dsContributions: DatasourceContribution[] = contributions?.contributions || []
-  const totalCommits = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.commits, 0), 0)
-  const totalPRs = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.pull_requests, 0), 0)
-  const totalIssuesResolved = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.issues_resolved, 0), 0)
-  const totalReviews = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.reviews_given, 0), 0)
-  const totalLocAdded = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.pr_loc_added, 0), 0)
-  const totalLocRemoved = dsContributions.reduce((sum, ds) => sum + ds.projects.reduce((s, p) => s + p.pr_loc_removed, 0), 0)
 
   return (
     <div>
@@ -113,8 +94,8 @@ export default function PeoplePage() {
               {persons.map((person) => (
                 <tr
                   key={person.id}
-                  className={`border-t border-gray-100 cursor-pointer hover:bg-gray-50 ${selectedPerson === person.id ? 'bg-blue-50' : ''}`}
-                  onClick={() => setSelectedPerson(person.id === selectedPerson ? null : person.id)}
+                  className="border-t border-gray-100 cursor-pointer hover:bg-gray-50"
+                  onClick={() => navigate(`/persons/${person.id}${window.location.search}`)}
                   title={person.identities.map(i => `${i.source}: ${i.external_id}`).join('\n')}
                 >
                   <td className="px-4 py-2 font-medium text-gray-900">
@@ -153,86 +134,6 @@ export default function PeoplePage() {
           </table>
         </div>
 
-        {selectedPerson && contributions && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <h4 className="font-medium text-gray-900">
-                  {contributions.display_name}
-                </h4>
-                <div className="flex gap-1">
-                  {contributions.identities?.map((i: Identity) => (
-                    <span key={i.source} className={`inline-block px-1.5 py-0.5 rounded text-xs ${
-                      i.source === 'jira' ? 'bg-purple-100 text-purple-700' :
-                      i.source === 'launchpad' ? 'bg-orange-100 text-orange-700' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
-                      {i.source}: {i.external_id}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <button onClick={() => setSelectedPerson(null)} className="text-sm text-blue-600 hover:underline">Clear</button>
-            </div>
-
-            <div className="grid grid-cols-4 gap-4 mb-4">
-              <MetricCard title="Commits" value={totalCommits} loading={cLoading} />
-              <MetricCard title="PRs Merged" value={totalPRs} loading={cLoading} />
-              <MetricCard title="Issues Resolved" value={totalIssuesResolved} loading={cLoading} />
-              <MetricCard title="Reviews Given" value={totalReviews} loading={cLoading} />
-            </div>
-            {totalLocAdded > 0 && (
-              <div className="mb-4 text-xs text-gray-500">
-                +{totalLocAdded.toLocaleString()} / −{totalLocRemoved.toLocaleString()} lines
-              </div>
-            )}
-
-            {dsContributions.map((ds: DatasourceContribution) => (
-              <div key={ds.datasource} className="mb-4">
-                <h5 className="text-sm font-medium text-gray-800 mb-1">
-                  <span className={`inline-block px-1.5 py-0.5 rounded text-xs mr-1.5 ${
-                    ds.role === 'umbrella' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
-                  }`}>
-                    {ds.role === 'umbrella' ? 'Umbrella' : 'Code'}
-                  </span>
-                  {ds.datasource === 'jira' ? 'Jira' : ds.datasource === 'launchpad' ? 'Launchpad' : 'GitHub'}
-                </h5>
-                <div className="bg-white rounded border border-gray-200 overflow-hidden">
-                  <table className="w-full text-xs">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-3 py-1.5 text-left font-medium text-gray-600">Project</th>
-                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">Commits</th>}
-                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">PRs</th>}
-                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">LOC</th>}
-                        <th className="px-3 py-1.5 text-right font-medium text-gray-600">Issues Resolved</th>
-                        {ds.role === 'code' && <th className="px-3 py-1.5 text-right font-medium text-gray-600">Reviews</th>}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ds.projects.map((p: ProjectContribution) => (
-                        <tr key={p.project} className="border-t border-gray-100">
-                          <td className="px-3 py-1.5 font-medium text-gray-700">{p.project}</td>
-                          {ds.role === 'code' && <td className="px-3 py-1.5 text-right text-gray-600">{p.commits}</td>}
-                          {ds.role === 'code' && <td className="px-3 py-1.5 text-right text-gray-600">{p.pull_requests}</td>}
-                          {ds.role === 'code' && (
-                            <td className="px-3 py-1.5 text-right text-gray-600">
-                              +{p.pr_loc_added.toLocaleString()} / −{p.pr_loc_removed.toLocaleString()}
-                            </td>
-                          )}
-                          <td className="px-3 py-1.5 text-right text-gray-600">{p.issues_resolved}</td>
-                          {ds.role === 'code' && <td className="px-3 py-1.5 text-right text-gray-600">{p.reviews_given}</td>}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ))}
-
-            {cLoading && <div className="text-center text-gray-400 py-4">Loading contributions…</div>}
-          </div>
-        )}
       </section>
     </div>
   )

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useProjects } from '../hooks/useMetrics'
 
@@ -12,14 +12,26 @@ type DatasourceGroup = {
 export default function DatasourceProjectFilter() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { data, isLoading } = useProjects()
+  const [open, setOpen] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
+  const ref = useRef<HTMLDivElement>(null)
 
   const datasource = searchParams.get('datasource') ?? ''
   const project = searchParams.get('project') ?? ''
-
   const legacyProject = searchParams.get('projects') ?? ''
   const effectiveDatasource = datasource || (legacyProject ? inferDatasource(legacyProject, data?.datasources || []) : '')
   const effectiveProject = project || legacyProject
+
+  // Close on outside click
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
+  }, [])
 
   const setFilter = useCallback((dsId: string, proj: string) => {
     const params = new URLSearchParams(searchParams)
@@ -37,6 +49,7 @@ export default function DatasourceProjectFilter() {
       params.delete('projects')
     }
     setSearchParams(params, { replace: true })
+    setOpen(false)
   }, [searchParams, setSearchParams])
 
   const toggleGroup = useCallback((dsId: string) => {
@@ -45,63 +58,83 @@ export default function DatasourceProjectFilter() {
 
   const datasources: DatasourceGroup[] = data?.datasources || []
 
+  // Build trigger label
+  let triggerLabel = 'All sources'
+  if (effectiveDatasource) {
+    const ds = datasources.find(d => d.id === effectiveDatasource)
+    triggerLabel = effectiveProject
+      ? `${ds?.display_name ?? effectiveDatasource}: ${effectiveProject}`
+      : (ds?.display_name ?? effectiveDatasource)
+  }
+
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2" ref={ref}>
       <span className="text-sm text-gray-500">Filter:</span>
-      <div className="border border-gray-300 rounded-md bg-white min-w-[12rem] text-sm">
+      <div className="relative">
         <button
-          className={`w-full px-3 py-1.5 text-left ${!effectiveDatasource ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700'}`}
-          onClick={() => setFilter('', '')}
+          onClick={() => setOpen(v => !v)}
           disabled={isLoading}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 min-w-[10rem] text-left"
         >
-          All sources
+          <span className="flex-1 truncate">{isLoading ? 'Loading…' : triggerLabel}</span>
+          <span className="text-gray-400 text-xs">{open ? '▲' : '▼'}</span>
         </button>
-        {datasources.map(ds => (
-          <div key={ds.id} className="border-t border-gray-100">
+
+        {open && (
+          <div className="absolute right-0 top-full mt-1 z-50 border border-gray-200 rounded-md bg-white shadow-lg min-w-[14rem] text-sm">
             <button
-              className={`w-full px-3 py-1 text-left flex items-center justify-between ${
-                effectiveDatasource === ds.id && !effectiveProject
-                  ? 'bg-blue-50 text-blue-700 font-medium'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-              onClick={() => {
-                if (expandedGroups[ds.id]) {
-                  setFilter(ds.id, '')
-                } else {
-                  toggleGroup(ds.id)
-                  setFilter(ds.id, '')
-                }
-              }}
-              disabled={isLoading}
+              className={`w-full px-3 py-1.5 text-left ${!effectiveDatasource ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+              onClick={() => setFilter('', '')}
             >
-              <span>
-                <span className="inline-block px-1.5 py-0.5 rounded text-xs mr-1.5 ${
-                  ds.role === 'umbrella' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
-                }">
-                  {ds.role === 'umbrella' ? 'U' : 'C'}
-                </span>
-                {ds.display_name}
-              </span>
-              <span className="text-gray-400">
-                {expandedGroups[ds.id] ? '−' : '+'}
-              </span>
+              All sources
             </button>
-            {expandedGroups[ds.id] && ds.projects.map(p => (
-              <button
-                key={p}
-                className={`w-full px-3 py-1 text-left pl-8 ${
-                  effectiveDatasource === ds.id && effectiveProject === p
-                    ? 'bg-blue-50 text-blue-700 font-medium'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setFilter(ds.id, p)}
-                disabled={isLoading}
-              >
-                {p}
-              </button>
+            {datasources.map(ds => (
+              <div key={ds.id} className="border-t border-gray-100">
+                <button
+                  className={`w-full px-3 py-1.5 text-left flex items-center justify-between ${
+                    effectiveDatasource === ds.id && !effectiveProject
+                      ? 'bg-blue-50 text-blue-700 font-medium'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                  onClick={() => {
+                    if (!expandedGroups[ds.id]) toggleGroup(ds.id)
+                    setFilter(ds.id, '')
+                    setOpen(true)
+                  }}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span className={`inline-block px-1.5 py-0.5 rounded text-xs ${
+                      ds.role === 'umbrella' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
+                    }`}>
+                      {ds.role === 'umbrella' ? 'U' : 'C'}
+                    </span>
+                    {ds.display_name}
+                  </span>
+                  <button
+                    className="text-gray-400 px-1"
+                    onClick={e => { e.stopPropagation(); toggleGroup(ds.id) }}
+                    aria-label={expandedGroups[ds.id] ? 'Collapse' : 'Expand'}
+                  >
+                    {expandedGroups[ds.id] ? '−' : '+'}
+                  </button>
+                </button>
+                {expandedGroups[ds.id] && ds.projects.map(p => (
+                  <button
+                    key={p}
+                    className={`w-full px-3 py-1.5 text-left pl-9 ${
+                      effectiveDatasource === ds.id && effectiveProject === p
+                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setFilter(ds.id, p)}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
-        ))}
+        )}
       </div>
     </div>
   )

@@ -40,15 +40,15 @@ export function useSprintBurndown(sprintId: string) {
   return useQuery({ queryKey: ['metrics', 'sprint-burndown', sprintId], queryFn: () => getMetrics('sprint-burndown', { sprint_id: sprintId }) })
 }
 
-export function useContributionVolumeTs(query: Record<string, string | undefined>) {
+export function useContributionVolumeTs(query: Record<string, string | string[] | undefined>) {
   return useQuery({ queryKey: ['metrics', 'contribution-volume-ts', query], queryFn: () => getMetricsTs('contribution-volume', query) })
 }
 
-export function useVelocityTs(query: Record<string, string | undefined>) {
+export function useVelocityTs(query: Record<string, string | string[] | undefined>) {
   return useQuery({ queryKey: ['metrics', 'velocity-ts', query], queryFn: () => getMetricsTs('velocity', query) })
 }
 
-export function useCollaborationTs(query: Record<string, string | undefined>) {
+export function useCollaborationTs(query: Record<string, string | string[] | undefined>) {
   return useQuery({ queryKey: ['metrics', 'collaboration-ts', query], queryFn: () => getMetricsTs('collaboration', query) })
 }
 
