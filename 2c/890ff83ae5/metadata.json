@@ -3,10 +3,16 @@
   "checkpoint_id": "2c890ff83ae5",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 7,
+  "checkpoints_count": 33,
   "files_touched": [
     "frontend/src/api/client.ts",
     "frontend/src/api/types.ts",
+    "frontend/src/components/ActiveWorkSection.tsx",
+    "frontend/src/components/CommitList.tsx",
+    "frontend/src/components/GroupedWorkItemsView.tsx",
+    "frontend/src/components/TimelineWorkItemsView.tsx",
+    "frontend/src/components/ViewToggle.tsx",
+    "frontend/src/components/WorkItemCard.test.tsx",
     "frontend/src/components/WorkItemCard.tsx",
     "frontend/src/components/WorkItemsSection.test.tsx",
     "frontend/src/components/WorkItemsSection.tsx",
@@ -21,6 +27,8 @@
     "src/project_health/aggregation/queries.py",
     "src/project_health/api/routes/persons.py",
     "src/project_health/providers/github.py",
+    "tests/test_api_work_items.py",
+    "tests/test_work_items.py",
     "workshop.yaml"
   ],
   "sessions": [
@@ -41,13 +49,19 @@
       "transcript": "/2c/890ff83ae5/2/full.jsonl",
       "content_hash": "/2c/890ff83ae5/2/content_hash.txt",
       "prompt": "/2c/890ff83ae5/2/prompt.txt"
+    },
+    {
+      "metadata": "/2c/890ff83ae5/3/metadata.json",
+      "transcript": "/2c/890ff83ae5/3/full.jsonl",
+      "content_hash": "/2c/890ff83ae5/3/content_hash.txt",
+      "prompt": "/2c/890ff83ae5/3/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1444206,
+    "input_tokens": 12768896,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 2700742,
-    "output_tokens": 11644,
-    "api_call_count": 89
+    "cache_read_tokens": 22981574,
+    "output_tokens": 132780,
+    "api_call_count": 424
   }
 }
