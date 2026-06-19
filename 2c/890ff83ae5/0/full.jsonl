@@ -17,19 +17,19 @@
       "deletions": 0,
       "files": 0
     },
-    "cost": 1.88359405,
+    "cost": 1.9897313099999998,
     "tokens": {
-      "input": 1389337,
-      "output": 9192,
-      "reasoning": 25505,
+      "input": 1467545,
+      "output": 9776,
+      "reasoning": 25751,
       "cache": {
-        "read": 2413318,
+        "read": 2560746,
         "write": 0
       }
     },
     "time": {
       "created": 1781853030740,
-      "updated": 1781855083503
+      "updated": 1781855109418
     }
   },
   "messages": [
@@ -9796,9 +9796,9 @@
           "diffs": [
             {
               "file": "frontend/src/components/TimeframeSelector.tsx",
-              "patch": "Index: frontend/src/components/TimeframeSelector.tsx\n===================================================================\n--- frontend/src/components/TimeframeSelector.tsx\t\n+++ frontend/src/components/TimeframeSelector.tsx\t\n@@ -1,129 +1,130 @@\n import { useCallback } from 'react'\n import { useSearchParams } from 'react-router-dom'\n import { useSprints } from '../hooks/useMetrics'\n \n const RELATIVE_PRESETS = [\n   { label: 'Last 7 days', days: 7 },\n+  { label: 'Last 14 days', days: 14 },\n   { label: 'Last 30 days', days: 30 },\n   { label: 'Last 90 days', days: 90 },\n   { label: 'This month', days: 0, thisMonth: true },\n   { label: 'This quarter', days: 0, thisQuarter: true },\n ]\n \n function presetValue(p: typeof RELATIVE_PRESETS[number]): string {\n   if ('thisMonth' in p) return 'preset-month'\n   if ('thisQuarter' in p) return 'preset-quarter'\n   return `preset-${p.days}`\n }\n \n function applyPreset(p: typeof RELATIVE_PRESETS[number]): { from: string; to: string } {\n   const now = new Date()\n   const to = now.toISOString().split('T')[0]\n   if ('thisMonth' in p) {\n     const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]\n     return { from, to }\n   }\n   if ('thisQuarter' in p) {\n     const q = Math.floor(now.getMonth() / 3)\n     const from = new Date(now.getFullYear(), q * 3, 1).toISOString().split('T')[0]\n     return { from, to }\n   }\n   const fromDate = new Date(now)\n   fromDate.setDate(fromDate.getDate() - p.days)\n   return { from: fromDate.toISOString().split('T')[0], to }\n }\n \n export default function TimeframeSelector() {\n   const [searchParams, setSearchParams] = useSearchParams()\n   const { data: sprints } = useSprints()\n \n   const fromParam = searchParams.get('from')\n   const toParam = searchParams.get('to')\n   const sprintId = searchParams.get('sprint_id')\n \n   // Compute current select value\n   const currentValue = sprintId\n     ? sprintId\n     : (() => {\n         const matched = RELATIVE_PRESETS.find(p => {\n           const { from } = applyPreset(p)\n           return fromParam === from\n         })\n         return matched ? presetValue(matched) : (fromParam ? 'custom' : 'preset-30')\n       })()\n \n   const setPreset = useCallback((p: typeof RELATIVE_PRESETS[number]) => {\n     const { from, to } = applyPreset(p)\n     const params = new URLSearchParams(searchParams)\n     params.set('from', from)\n     params.set('to', to)\n     params.delete('sprint_id')\n     setSearchParams(params, { replace: true })\n   }, [searchParams, setSearchParams])\n \n   const setRange = useCallback((newFrom: string, newTo: string) => {\n     const params = new URLSearchParams(searchParams)\n     if (newFrom) params.set('from', newFrom); else params.delete('from')\n     if (newTo) params.set('to', newTo); else params.delete('to')\n     params.delete('sprint_id')\n     setSearchParams(params, { replace: true })\n   }, [searchParams, setSearchParams])\n \n   return (\n     <div className=\"flex items-center gap-2\">\n       <select\n         className=\"text-sm border border-gray-300 rounded-md px-2 py-1 bg-white\"\n         value={currentValue}\n         onChange={e => {\n           const val = e.target.value\n           if (val.startsWith('preset-')) {\n             const preset = RELATIVE_PRESETS.find(p => presetValue(p) === val)\n             if (preset) setPreset(preset)\n           } else if (val === 'custom') {\n             // keep current range\n           } else {\n             // sprint ID\n             const params = new URLSearchParams(searchParams)\n             params.set('sprint_id', val)\n             params.delete('from')\n             params.delete('to')\n             setSearchParams(params, { replace: true })\n           }\n         }}\n       >\n         <optgroup label=\"Presets\">\n           {RELATIVE_PRESETS.map(p => (\n             <option key={presetValue(p)} value={presetValue(p)}>{p.label}</option>\n           ))}\n           {fromParam && <option value=\"custom\">Custom range</option>}\n         </optgroup>\n         {sprints && sprints.length > 0 && (\n           <optgroup label=\"Sprints\">\n             {(sprints as Array<{id: string; name: string; is_active: boolean}>).map(s => (\n               <option key={s.id} value={s.id}>\n                 {s.name}{s.is_active ? ' (active)' : ''}\n               </option>\n             ))}\n           </optgroup>\n         )}\n       </select>\n       {!sprintId && (\n         <div className=\"flex items-center gap-1\">\n           <input\n             type=\"date\"\n             className=\"text-sm border border-gray-300 rounded-md px-2 py-1\"\n             value={fromParam || ''}\n             onChange={e => setRange(e.target.value, toParam || '')}\n           />\n           <span className=\"text-gray-400\">→</span>\n           <input\n             type=\"date\"\n             className=\"text-sm border border-gray-300 rounded-md px-2 py-1\"\n             value={toParam || ''}\n             onChange={e => setRange(fromParam || '', e.target.value)}\n           />\n         </div>\n       )}\n     </div>\n   )\n }\n",
-              "additions": 1,
-              "deletions": 0,
+              "patch": "Index: frontend/src/components/TimeframeSelector.tsx\n===================================================================\n--- frontend/src/components/TimeframeSelector.tsx\t\n+++ frontend/src/components/TimeframeSelector.tsx\t\n@@ -1,129 +1,139 @@\n import { useCallback } from 'react'\n import { useSearchParams } from 'react-router-dom'\n import { useSprints } from '../hooks/useMetrics'\n \n const RELATIVE_PRESETS = [\n   { label: 'Last 7 days', days: 7 },\n+  { label: 'Last 14 days', days: 14 },\n   { label: 'Last 30 days', days: 30 },\n   { label: 'Last 90 days', days: 90 },\n   { label: 'This month', days: 0, thisMonth: true },\n   { label: 'This quarter', days: 0, thisQuarter: true },\n ]\n \n function presetValue(p: typeof RELATIVE_PRESETS[number]): string {\n   if ('thisMonth' in p) return 'preset-month'\n   if ('thisQuarter' in p) return 'preset-quarter'\n   return `preset-${p.days}`\n }\n \n function applyPreset(p: typeof RELATIVE_PRESETS[number]): { from: string; to: string } {\n   const now = new Date()\n   const to = now.toISOString().split('T')[0]\n   if ('thisMonth' in p) {\n     const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]\n     return { from, to }\n   }\n   if ('thisQuarter' in p) {\n     const q = Math.floor(now.getMonth() / 3)\n     const from = new Date(now.getFullYear(), q * 3, 1).toISOString().split('T')[0]\n     return { from, to }\n   }\n   const fromDate = new Date(now)\n   fromDate.setDate(fromDate.getDate() - p.days)\n   return { from: fromDate.toISOString().split('T')[0], to }\n }\n \n export default function TimeframeSelector() {\n   const [searchParams, setSearchParams] = useSearchParams()\n   const { data: sprints } = useSprints()\n \n   const fromParam = searchParams.get('from')\n   const toParam = searchParams.get('to')\n   const sprintId = searchParams.get('sprint_id')\n \n   // Compute current select value\n   const currentValue = sprintId\n     ? sprintId\n     : (() => {\n         const matched = RELATIVE_PRESETS.find(p => {\n           const { from } = applyPreset(p)\n           return fromParam === from\n         })\n         return matched ? presetValue(matched) : (fromParam ? 'custom' : 'preset-30')\n       })()\n \n   const setPreset = useCallback((p: typeof RELATIVE_PRESETS[number]) => {\n     const { from, to } = applyPreset(p)\n     const params = new URLSearchParams(searchParams)\n     params.set('from', from)\n     params.set('to', to)\n     params.delete('sprint_id')\n     setSearchParams(params, { replace: true })\n   }, [searchParams, setSearchParams])\n \n   const setRange = useCallback((newFrom: string, newTo: string) => {\n     const params = new URLSearchParams(searchParams)\n     if (newFrom) params.set('from', newFrom); else params.delete('from')\n     if (newTo) params.set('to', newTo); else params.delete('to')\n     params.delete('sprint_id')\n     setSearchParams(params, { replace: true })\n   }, [searchParams, setSearchParams])\n \n   return (\n     <div className=\"flex items-center gap-2\">\n       <select\n         className=\"text-sm border border-gray-300 rounded-md px-2 py-1 bg-white\"\n         value={currentValue}\n         onChange={e => {\n           const val = e.target.value\n           if (val.startsWith('preset-')) {\n             const preset = RELATIVE_PRESETS.find(p => presetValue(p) === val)\n             if (preset) setPreset(preset)\n           } else if (val === 'custom') {\n             // keep current range\n           } else {\n             // sprint ID\n             const params = new URLSearchParams(searchParams)\n             params.set('sprint_id', val)\n             params.delete('from')\n             params.delete('to')\n             setSearchParams(params, { replace: true })\n           }\n         }}\n       >\n         <optgroup label=\"Presets\">\n           {RELATIVE_PRESETS.map(p => (\n             <option key={presetValue(p)} value={presetValue(p)}>{p.label}</option>\n           ))}\n           {fromParam && <option value=\"custom\">Custom range</option>}\n         </optgroup>\n         {sprints && sprints.length > 0 && (\n           <optgroup label=\"Sprints\">\n-            {(sprints as Array<{id: string; name: string; is_active: boolean}>).map(s => (\n-              <option key={s.id} value={s.id}>\n-                {s.name}{s.is_active ? ' (active)' : ''}\n-              </option>\n-            ))}\n+            {(() => {\n+              const now = new Date().toISOString()\n+              const recentSprints = (sprints as Array<{\n+                id: string; name: string; is_active: boolean; start_date: string\n+              }>)\n+                .filter(s => s.start_date <= now)\n+                .sort((a, b) => b.start_date.localeCompare(a.start_date))\n+                .slice(0, 5)\n+              return recentSprints.map(s => (\n+                <option key={s.id} value={s.id}>\n+                  {s.name}{s.is_active ? ' (active)' : ''}\n+                </option>\n+              ))\n+            })()}\n           </optgroup>\n         )}\n       </select>\n       {!sprintId && (\n         <div className=\"flex items-center gap-1\">\n           <input\n             type=\"date\"\n             className=\"text-sm border border-gray-300 rounded-md px-2 py-1\"\n             value={fromParam || ''}\n             onChange={e => setRange(e.target.value, toParam || '')}\n           />\n           <span className=\"text-gray-400\">→</span>\n           <input\n             type=\"date\"\n             className=\"text-sm border border-gray-300 rounded-md px-2 py-1\"\n             value={toParam || ''}\n             onChange={e => setRange(fromParam || '', e.target.value)}\n           />\n         </div>\n       )}\n     </div>\n   )\n }\n",
+              "additions": 15,
+              "deletions": 5,
               "status": "modified"
             }
           ]
@@ -10956,25 +10956,379 @@
           "cwd": "/home/thorsten.merten@canonical.com/src/a1l-in-one",
           "root": "/home/thorsten.merten@canonical.com/src/a1l-in-one"
         },
-        "cost": 0,
+        "cost": 0.03622845,
         "tokens": {
-          "input": 0,
-          "output": 0,
-          "reasoning": 0,
+          "total": 75040,
+          "input": 26828,
+          "output": 338,
+          "reasoning": 181,
           "cache": {
-            "read": 0,
-            "write": 0
+            "write": 0,
+            "read": 47693
           }
         },
         "modelID": "~moonshotai/kimi-latest",
         "providerID": "openrouter",
         "time": {
-          "created": 1781855083502
+          "created": 1781855083502,
+          "completed": 1781855101016
         },
+        "finish": "tool-calls",
         "id": "msg_eded6dbee001wZfOFY0qIHWExB",
         "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK"
       },
-      "parts": []
+      "parts": [
+        {
+          "snapshot": "e0edf221a2a809be320059e58eff90088232245b",
+          "type": "step-start",
+          "id": "prt_eded6ee3100146LMBaCWvLFxoS",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded6dbee001wZfOFY0qIHWExB"
+        },
+        {
+          "type": "reasoning",
+          "text": "Now I need to modify the sprint rendering part. Currently it shows all sprints. I need to:\n1. Filter out future sprints\n2. Sort by start_date descending (latest first, from current running sprint backwards)\n3. Take only the first 5\n\nThe SprintResponse has `start_date` as an ISO string. I'll filter out future ones (where start_date > now), sort by start_date descending, and slice to 5.\n\nLet me also check what format the sprint data comes in - the current code casts `sprints as Array<{id: string; name: string; is_active: boolean}>`. I need to also include start_date for sorting.\n\nActually, looking at the SprintResponse type, `start_date` is available. The current code doesn't use it but it is there.\n\nI need to replace the sprint optgroup rendering with filtered/sorted sprints.",
+          "time": {
+            "start": 1781855088179,
+            "end": 1781855100975
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Now I need to modify the sprint rendering part. Currently it shows all sprints. I need to:\n1. Filter out future sprints\n2. Sort by start_date descending (latest first, from current running sprint backwards)\n3. Take only the first 5\n\nThe SprintResponse has `start_date` as an ISO string. I'll filter out future ones (where start_date > now), sort by start_date descending, and slice to 5.\n\nLet me also check what format the sprint data comes in - the current code casts `sprints as Array<{id: string; name: string; is_active: boolean}>`. I need to also include start_date for sorting.\n\nActually, looking at the SprintResponse type, `start_date` is available. The current code doesn't use it but it is there.\n\nI need to replace the sprint optgroup rendering with filtered/sorted sprints.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_eded6ee3300185oZ9a9Zo09k9e",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded6dbee001wZfOFY0qIHWExB"
+        },
+        {
+          "type": "tool",
+          "tool": "edit",
+          "callID": "functions.edit:110",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx",
+              "newString": "        {sprints && sprints.length > 0 && (\n          <optgroup label=\"Sprints\">\n            {(() => {\n              const now = new Date().toISOString()\n              const recentSprints = (sprints as Array<{\n                id: string; name: string; is_active: boolean; start_date: string\n              }>)\n                .filter(s => s.start_date <= now)\n                .sort((a, b) => b.start_date.localeCompare(a.start_date))\n                .slice(0, 5)\n              return recentSprints.map(s => (\n                <option key={s.id} value={s.id}>\n                  {s.name}{s.is_active ? ' (active)' : ''}\n                </option>\n              ))\n            })()}\n          </optgroup>\n        )}",
+              "oldString": "        {sprints && sprints.length > 0 && (\n          <optgroup label=\"Sprints\">\n            {(sprints as Array<{id: string; name: string; is_active: boolean}>).map(s => (\n              <option key={s.id} value={s.id}>\n                {s.name}{s.is_active ? ' (active)' : ''}\n              </option>\n            ))}\n          </optgroup>\n        )}"
+            },
+            "output": "Edit applied successfully.",
+            "metadata": {
+              "diagnostics": {},
+              "diff": "Index: /home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx\n===================================================================\n--- /home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx\n+++ /home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx\n@@ -99,13 +99,22 @@\n     {fromParam && <option value=\"custom\">Custom range</option>}\n   </optgroup>\n   {sprints && sprints.length > 0 && (\n     <optgroup label=\"Sprints\">\n-      {(sprints as Array<{id: string; name: string; is_active: boolean}>).map(s => (\n-        <option key={s.id} value={s.id}>\n-          {s.name}{s.is_active ? ' (active)' : ''}\n-        </option>\n-      ))}\n+      {(() => {\n+        const now = new Date().toISOString()\n+        const recentSprints = (sprints as Array<{\n+          id: string; name: string; is_active: boolean; start_date: string\n+        }>)\n+          .filter(s => s.start_date <= now)\n+          .sort((a, b) => b.start_date.localeCompare(a.start_date))\n+          .slice(0, 5)\n+        return recentSprints.map(s => (\n+          <option key={s.id} value={s.id}>\n+            {s.name}{s.is_active ? ' (active)' : ''}\n+          </option>\n+        ))\n+      })()}\n     </optgroup>\n   )}\n </select>\n {!sprintId && (\n",
+              "filediff": {
+                "file": "/home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx",
+                "patch": "Index: /home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx\n===================================================================\n--- /home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx\n+++ /home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx\n@@ -99,13 +99,22 @@\n     {fromParam && <option value=\"custom\">Custom range</option>}\n   </optgroup>\n   {sprints && sprints.length > 0 && (\n     <optgroup label=\"Sprints\">\n-      {(sprints as Array<{id: string; name: string; is_active: boolean}>).map(s => (\n-        <option key={s.id} value={s.id}>\n-          {s.name}{s.is_active ? ' (active)' : ''}\n-        </option>\n-      ))}\n+      {(() => {\n+        const now = new Date().toISOString()\n+        const recentSprints = (sprints as Array<{\n+          id: string; name: string; is_active: boolean; start_date: string\n+        }>)\n+          .filter(s => s.start_date <= now)\n+          .sort((a, b) => b.start_date.localeCompare(a.start_date))\n+          .slice(0, 5)\n+        return recentSprints.map(s => (\n+          <option key={s.id} value={s.id}>\n+            {s.name}{s.is_active ? ' (active)' : ''}\n+          </option>\n+        ))\n+      })()}\n     </optgroup>\n   )}\n </select>\n {!sprintId && (\n",
+                "additions": 14,
+                "deletions": 5
+              },
+              "truncated": false
+            },
+            "title": "frontend/src/components/TimeframeSelector.tsx",
+            "time": {
+              "start": 1781855100891,
+              "end": 1781855100894
+            }
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Now I need to modify the sprint rendering part. Currently it shows all sprints. I need to:\n1. Filter out future sprints\n2. Sort by start_date descending (latest first, from current running sprint backwards)\n3. Take only the first 5\n\nThe SprintResponse has `start_date` as an ISO string. I'll filter out future ones (where start_date > now), sort by start_date descending, and slice to 5.\n\nLet me also check what format the sprint data comes in - the current code casts `sprints as Array<{id: string; name: string; is_active: boolean}>`. I need to also include start_date for sorting.\n\nActually, looking at the SprintResponse type, `start_date` is available. The current code doesn't use it but it is there.\n\nI need to replace the sprint optgroup rendering with filtered/sorted sprints.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_eded70097001RnT1gv32w1wH69",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded6dbee001wZfOFY0qIHWExB"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "c9be421f0d8d5bade79a5f532e3878c3842aa5b4",
+          "type": "step-finish",
+          "tokens": {
+            "total": 75040,
+            "input": 26828,
+            "output": 338,
+            "reasoning": 181,
+            "cache": {
+              "write": 0,
+              "read": 47693
+            }
+          },
+          "cost": 0.03622845,
+          "id": "prt_eded72041001g8LS12A3ruFno0",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded6dbee001wZfOFY0qIHWExB"
+        },
+        {
+          "type": "patch",
+          "hash": "e0edf221a2a809be320059e58eff90088232245b",
+          "files": [
+            "/home/thorsten.merten@canonical.com/src/a1l-in-one/frontend/src/components/TimeframeSelector.tsx"
+          ],
+          "id": "prt_eded720550017LZ6aLI1EPYM63",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded6dbee001wZfOFY0qIHWExB"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_eded5e9d3001Vm2ic5jLVqlPAj",
+        "role": "assistant",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/thorsten.merten@canonical.com/src/a1l-in-one",
+          "root": "/home/thorsten.merten@canonical.com/src/a1l-in-one"
+        },
+        "cost": 0.03468517,
+        "tokens": {
+          "total": 75203,
+          "input": 25521,
+          "output": 133,
+          "reasoning": 10,
+          "cache": {
+            "write": 0,
+            "read": 49539
+          }
+        },
+        "modelID": "~moonshotai/kimi-latest",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1781855101024,
+          "completed": 1781855109410
+        },
+        "finish": "tool-calls",
+        "id": "msg_eded72060001px0x34wBHmbKc3",
+        "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK"
+      },
+      "parts": [
+        {
+          "snapshot": "c9be421f0d8d5bade79a5f532e3878c3842aa5b4",
+          "type": "step-start",
+          "id": "prt_eded72d8c001q9tz82XK5mQyuP",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded72060001px0x34wBHmbKc3"
+        },
+        {
+          "type": "reasoning",
+          "text": "Let me verify the changes build and tests pass.",
+          "time": {
+            "start": 1781855104398,
+            "end": 1781855107885
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me verify the changes build and tests pass.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_eded72d8e001OySUYyAVkQxKHJ",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded72060001px0x34wBHmbKc3"
+        },
+        {
+          "type": "tool",
+          "tool": "bash",
+          "callID": "functions.bash:111",
+          "state": {
+            "status": "completed",
+            "input": {
+              "command": "npm run build 2>&1 | tail -n 20",
+              "description": "Build frontend to verify changes",
+              "timeout": 120000,
+              "workdir": "/home/thorsten.merten@canonical.com/src/a1l-in-one/frontend"
+            },
+            "output": "\n> frontend@0.0.0 build\n> tsc -b && vite build\n\nvite v8.0.12 building client environment for production...\n\u001b[2K\rtransforming...✓ 651 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.45 kB │ gzip:   0.29 kB\ndist/assets/index-DR7jigdw.css   20.18 kB │ gzip:   4.82 kB\ndist/assets/index-c9sLKhr6.js   725.06 kB │ gzip: 216.32 kB\n\n✓ built in 348ms\n[plugin builtin:vite-reporter] \n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n",
+            "metadata": {
+              "output": "\n> frontend@0.0.0 build\n> tsc -b && vite build\n\nvite v8.0.12 building client environment for production...\n\u001b[2K\rtransforming...✓ 651 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.45 kB │ gzip:   0.29 kB\ndist/assets/index-DR7jigdw.css   20.18 kB │ gzip:   4.82 kB\ndist/assets/index-c9sLKhr6.js   725.06 kB │ gzip: 216.32 kB\n\n✓ built in 348ms\n[plugin builtin:vite-reporter] \n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n",
+              "exit": 0,
+              "description": "Build frontend to verify changes",
+              "truncated": false
+            },
+            "title": "Build frontend to verify changes",
+            "time": {
+              "start": 1781855108408,
+              "end": 1781855108414
+            }
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "Let me verify the changes build and tests pass.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_eded72f64001dKc5bTZM7xHGqD",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded72060001px0x34wBHmbKc3"
+        },
+        {
+          "type": "tool",
+          "tool": "bash",
+          "callID": "functions.bash:112",
+          "state": {
+            "status": "completed",
+            "input": {
+              "command": "cd /home/thorsten.merten@canonical.com/src/a1l-in-one/frontend && npm test -- --run 2>&1 | tail -n 20",
+              "description": "Run frontend tests",
+              "timeout": 60000
+            },
+            "output": "\n> frontend@0.0.0 test\n> vitest run --run\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/home/thorsten.merten@canonical.com/src/a1l-in-one/frontend\u001b[39m\n\n \u001b[32m✓\u001b[39m src/lib/formatBucket.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/ChartSectionToggle.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 48\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/WorkItemCard.test.tsx \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 184\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/pages/PeoplePage.test.tsx \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 40\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/StackedBarChart.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 69\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/WorkItemsSection.test.tsx \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 138\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/pages/PersonDetailPage.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 52\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m7 passed\u001b[39m\u001b[22m\u001b[90m (7)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m44 passed\u001b[39m\u001b[22m\u001b[90m (44)\u001b[39m\n\u001b[2m   Start at \u001b[22m 09:45:08\n\u001b[2m   Duration \u001b[22m 1.15s\u001b[2m (transform 401ms, setup 300ms, import 1.32s, tests 536ms, environment 3.86s)\u001b[22m\n\n",
+            "metadata": {
+              "output": "\n> frontend@0.0.0 test\n> vitest run --run\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/home/thorsten.merten@canonical.com/src/a1l-in-one/frontend\u001b[39m\n\n \u001b[32m✓\u001b[39m src/lib/formatBucket.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/ChartSectionToggle.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 48\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/WorkItemCard.test.tsx \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 184\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/pages/PeoplePage.test.tsx \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 40\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/StackedBarChart.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 69\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/components/WorkItemsSection.test.tsx \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 138\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/pages/PersonDetailPage.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 52\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m7 passed\u001b[39m\u001b[22m\u001b[90m (7)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m44 passed\u001b[39m\u001b[22m\u001b[90m (44)\u001b[39m\n\u001b[2m   Start at \u001b[22m 09:45:08\n\u001b[2m   Duration \u001b[22m 1.15s\u001b[2m (transform 401ms, setup 300ms, import 1.32s, tests 536ms, environment 3.86s)\u001b[22m\n\n",
+              "exit": 0,
+              "description": "Run frontend tests",
+              "truncated": false
+            },
+            "title": "Run frontend tests",
+            "time": {
+              "start": 1781855109376,
+              "end": 1781855109380
+            }
+          },
+          "id": "prt_eded7359e001cRHTbx0vap1eBI",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded72060001px0x34wBHmbKc3"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "c9be421f0d8d5bade79a5f532e3878c3842aa5b4",
+          "type": "step-finish",
+          "tokens": {
+            "total": 75203,
+            "input": 25521,
+            "output": 133,
+            "reasoning": 10,
+            "cache": {
+              "write": 0,
+              "read": 49539
+            }
+          },
+          "cost": 0.03468517,
+          "id": "prt_eded7410d001LY64EORhDLLY7v",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded72060001px0x34wBHmbKc3"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_eded5e9d3001Vm2ic5jLVqlPAj",
+        "role": "assistant",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/thorsten.merten@canonical.com/src/a1l-in-one",
+          "root": "/home/thorsten.merten@canonical.com/src/a1l-in-one"
+        },
+        "cost": 0.03522364,
+        "tokens": {
+          "total": 76223,
+          "input": 25859,
+          "output": 113,
+          "reasoning": 55,
+          "cache": {
+            "write": 0,
+            "read": 50196
+          }
+        },
+        "modelID": "~moonshotai/kimi-latest",
+        "providerID": "openrouter",
+        "time": {
+          "created": 1781855109417,
+          "completed": 1781855116248
+        },
+        "finish": "stop",
+        "id": "msg_eded74129001v34zdqhrg7euPz",
+        "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK"
+      },
+      "parts": [
+        {
+          "snapshot": "c9be421f0d8d5bade79a5f532e3878c3842aa5b4",
+          "type": "step-start",
+          "id": "prt_eded74cc4001EdNyRSo9L8eLgk",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded74129001v34zdqhrg7euPz"
+        },
+        {
+          "type": "reasoning",
+          "text": "The user asked for:\n1. Add a 14 day preset\n2. Show the five latest sprints (from current running sprint, no future sprints) below the presets\n\nBoth changes are done, the build passes, and all tests pass. Let me summarize.",
+          "time": {
+            "start": 1781855112390,
+            "end": 1781855113631
+          },
+          "metadata": {
+            "openrouter": {
+              "reasoning_details": [
+                {
+                  "type": "reasoning.text",
+                  "text": "The user asked for:\n1. Add a 14 day preset\n2. Show the five latest sprints (from current running sprint, no future sprints) below the presets\n\nBoth changes are done, the build passes, and all tests pass. Let me summarize.",
+                  "format": "unknown",
+                  "index": 0
+                }
+              ]
+            }
+          },
+          "id": "prt_eded74cc6001ei1ySkd7Viu5MC",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded74129001v34zdqhrg7euPz"
+        },
+        {
+          "type": "text",
+          "text": "Done. Two changes to `TimeframeSelector.tsx`:\n\n1. **Added 14-day preset** — `{ label: 'Last 14 days', days: 14 }` is now between Last 7 days and Last 30 days.\n\n2. **Sprint dropdown now shows only the 5 latest non-future sprints** — filtered by `start_date <= now`, sorted descending by `start_date`, and sliced to the top 5. Active sprints still get the `(active)` label.\n\nBuild and all 44 tests pass.",
+          "time": {
+            "start": 1781855113633,
+            "end": 1781855116230
+          },
+          "id": "prt_eded751a1001fttSXhacO7nHJm",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded74129001v34zdqhrg7euPz"
+        },
+        {
+          "reason": "stop",
+          "snapshot": "c9be421f0d8d5bade79a5f532e3878c3842aa5b4",
+          "type": "step-finish",
+          "tokens": {
+            "total": 76223,
+            "input": 25859,
+            "output": 113,
+            "reasoning": 55,
+            "cache": {
+              "write": 0,
+              "read": 50196
+            }
+          },
+          "cost": 0.03522364,
+          "id": "prt_eded75bcf001qkRXfwC4RNMiB2",
+          "sessionID": "ses_1214876abffeMbU6Mk7Lcjb5aK",
+          "messageID": "msg_eded74129001v34zdqhrg7euPz"
+        }
+      ]
     }
   ]
 }

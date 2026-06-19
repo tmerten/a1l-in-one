@@ -1,1 +1,1 @@
-There are some bug in the code, previous models got stuck trying to fix them. Help me get the codebase going again.
+The time range dropdown misses sprints. I would like to see the five latest sprints there (from current running sprint, no future sprints) below the presets. Also I'd like to add a 14 day preset.
