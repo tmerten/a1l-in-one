@@ -1,0 +1,16 @@
+Explore the codebase to understand:
+1. The current "People" view/page and what it shows (look for PeoplePage, PersonsPage, or similar)
+2. What metrics/numbers are currently displayed per person
+3. The API endpoints that serve person data
+4. How raw_events or similar tables store work items (issues, PRs, etc.)
+
+Focus on finding:
+- Frontend components for the people/person view
+- Backend API routes for person-related data
+- Database models or queries related to persons and their contributions
+- What "work items" would mean in this context (GitHub issues, PRs, Jira issues, etc.)
+
+Return a summary of:
+1. Current people view structure and what it shows
+2. What data is available but not displayed (raw events, etc.)
+3. File paths for key components I'll need to modify
