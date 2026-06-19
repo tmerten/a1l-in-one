@@ -1,0 +1,41 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "2c890ff83ae5",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 5,
+  "files_touched": [
+    "frontend/src/api/client.ts",
+    "frontend/src/api/types.ts",
+    "frontend/src/components/WorkItemCard.tsx",
+    "frontend/src/components/WorkItemsSection.test.tsx",
+    "frontend/src/components/WorkItemsSection.tsx",
+    "frontend/src/hooks/useMetrics.ts",
+    "frontend/src/pages/PeoplePage.tsx",
+    "frontend/src/pages/PersonDetailPage.test.tsx",
+    "frontend/src/pages/PersonDetailPage.tsx",
+    "openspec/changes/archive/2026-06-19-people-work-items-drilldown/.openspec.yaml",
+    "openspec/changes/archive/2026-06-19-people-work-items-drilldown/design.md",
+    "openspec/changes/archive/2026-06-19-people-work-items-drilldown/proposal.md",
+    "openspec/changes/archive/2026-06-19-people-work-items-drilldown/tasks.md",
+    "src/project_health/aggregation/queries.py",
+    "src/project_health/api/routes/persons.py",
+    "src/project_health/providers/github.py",
+    "workshop.yaml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/2c/890ff83ae5/0/metadata.json",
+      "transcript": "/2c/890ff83ae5/0/full.jsonl",
+      "content_hash": "/2c/890ff83ae5/0/content_hash.txt",
+      "prompt": "/2c/890ff83ae5/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1389337,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2413318,
+    "output_tokens": 9192,
+    "api_call_count": 76
+  }
+}
