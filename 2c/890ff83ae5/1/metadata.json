@@ -1,0 +1,102 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "2c890ff83ae5",
+  "session_id": "ses_1214d2833ffeLiQBC1BxuASB1n",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-19T07:44:45.11520773Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "frontend/src/api/client.ts",
+    "frontend/src/api/types.ts",
+    "frontend/src/hooks/useMetrics.ts",
+    "frontend/src/pages/PeoplePage.tsx",
+    "frontend/src/pages/PersonDetailPage.test.tsx",
+    "frontend/src/pages/PersonDetailPage.tsx",
+    "src/project_health/aggregation/queries.py",
+    "src/project_health/api/routes/persons.py",
+    "src/project_health/providers/github.py",
+    "workshop.yaml"
+  ],
+  "agent": "OpenCode",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "turn_id": "0a80a6e4e202",
+  "token_usage": {
+    "input_tokens": 7869,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 64,
+    "output_tokens": 0,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-19T07:44:45.113667492Z",
+    "agent_lines": 0,
+    "agent_removed": 1,
+    "human_added": 709,
+    "human_modified": 20,
+    "human_removed": 0,
+    "total_committed": 712,
+    "total_lines_changed": 730,
+    "agent_percentage": 0.136986301369863,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 3218,
+      "user_lines_removed": 20,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7,
+        "frontend/src/api/client.ts": 25,
+        "frontend/src/api/types.ts": 547,
+        "frontend/src/components/ActiveWorkSection.tsx": 61,
+        "frontend/src/components/CommitList.tsx": 131,
+        "frontend/src/components/GroupedWorkItemsView.tsx": 86,
+        "frontend/src/components/TimelineWorkItemsView.tsx": 96,
+        "frontend/src/components/ViewToggle.tsx": 43,
+        "frontend/src/components/WorkItemCard.test.tsx": 112,
+        "frontend/src/components/WorkItemCard.tsx": 208,
+        "frontend/src/components/WorkItemsSection.test.tsx": 94,
+        "frontend/src/components/WorkItemsSection.tsx": 1,
+        "frontend/src/hooks/useMetrics.ts": 18,
+        "frontend/src/pages/PeoplePage.tsx": 6,
+        "frontend/src/pages/PersonDetailPage.test.tsx": 14,
+        "frontend/src/pages/PersonDetailPage.tsx": 8,
+        "openspec/changes/people-work-items-drilldown/.openspec.yaml": 2,
+        "openspec/changes/people-work-items-drilldown/design.md": 417,
+        "openspec/changes/people-work-items-drilldown/proposal.md": 70,
+        "openspec/changes/people-work-items-drilldown/tasks.md": 128,
+        "src/project_health/aggregation/queries.py": 311,
+        "src/project_health/api/routes/persons.py": 85,
+        "src/project_health/providers/github.py": 2,
+        "tests/test_api_work_items.py": 393,
+        "tests/test_work_items.py": 348,
+        "workshop.yaml": 5
+      },
+      "user_removed_per_file": {
+        "frontend/src/api/types.ts": 1,
+        "frontend/src/hooks/useMetrics.ts": 1,
+        "frontend/src/pages/PeoplePage.tsx": 3,
+        "frontend/src/pages/PersonDetailPage.test.tsx": 5,
+        "src/project_health/aggregation/queries.py": 1,
+        "src/project_health/api/routes/persons.py": 3,
+        "workshop.yaml": 6
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3211,
+      "agent_lines_removed": 20,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    }
+  ]
+}
