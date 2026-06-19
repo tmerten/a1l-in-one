@@ -66,3 +66,28 @@ export async function getPersons(query: Record<string, string | string[] | undef
 export async function getPersonContributions(personId: string, query: Record<string, string | string[] | undefined>) {
   return fetchJson(`/persons/${personId}/contributions?${buildParams(query)}`)
 }
+
+export interface WorkItemsParams {
+  status?: 'active' | 'completed'
+  datasource?: string
+  event_type?: string
+  from?: string
+  to?: string
+  page?: number
+  per_page?: number
+}
+
+export async function getWorkItems(personId: string, query: WorkItemsParams) {
+  return fetchJson(`/persons/${personId}/work-items?${buildParams(query as Record<string, string | string[] | undefined>)}`)
+}
+
+export interface CommitsParams {
+  from?: string
+  to?: string
+  page?: number
+  per_page?: number
+}
+
+export async function getCommits(personId: string, query: CommitsParams) {
+  return fetchJson(`/persons/${personId}/commits?${buildParams(query as Record<string, string | string[] | undefined>)}`)
+}

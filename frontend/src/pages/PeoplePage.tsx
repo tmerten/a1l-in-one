@@ -91,11 +91,13 @@ export default function PeoplePage() {
               </tr>
             </thead>
             <tbody>
-              {persons.map((person) => (
+              {persons.map((person) => {
+                const detailUrl = `/persons/${person.id}?section=work-items${from ? `&from=${from}` : ''}${to ? `&to=${to}` : ''}${sprintId ? `&sprint_id=${sprintId}` : ''}${datasource ? `&datasource=${datasource}` : ''}${project ? `&project=${project}` : ''}`
+                return (
                 <tr
                   key={person.id}
                   className="border-t border-gray-100 cursor-pointer hover:bg-gray-50"
-                  onClick={() => navigate(`/persons/${person.id}${window.location.search}`)}
+                  onClick={() => navigate(detailUrl)}
                   title={person.identities.map(i => `${i.source}: ${i.external_id}`).join('\n')}
                 >
                   <td className="px-4 py-2 font-medium text-gray-900">
@@ -123,7 +125,8 @@ export default function PeoplePage() {
                     {person.metrics.median_cycle_time_hours?.toFixed(1) ?? '—'}
                   </td>
                 </tr>
-              ))}
+                )
+              })}
               {pLoading && (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400">Loading…</td></tr>
               )}

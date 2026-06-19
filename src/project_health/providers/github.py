@@ -83,6 +83,7 @@ class GitHubProvider:
                                     "pr_number": pr["number"],
                                     "author_name": commit["commit"]["author"]["name"],
                                     "committer_name": commit["commit"]["committer"]["name"],
+                                    "html_url": f"https://github.com/{repo}/commit/{commit['sha']}",
                                 },
                             )
                         )
@@ -177,6 +178,7 @@ class GitHubProvider:
                                     "comment_count": len(comments),
                                     "pr_external_id": str(pr["number"]),
                                     "body": review.get("body", ""),
+                                    "html_url": f"https://github.com/{repo}/pull/{pr['number']}#pullrequestreview-{review['id']}",
                                 },
                             )
                         )

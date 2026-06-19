@@ -15,7 +15,7 @@ export interface paths {
         put?: never;
         /**
          * Sync Run
-         * @description Trigger an immediate ingestion run.
+         * @description Trigger an immediate ingestion run for all providers (or a specific one).
          */
         post: operations["sync_run_api_sync_run_post"];
         delete?: never;
@@ -56,6 +56,23 @@ export interface paths {
          * @description List sprints for a project. Returns active + completed from last 90 days.
          */
         get: operations["list_sprints_api_sprints__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/projects/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Projects */
+        get: operations["list_projects_api_projects__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -200,6 +217,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/persons/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Persons */
+        get: operations["list_persons_api_persons__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/persons/{person_id}/contributions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Person Contributions */
+        get: operations["person_contributions_api_persons__person_id__contributions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/persons/{person_id}/work-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Work Items */
+        get: operations["get_work_items_api_persons__person_id__work_items_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/persons/{person_id}/commits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Commits */
+        get: operations["get_commits_api_persons__person_id__commits_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -218,6 +303,39 @@ export interface components {
                     [key: string]: unknown;
                 };
             };
+        };
+        /** CommitItem */
+        CommitItem: {
+            /** Id */
+            id: string;
+            /** Sha */
+            sha: string;
+            /** Message */
+            message: string;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /** Url */
+            url: string;
+            /** Project */
+            project: string;
+            /** Pr Number */
+            pr_number?: number | null;
+        };
+        /** CommitsResponse */
+        CommitsResponse: {
+            /** Person Id */
+            person_id: string;
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Per Page */
+            per_page: number;
+            /** Items */
+            items: components["schemas"]["CommitItem"][];
         };
         /** CompositionResponse */
         CompositionResponse: {
@@ -261,10 +379,176 @@ export interface components {
                 };
             };
         };
+        /** DatasourceContribution */
+        DatasourceContribution: {
+            /** Datasource */
+            datasource: string;
+            /** Role */
+            role: string;
+            /** Projects */
+            projects: components["schemas"]["ProjectContribution"][];
+        };
+        /** DatasourceProjectGroup */
+        DatasourceProjectGroup: {
+            /** Id */
+            id: string;
+            /** Role */
+            role: string;
+            /** Display Name */
+            display_name: string;
+            /** Projects */
+            projects: string[];
+        };
+        /** GroupedProjectsResponse */
+        GroupedProjectsResponse: {
+            /** Datasources */
+            datasources: components["schemas"]["DatasourceProjectGroup"][];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** IdentityInfo */
+        IdentityInfo: {
+            /** Source */
+            source: string;
+            /** External Id */
+            external_id: string;
+        };
+        /** PersonContributionsResponse */
+        PersonContributionsResponse: {
+            /** Person Id */
+            person_id: string;
+            /** Display Name */
+            display_name: string;
+            /** Identities */
+            identities: components["schemas"]["IdentityInfo"][];
+            /** Timeframe */
+            timeframe: {
+                [key: string]: unknown;
+            };
+            /** Contributions */
+            contributions: components["schemas"]["DatasourceContribution"][];
+        };
+        /** PersonMetrics */
+        PersonMetrics: {
+            /**
+             * Commits
+             * @default 0
+             */
+            commits: number;
+            /**
+             * Prs Opened
+             * @default 0
+             */
+            prs_opened: number;
+            /**
+             * Prs Merged
+             * @default 0
+             */
+            prs_merged: number;
+            /**
+             * Pr Loc Added
+             * @default 0
+             */
+            pr_loc_added: number;
+            /**
+             * Pr Loc Removed
+             * @default 0
+             */
+            pr_loc_removed: number;
+            /**
+             * Issues Resolved
+             * @default 0
+             */
+            issues_resolved: number;
+            /**
+             * Issues Opened
+             * @default 0
+             */
+            issues_opened: number;
+            /**
+             * Reviews Given
+             * @default 0
+             */
+            reviews_given: number;
+            /**
+             * Review Comments
+             * @default 0
+             */
+            review_comments: number;
+            /** Median Cycle Time Hours */
+            median_cycle_time_hours?: number | null;
+            /**
+             * Sources
+             * @default {}
+             */
+            sources: {
+                [key: string]: {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        /** PersonSummary */
+        PersonSummary: {
+            /** Id */
+            id: string;
+            /** Display Name */
+            display_name: string;
+            /** Identities */
+            identities: components["schemas"]["IdentityInfo"][];
+            metrics: components["schemas"]["PersonMetrics"];
+        };
+        /** PersonsResponse */
+        PersonsResponse: {
+            /** Persons */
+            persons: components["schemas"]["PersonSummary"][];
+        };
+        /** ProjectContribution */
+        ProjectContribution: {
+            /** Project */
+            project: string;
+            /**
+             * Commits
+             * @default 0
+             */
+            commits: number;
+            /**
+             * Pull Requests
+             * @default 0
+             */
+            pull_requests: number;
+            /**
+             * Pr Loc Added
+             * @default 0
+             */
+            pr_loc_added: number;
+            /**
+             * Pr Loc Removed
+             * @default 0
+             */
+            pr_loc_removed: number;
+            /**
+             * Issues Resolved
+             * @default 0
+             */
+            issues_resolved: number;
+            /**
+             * Issues Opened
+             * @default 0
+             */
+            issues_opened: number;
+            /**
+             * Reviews Given
+             * @default 0
+             */
+            reviews_given: number;
+        };
+        /** ProjectsResponse */
+        ProjectsResponse: {
+            /** Projects */
+            projects: string[];
         };
         /** SprintBurndownResponse */
         SprintBurndownResponse: {
@@ -336,6 +620,11 @@ export interface components {
              * @default 0
              */
             cache_misses: number;
+            /**
+             * Any Running
+             * @default false
+             */
+            any_running: boolean;
         };
         /** TimeSeriesPoint */
         TimeSeriesPoint: {
@@ -386,6 +675,67 @@ export interface components {
                     [key: string]: unknown;
                 };
             };
+        };
+        /** WorkItem */
+        WorkItem: {
+            /** Id */
+            id: string;
+            /** Datasource */
+            datasource: string;
+            /** Event Type */
+            event_type: string;
+            /** External Id */
+            external_id: string;
+            /** Project */
+            project: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description?: string | null;
+            /** Status */
+            status: string;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /** Url */
+            url: string;
+            metadata?: components["schemas"]["WorkItemMetadata"] | null;
+        };
+        /** WorkItemMetadata */
+        WorkItemMetadata: {
+            /** Additions */
+            additions?: number | null;
+            /** Deletions */
+            deletions?: number | null;
+            /** Reviewers */
+            reviewers?: string[] | null;
+            /** Issue Type */
+            issue_type?: string | null;
+            /** Story Points */
+            story_points?: number | null;
+            /** Labels */
+            labels?: string[] | null;
+            /** Pr Number */
+            pr_number?: number | null;
+            /** Sha */
+            sha?: string | null;
+        };
+        /** WorkItemsResponse */
+        WorkItemsResponse: {
+            /** Person Id */
+            person_id: string;
+            /** Status */
+            status: string;
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Per Page */
+            per_page: number;
+            /** Items */
+            items: components["schemas"]["WorkItem"][];
         };
     };
     responses: never;
@@ -479,6 +829,37 @@ export interface operations {
             };
         };
     };
+    list_projects_api_projects__get: {
+        parameters: {
+            query?: {
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupedProjectsResponse"] | components["schemas"]["ProjectsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     contribution_volume_api_metrics_contribution_volume_get: {
         parameters: {
             query?: {
@@ -487,6 +868,7 @@ export interface operations {
                 sprint_id?: string | null;
                 projects?: string[] | null;
                 actors?: string[] | null;
+                datasource?: string | null;
             };
             header?: never;
             path?: never;
@@ -520,6 +902,9 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 sprint_id?: string | null;
+                projects?: string[] | null;
+                actors?: string[] | null;
+                datasource?: string | null;
             };
             header?: never;
             path?: never;
@@ -553,6 +938,9 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 sprint_id?: string | null;
+                projects?: string[] | null;
+                actors?: string[] | null;
+                datasource?: string | null;
             };
             header?: never;
             path?: never;
@@ -586,6 +974,9 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 sprint_id?: string | null;
+                projects?: string[] | null;
+                actors?: string[] | null;
+                datasource?: string | null;
             };
             header?: never;
             path?: never;
@@ -650,6 +1041,9 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 sprint_id?: string | null;
+                projects?: string[] | null;
+                actors?: string[] | null;
+                datasource?: string | null;
             };
             header?: never;
             path?: never;
@@ -683,6 +1077,9 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 sprint_id?: string | null;
+                projects?: string[] | null;
+                actors?: string[] | null;
+                datasource?: string | null;
             };
             header?: never;
             path?: never;
@@ -716,6 +1113,9 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 sprint_id?: string | null;
+                projects?: string[] | null;
+                actors?: string[] | null;
+                datasource?: string | null;
             };
             header?: never;
             path?: never;
@@ -730,6 +1130,152 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TimeSeriesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_persons_api_persons__get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+                sprint_id?: string | null;
+                projects?: string[] | null;
+                datasource?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    person_contributions_api_persons__person_id__contributions_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+                sprint_id?: string | null;
+                projects?: string[] | null;
+            };
+            header?: never;
+            path: {
+                person_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonContributionsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_work_items_api_persons__person_id__work_items_get: {
+        parameters: {
+            query?: {
+                status?: "active" | "completed";
+                datasource?: string | null;
+                event_type?: string | null;
+                from?: string | null;
+                to?: string | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                person_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkItemsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_commits_api_persons__person_id__commits_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                person_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommitsResponse"];
                 };
             };
             /** @description Validation Error */

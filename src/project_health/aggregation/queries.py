@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
-from typing import Any
+from datetime import UTC, datetime, timedelta
+from typing import Any, Literal
 
+from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +21,63 @@ from project_health.config.loader import Config
 from project_health.providers.protocol import sources_for_event_type
 
 UTC = UTC
+
+
+class WorkItemMetadata(BaseModel):
+    additions: int | None = None
+    deletions: int | None = None
+    reviewers: list[str] | None = None
+    issue_type: str | None = None
+    story_points: int | None = None
+    labels: list[str] | None = None
+    pr_number: int | None = None
+    sha: str | None = None
+
+
+class WorkItem(BaseModel):
+    id: str
+    datasource: str
+    event_type: str
+    external_id: str
+    project: str
+    title: str
+    description: str | None = None
+    status: str
+    timestamp: datetime
+    url: str
+    metadata: WorkItemMetadata | None = None
+
+
+class CommitItem(BaseModel):
+    id: str
+    sha: str
+    message: str
+    timestamp: datetime
+    url: str
+    project: str
+    pr_number: int | None = None
+
+
+class WorkItemsResponse(BaseModel):
+    person_id: str
+    status: str
+    total: int
+    page: int
+    per_page: int
+    items: list[WorkItem]
+
+
+class CommitsResponse(BaseModel):
+    person_id: str
+    total: int
+    page: int
+    per_page: int
+    items: list[CommitItem]
+
+
+JIRA_TERMINAL_STATES = {"done", "closed", "cancelled", "resolved", "completed"}
+GITHUB_PR_ACTIVE_STATES = {"open"}
+GITHUB_ISSUE_ACTIVE_STATES = {"open"}
 
 
 def _parse_dt(value: object) -> datetime | None:
@@ -848,3 +906,263 @@ class AggregationQueries:
         params = {f"actor_{i}": a for i, a in enumerate(ctx.actors)}
         placeholders = ", ".join(f":actor_{i}" for i in range(len(ctx.actors)))
         return f"AND {col} IN ({placeholders})", params
+
+    async def work_items(
+        self,
+        person_id: str,
+        status: Literal["active", "completed"],
+        datasource: str | None,
+        event_type: str | None,
+        from_ts: datetime | None,
+        to_ts: datetime | None,
+        page: int,
+        per_page: int,
+    ) -> tuple[list[WorkItem], int]:
+        id_sql = """
+            SELECT source, external_id FROM person_identities
+            WHERE person_id = :person_id
+        """
+        id_result = await self._session.execute(text(id_sql), {"person_id": person_id})
+        id_rows = id_result.mappings().all()
+        if not id_rows:
+            return [], 0
+
+        pair_params: dict[str, str] = {}
+        pair_clauses: list[str] = []
+        for i, row in enumerate(id_rows):
+            pair_params[f"ids_{i}"] = row["source"]
+            pair_params[f"idx_{i}"] = row["external_id"]
+            pair_clauses.append(f"(:ids_{i}, :idx_{i})")
+        identity_pairs_sql = ", ".join(pair_clauses)
+
+        conditions = [f"(source, actor) IN ({identity_pairs_sql})"]
+        params: dict[str, Any] = {**pair_params}
+
+        if status == "active":
+            conditions.append("event_type IN ('pull_request', 'issue')")
+            conditions.append("""(
+                (source = 'github' AND event_type = 'pull_request' AND json_extract(data, '$.state') = 'open')
+                OR (source = 'github' AND event_type = 'issue' AND json_extract(data, '$.state') = 'open')
+                OR (source = 'jira' AND event_type = 'issue' AND LOWER(json_extract(data, '$.status')) NOT IN ('done', 'closed', 'cancelled', 'resolved', 'completed'))
+            )""")
+        else:
+            from_dt = from_ts or (datetime.now(UTC) - timedelta(days=30))
+            to_dt = to_ts or datetime.now(UTC)
+            conditions.append("timestamp BETWEEN :from_ts AND :to_ts")
+            params["from_ts"] = from_dt
+            params["to_ts"] = to_dt
+
+        if datasource:
+            conditions.append("source = :datasource")
+            params["datasource"] = datasource
+
+        if event_type:
+            conditions.append("event_type = :event_type")
+            params["event_type"] = event_type
+
+        where_clause = " AND ".join(conditions)
+
+        count_sql = f"SELECT COUNT(*) as cnt FROM raw_events WHERE {where_clause}"
+        count_result = await self._session.execute(text(count_sql), params)
+        total = count_result.scalar() or 0
+
+        offset = (page - 1) * per_page
+        data_sql = f"""
+            SELECT id, source, event_type, external_id, project, timestamp, data
+            FROM raw_events
+            WHERE {where_clause}
+            ORDER BY timestamp DESC
+            LIMIT :per_page OFFSET :offset
+        """
+        params["per_page"] = per_page
+        params["offset"] = offset
+        data_result = await self._session.execute(text(data_sql), params)
+
+        items: list[WorkItem] = []
+        for row in data_result.mappings().all():
+            item = self._row_to_work_item(row, status)
+            if item:
+                items.append(item)
+
+        return items, total
+
+    def _row_to_work_item(self, row: dict[str, Any], status: str) -> WorkItem | None:
+        data = row["data"]
+        if isinstance(data, str):
+            data = json.loads(data)
+
+        source = row["source"]
+        event_type = row["event_type"]
+        external_id = str(row["external_id"])
+        project = row["project"] or "unknown"
+        timestamp = row["timestamp"]
+        if isinstance(timestamp, str):
+            timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+
+        title: str = ""
+        description: str | None = None
+        item_status: str = "unknown"
+        url: str = ""
+        metadata = WorkItemMetadata()
+
+        if event_type == "pull_request":
+            title = data.get("title", f"PR #{external_id}")
+            description = data.get("body")
+            pr_state = data.get("state", "unknown")
+            merged_at = data.get("merged_at")
+            if merged_at:
+                item_status = "merged"
+            elif pr_state == "closed":
+                item_status = "closed"
+            elif data.get("draft"):
+                item_status = "draft"
+            else:
+                item_status = "open"
+            url = data.get("html_url", "")
+            metadata.additions = data.get("additions")
+            metadata.deletions = data.get("deletions")
+            reviewers = data.get("reviewers")
+            if reviewers and isinstance(reviewers, list):
+                metadata.reviewers = reviewers
+
+        elif event_type == "issue":
+            if source == "jira":
+                title = data.get("summary", external_id)
+                description = data.get("description")
+                jira_status = (data.get("status") or "unknown").lower()
+                if jira_status in JIRA_TERMINAL_STATES:
+                    item_status = "Done"
+                else:
+                    item_status = data.get("status", "unknown")
+                url = data.get("self", "")
+                metadata.issue_type = data.get("issue_type")
+                metadata.story_points = data.get("story_points")
+                labels = data.get("labels")
+                if labels and isinstance(labels, list):
+                    metadata.labels = labels
+            else:
+                title = data.get("title", f"Issue #{external_id}")
+                description = data.get("body")
+                issue_state = data.get("state", "unknown")
+                item_status = "closed" if issue_state == "closed" else "open"
+                url = data.get("html_url", "")
+                labels = data.get("labels")
+                if labels and isinstance(labels, list):
+                    metadata.labels = labels
+
+        elif event_type == "pull_request_review":
+            title = f"Review on PR #{data.get('pr_external_id', external_id)}"
+            description = data.get("body")
+            item_status = data.get("review_state", "reviewed")
+            pr_external_id = data.get("pr_external_id")
+            metadata.pr_number = int(pr_external_id) if pr_external_id is not None else None
+            url = data.get("html_url") or ""
+            if not url and pr_external_id and project != "unknown":
+                url = f"https://github.com/{project}/pull/{pr_external_id}#pullrequestreview-{external_id}"
+
+        elif event_type == "commit":
+            message = data.get("message", "")
+            first_line = message.split("\n")[0] if message else f"Commit {external_id[:7]}"
+            title = first_line[:80]
+            description = message if "\n" in message else None
+            item_status = "committed"
+            url = data.get("html_url") or (f"https://github.com/{project}/commit/{external_id}" if project != "unknown" else "")
+            metadata.sha = external_id[:7]
+            metadata.pr_number = data.get("pr_number")
+
+        else:
+            title = f"{event_type} {external_id}"
+            url = data.get("html_url", "")
+
+        return WorkItem(
+            id=str(row["id"]),
+            datasource=source,
+            event_type=event_type,
+            external_id=external_id,
+            project=project,
+            title=title,
+            description=description,
+            status=item_status,
+            timestamp=timestamp,
+            url=url,
+            metadata=metadata,
+        )
+
+    async def commits(
+        self,
+        person_id: str,
+        from_ts: datetime | None,
+        to_ts: datetime | None,
+        page: int,
+        per_page: int,
+    ) -> tuple[list[CommitItem], int]:
+        id_sql = """
+            SELECT source, external_id FROM person_identities
+            WHERE person_id = :person_id
+        """
+        id_result = await self._session.execute(text(id_sql), {"person_id": person_id})
+        id_rows = id_result.mappings().all()
+        if not id_rows:
+            return [], 0
+
+        pair_params: dict[str, str] = {}
+        pair_clauses: list[str] = []
+        for i, row in enumerate(id_rows):
+            pair_params[f"ids_{i}"] = row["source"]
+            pair_params[f"idx_{i}"] = row["external_id"]
+            pair_clauses.append(f"(:ids_{i}, :idx_{i})")
+        identity_pairs_sql = ", ".join(pair_clauses)
+
+        conditions = [f"(source, actor) IN ({identity_pairs_sql})", "event_type = 'commit'"]
+        params: dict[str, Any] = {**pair_params}
+
+        if from_ts and to_ts:
+            conditions.append("timestamp BETWEEN :from_ts AND :to_ts")
+            params["from_ts"] = from_ts
+            params["to_ts"] = to_ts
+
+        where_clause = " AND ".join(conditions)
+
+        count_sql = f"SELECT COUNT(*) as cnt FROM raw_events WHERE {where_clause}"
+        count_result = await self._session.execute(text(count_sql), params)
+        total = count_result.scalar() or 0
+
+        offset = (page - 1) * per_page
+        data_sql = f"""
+            SELECT id, external_id, project, timestamp, data
+            FROM raw_events
+            WHERE {where_clause}
+            ORDER BY timestamp DESC
+            LIMIT :per_page OFFSET :offset
+        """
+        params["per_page"] = per_page
+        params["offset"] = offset
+        data_result = await self._session.execute(text(data_sql), params)
+
+        items: list[CommitItem] = []
+        for row in data_result.mappings().all():
+            data = row["data"]
+            if isinstance(data, str):
+                data = json.loads(data)
+
+            sha = str(row["external_id"])[:7]
+            full_sha = str(row["external_id"])
+            message = data.get("message", "")
+            timestamp = row["timestamp"]
+            if isinstance(timestamp, str):
+                timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+
+            project = row["project"] or "unknown"
+            url = data.get("html_url") or (f"https://github.com/{project}/commit/{full_sha}" if project != "unknown" else "")
+
+            items.append(CommitItem(
+                id=str(row["id"]),
+                sha=sha,
+                message=message[:100],
+                timestamp=timestamp,
+                url=url,
+                project=project,
+                pr_number=data.get("pr_number"),
+            ))
+
+        return items, total

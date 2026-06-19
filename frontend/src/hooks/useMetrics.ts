@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   getMetrics, getMetricsTs, getProjects, getSyncStatus, getSprints,
-  getPersons, getPersonContributions,
+  getPersons, getPersonContributions, getWorkItems, getCommits,
 } from '../api/client'
+import type { WorkItemsParams, CommitsParams } from '../api/client'
 
 export function useSyncStatus() {
   return useQuery({
@@ -60,6 +61,22 @@ export function usePersonContributions(personId: string, query: Record<string, s
   return useQuery({
     queryKey: ['personContributions', personId, query],
     queryFn: () => getPersonContributions(personId, query),
+    enabled: !!personId,
+  })
+}
+
+export function useWorkItems(personId: string, query: WorkItemsParams) {
+  return useQuery({
+    queryKey: ['workItems', personId, query],
+    queryFn: () => getWorkItems(personId, query),
+    enabled: !!personId,
+  })
+}
+
+export function useCommits(personId: string, query: CommitsParams) {
+  return useQuery({
+    queryKey: ['commits', personId, query],
+    queryFn: () => getCommits(personId, query),
     enabled: !!personId,
   })
 }

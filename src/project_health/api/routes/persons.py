@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from project_health.aggregation.core import Timeframe, build_timeframe
-from project_health.aggregation.queries import AggregationQueries
+from project_health.aggregation.queries import (
+    AggregationQueries,
+    CommitsResponse,
+    WorkItemsResponse,
+)
 from project_health.api.deps import get_config, get_registry, get_session
 from project_health.config.loader import Config
 from project_health.db.models import Sprint
@@ -139,3 +143,75 @@ async def person_contributions(
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Person not found")
     return PersonContributionsResponse(**result)
+
+
+@router.get("/{person_id}/work-items", response_model=WorkItemsResponse)
+async def get_work_items(
+    person_id: str,
+    status: Literal["active", "completed"] = Query("completed"),
+    datasource: str | None = Query(None),
+    event_type: str | None = Query(None),
+    from_date: datetime | None = Query(None, alias="from"),
+    to_date: datetime | None = Query(None, alias="to"),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=1, le=100),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
+) -> WorkItemsResponse:
+    configured_sources = registry.configured_sources()
+    if datasource:
+        configured_sources = configured_sources & {datasource}
+
+    queries = AggregationQueries(session, config, configured_sources)
+
+    items, total = await queries.work_items(
+        person_id=person_id,
+        status=status,
+        datasource=datasource,
+        event_type=event_type,
+        from_ts=from_date,
+        to_ts=to_date,
+        page=page,
+        per_page=per_page,
+    )
+
+    return WorkItemsResponse(
+        person_id=person_id,
+        status=status,
+        total=total,
+        page=page,
+        per_page=per_page,
+        items=items,
+    )
+
+
+@router.get("/{person_id}/commits", response_model=CommitsResponse)
+async def get_commits(
+    person_id: str,
+    from_date: datetime | None = Query(None, alias="from"),
+    to_date: datetime | None = Query(None, alias="to"),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=1, le=100),
+    session: AsyncSession = Depends(get_session),
+    config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
+) -> CommitsResponse:
+    configured_sources = registry.configured_sources()
+    queries = AggregationQueries(session, config, configured_sources)
+
+    items, total = await queries.commits(
+        person_id=person_id,
+        from_ts=from_date,
+        to_ts=to_date,
+        page=page,
+        per_page=per_page,
+    )
+
+    return CommitsResponse(
+        person_id=person_id,
+        total=total,
+        page=page,
+        per_page=per_page,
+        items=items,
+    )

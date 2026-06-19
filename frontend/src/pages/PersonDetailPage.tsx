@@ -4,6 +4,7 @@ import { usePersonContributions, useContributionVolumeTs, useVelocityTs, useColl
 import MetricCard from '../components/MetricCard'
 import StackedBarChart from '../components/StackedBarChart'
 import MultiLineChart from '../components/MultiLineChart'
+import WorkItemsSection from '../components/WorkItemsSection'
 
 type Identity = { source: string; external_id: string }
 type ProjectContribution = {
@@ -182,6 +183,13 @@ export default function PersonDetailPage() {
           </section>
         </>
       )}
+
+      <WorkItemsSection
+        personId={personId ?? ''}
+        from={from}
+        to={to}
+        sprintId={sprintId}
+      />
     </div>
   )
 }

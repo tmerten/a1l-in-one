@@ -6,9 +6,9 @@ sdks:
   - name: claude-code
   - name: opencode
   - name: vscode-remote
-  - name: node
   - name: pi-coding-agent
     channel: latest/edge
+  - name: node
   - name: project-entire
     slots:
       backend:
@@ -38,13 +38,12 @@ actions:
   pi: |
     pi "$@"
 
-  entire: |
-    entire "$@"
-
-  # does not work
   backend: |
     /var/lib/workshop/sdk/uv/bin/uv run project-health serve
 
   # does not work
   frontend: |
-    cd frontend && npm run dev
+    cd frontend && /var/lib/workshop/sdk/pi-coding-agent/bin/npm run dev
+
+  entire: |
+    entire "$@"
