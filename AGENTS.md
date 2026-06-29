@@ -1,5 +1,7 @@
 Never make write calls to external provider APIs (GitHub, Jira, and any future integrations). Use GET/HEAD only — no POST/PUT/PATCH/DELETE, no comments, no status transitions, no labels. Configure provider tokens with read-only scopes.
 
+When implementing the front-end always use the back-ends OpenAPI spec and generate the front-end SDK with `npm run typegen` in the `frontend` directory.
+
 The project's own HTTP API may expose write endpoints (e.g. triggering a manual sync). "Read-only" applies to outbound calls to providers, not to the dashboard's own surface.
 
 Add tests, but focus on functionality — tests exist to validate behavior, not to mirror implementation.
