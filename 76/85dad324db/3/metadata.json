@@ -1,0 +1,180 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "7685dad324db",
+  "session_id": "ses_0ec8c95c1ffemPtnyQd0XkHEJG",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T15:40:03.592856494Z",
+  "branch": "main",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "openspec/changes/fix-aggregation-dual-representation/.openspec.yaml",
+    "openspec/changes/fix-aggregation-dual-representation/design.md",
+    "openspec/changes/fix-aggregation-dual-representation/proposal.md",
+    "openspec/changes/fix-aggregation-dual-representation/tasks.md",
+    "src/project_health/aggregation/queries.py",
+    "tests/test_integration.py",
+    "tests/test_unified_contributions.py",
+    "tests/test_work_items.py"
+  ],
+  "agent": "OpenCode",
+  "model": "claude-opus-4.6",
+  "turn_id": "5aacc318ea15",
+  "token_usage": {
+    "input_tokens": 479117,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9568781,
+    "output_tokens": 50511,
+    "api_call_count": 123
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T15:40:03.5738479Z",
+    "agent_lines": 210,
+    "agent_removed": 0,
+    "human_added": 226,
+    "human_modified": 71,
+    "human_removed": 0,
+    "total_committed": 507,
+    "total_lines_changed": 507,
+    "agent_percentage": 41.42011834319527,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 3292,
+      "user_lines_removed": 120,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7,
+        "AGENTS.md": 2,
+        "alembic/versions/20250513_100000_initial_schema.py": 3,
+        "alembic/versions/20260626_120000_add_identity_details.py": 32,
+        "frontend/src/api/types.ts": 23,
+        "frontend/src/components/DatasourceProjectFilter.test.tsx": 41,
+        "frontend/src/components/DatasourceProjectFilter.tsx": 95,
+        "frontend/src/components/GroupedWorkItemsView.tsx": 17,
+        "frontend/src/components/TimeframeSelector.tsx": 15,
+        "frontend/src/components/WorkItemCard.test.tsx": 18,
+        "frontend/src/components/WorkItemCard.tsx": 2,
+        "frontend/src/components/WorkItemsSection.test.tsx": 45,
+        "frontend/src/pages/PersonDetailPage.tsx": 3,
+        "frontend/src/pages/ProjectsPage.tsx": 3,
+        "openspec/changes/add-launchpad-observation/.openspec.yaml": 2,
+        "openspec/changes/add-launchpad-observation/design.md": 431,
+        "openspec/changes/add-launchpad-observation/proposal.md": 74,
+        "openspec/changes/add-launchpad-observation/tasks.md": 95,
+        "openspec/changes/unified-contributions-view/tasks.md": 2,
+        "package.json": 5,
+        "project-health.example.yaml": 15,
+        "src/project_health/aggregation/cache.py": 7,
+        "src/project_health/aggregation/core.py": 20,
+        "src/project_health/aggregation/queries.py": 83,
+        "src/project_health/api/deps.py": 4,
+        "src/project_health/api/routes/metrics.py": 1,
+        "src/project_health/api/routes/persons.py": 3,
+        "src/project_health/api/routes/projects.py": 4,
+        "src/project_health/api/routes/sync.py": 15,
+        "src/project_health/api/server.py": 2,
+        "src/project_health/cli/backfill.py": 11,
+        "src/project_health/cli/main.py": 46,
+        "src/project_health/config/loader.py": 134,
+        "src/project_health/db/models.py": 3,
+        "src/project_health/db/reconcile.py": 12,
+        "src/project_health/db/session.py": 8,
+        "src/project_health/ingestion/scheduler.py": 24,
+        "src/project_health/ingestion/writer.py": 73,
+        "src/project_health/providers/github.py": 124,
+        "src/project_health/providers/jira.py": 22,
+        "src/project_health/providers/launchpad.py": 565,
+        "src/project_health/providers/launchpad_oauth.py": 166,
+        "src/project_health/providers/protocol.py": 96,
+        "src/project_health/providers/registry.py": 11,
+        "tests/cassettes/launchpad_public.json": 107,
+        "tests/test_config.py": 114,
+        "tests/test_ingestion.py": 96,
+        "tests/test_launchpad_oauth.py": 105,
+        "tests/test_launchpad_provider.py": 399,
+        "tests/test_unified_contributions.py": 107
+      },
+      "user_removed_per_file": {
+        "frontend/src/components/DatasourceProjectFilter.tsx": 19,
+        "frontend/src/components/GroupedWorkItemsView.tsx": 3,
+        "frontend/src/components/TimeframeSelector.tsx": 5,
+        "frontend/src/components/WorkItemCard.tsx": 2,
+        "frontend/src/pages/PersonDetailPage.tsx": 3,
+        "frontend/src/pages/ProjectsPage.tsx": 3,
+        "openspec/changes/unified-contributions-view/tasks.md": 2,
+        "project-health.example.yaml": 3,
+        "src/project_health/aggregation/cache.py": 4,
+        "src/project_health/aggregation/core.py": 1,
+        "src/project_health/aggregation/queries.py": 45,
+        "src/project_health/api/deps.py": 2,
+        "src/project_health/api/routes/persons.py": 1,
+        "src/project_health/api/routes/sync.py": 1,
+        "src/project_health/api/server.py": 1,
+        "src/project_health/cli/backfill.py": 1,
+        "src/project_health/config/loader.py": 6,
+        "src/project_health/db/session.py": 3,
+        "src/project_health/ingestion/scheduler.py": 1,
+        "src/project_health/ingestion/writer.py": 4,
+        "src/project_health/providers/jira.py": 3,
+        "src/project_health/providers/protocol.py": 2,
+        "src/project_health/providers/registry.py": 2,
+        "tests/test_ingestion.py": 1,
+        "tests/test_unified_contributions.py": 2
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3285,
+      "agent_lines_removed": 120,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 304,
+      "user_lines_removed": 24,
+      "agent_lines_added": 3546,
+      "agent_lines_removed": 120,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7,
+        "src/project_health/aggregation/queries.py": 58,
+        "tests/test_integration.py": 4,
+        "tests/test_unified_contributions.py": 185,
+        "tests/test_work_items.py": 50
+      },
+      "user_removed_per_file": {
+        "src/project_health/aggregation/queries.py": 19,
+        "tests/test_integration.py": 5
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3838,
+      "agent_lines_removed": 139,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3863,
+      "agent_lines_removed": 140,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    }
+  ]
+}

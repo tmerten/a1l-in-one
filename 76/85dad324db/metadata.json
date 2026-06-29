@@ -3,10 +3,16 @@
   "checkpoint_id": "7685dad324db",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 3,
+  "checkpoints_count": 7,
   "files_touched": [
+    "openspec/changes/fix-aggregation-dual-representation/.openspec.yaml",
+    "openspec/changes/fix-aggregation-dual-representation/design.md",
+    "openspec/changes/fix-aggregation-dual-representation/proposal.md",
+    "openspec/changes/fix-aggregation-dual-representation/tasks.md",
     "src/project_health/aggregation/queries.py",
-    "tests/test_unified_contributions.py"
+    "tests/test_integration.py",
+    "tests/test_unified_contributions.py",
+    "tests/test_work_items.py"
   ],
   "sessions": [
     {
@@ -26,13 +32,19 @@
       "transcript": "/76/85dad324db/2/full.jsonl",
       "content_hash": "/76/85dad324db/2/content_hash.txt",
       "prompt": "/76/85dad324db/2/prompt.txt"
+    },
+    {
+      "metadata": "/76/85dad324db/3/metadata.json",
+      "transcript": "/76/85dad324db/3/full.jsonl",
+      "content_hash": "/76/85dad324db/3/content_hash.txt",
+      "prompt": "/76/85dad324db/3/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 227314,
+    "input_tokens": 706431,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 1704976,
-    "output_tokens": 20709,
-    "api_call_count": 46
+    "cache_read_tokens": 11273757,
+    "output_tokens": 71220,
+    "api_call_count": 169
   }
 }
