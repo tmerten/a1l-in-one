@@ -1,0 +1,1 @@
+Explore the frontend structure and identify API type definitions, datasource/project filter UI, person drill-down components, and build/typecheck commands. Do not edit files. Return concise file paths and key observations. Thoroughness: medium.
