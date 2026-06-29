@@ -1,0 +1,14 @@
+Explore the project structure thoroughly. I need to understand:
+1. The overall architecture (backend, frontend, etc.)
+2. How providers (GitHub, Jira, Launchpad) are organized
+3. The data models used for metrics/PRs/MPs
+4. Any abstraction layers that unify concepts across providers
+
+Return:
+- Top-level directory structure
+- Key files related to provider integrations
+- Database models/schemas
+- Any shared abstractions or unified models
+- Configuration files
+
+Be very thorough - check src/, backend/, models/, schemas/, etc.
