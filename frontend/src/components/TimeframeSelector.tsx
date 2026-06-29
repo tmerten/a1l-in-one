@@ -36,7 +36,8 @@ function applyPreset(p: typeof RELATIVE_PRESETS[number]): { from: string; to: st
 
 export default function TimeframeSelector() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { data: sprints } = useSprints()
+  const project = searchParams.get('project') ?? undefined
+  const { data: sprints } = useSprints(project)
 
   const fromParam = searchParams.get('from')
   const toParam = searchParams.get('to')

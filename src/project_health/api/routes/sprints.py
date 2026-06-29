@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
@@ -28,23 +28,20 @@ class SprintResponse(BaseModel):
 @router.get("/")
 async def list_sprints(
     project: str | None = Query(None),
+    limit: int = Query(default=20, ge=1, le=100),
     session: AsyncSession = Depends(get_session),
 ) -> list[SprintResponse]:
-    """List sprints for a project. Returns active + completed from last 90 days."""
+    """List sprints for a project.
+
+    Returns all active/future sprints plus the most recent closed ones,
+    up to *limit* total entries (default 20).
+    """
     stmt = select(Sprint).order_by(Sprint.end_date.desc())
     if project:
         stmt = stmt.where(Sprint.project == project)
+    stmt = stmt.limit(limit)
     result = await session.execute(stmt)
     rows = result.scalars().all()
-
-    cutoff = datetime.now(UTC) - timedelta(days=90)
-    active_states = {"active", "future"}
-    filtered = [
-        row for row in rows
-        if row.state in active_states or (
-            row.end_date if row.end_date.tzinfo else row.end_date.replace(tzinfo=UTC)
-        ) >= cutoff
-    ]
 
     return [
         SprintResponse(
@@ -56,5 +53,5 @@ async def list_sprints(
             state=row.state,
             is_active=row.state == "active",
         )
-        for row in filtered
+        for row in rows
     ]

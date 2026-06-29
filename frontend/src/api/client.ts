@@ -31,7 +31,8 @@ export async function postSyncRun(source?: string, eventType?: string) {
 export async function getSprints(project?: string) {
   const params = new URLSearchParams()
   if (project) params.set('project', project)
-  return fetchJson(`/sprints?${params}`)
+  const suffix = params.toString() ? `?${params}` : ''
+  return fetchJson(`/sprints/${suffix}`)
 }
 
 function buildParams(query: Record<string, string | string[] | undefined>): URLSearchParams {
