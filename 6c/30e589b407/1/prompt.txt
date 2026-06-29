@@ -1,0 +1,10 @@
+Search the codebase thoroughly for how GitHub PRs are abstracted. I need to find:
+1. GitHub client/API code
+2. GitHub PR models
+3. Any unified/abstract model that GitHub PRs map to (e.g., "CodeReview", "MergeRequest", "PullRequest" as abstract concept)
+4. The mapping logic between GitHub PRs and the abstract model
+5. How PR metrics are computed
+
+Search for patterns like: "pull_request", "PullRequest", "github", "CodeReview", "MergeRequest", "review"
+
+Return all file paths and key code sections found.
