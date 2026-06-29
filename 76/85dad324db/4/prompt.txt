@@ -1,0 +1,1 @@
+We recently added launchpad support to this project. Now we need to fix some bugs. But first I need the app to login to launchpad. How do I do that? I don't think we have API tokens for launchpad.

@@ -1,0 +1,241 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "7685dad324db",
+  "session_id": "ses_0fb606980ffegiylS9N33H81aJ",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T15:40:04.965740057Z",
+  "branch": "main",
+  "checkpoints_count": 13,
+  "files_touched": [
+    "src/project_health/aggregation/queries.py",
+    "tests/test_unified_contributions.py"
+  ],
+  "agent": "OpenCode",
+  "model": "gpt-5.5",
+  "turn_id": "8124a36fb489",
+  "token_usage": {
+    "input_tokens": 968321,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 12505088,
+    "output_tokens": 34151,
+    "api_call_count": 126
+  },
+  "session_metrics": {
+    "turn_count": 13
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T15:40:04.924518996Z",
+    "agent_lines": 193,
+    "agent_removed": 15,
+    "human_added": 289,
+    "human_modified": 47,
+    "human_removed": 0,
+    "total_committed": 529,
+    "total_lines_changed": 549,
+    "agent_percentage": 37.88706739526412,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 2548,
+      "user_lines_removed": 116,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7,
+        "AGENTS.md": 2,
+        "alembic/versions/20250513_100000_initial_schema.py": 3,
+        "alembic/versions/20260626_120000_add_identity_details.py": 32,
+        "frontend/src/api/types.ts": 23,
+        "frontend/src/components/DatasourceProjectFilter.test.tsx": 41,
+        "frontend/src/components/DatasourceProjectFilter.tsx": 95,
+        "frontend/src/components/GroupedWorkItemsView.tsx": 17,
+        "frontend/src/components/TimeframeSelector.tsx": 15,
+        "frontend/src/components/WorkItemCard.test.tsx": 18,
+        "frontend/src/components/WorkItemCard.tsx": 2,
+        "frontend/src/components/WorkItemsSection.test.tsx": 45,
+        "frontend/src/pages/PersonDetailPage.tsx": 3,
+        "frontend/src/pages/ProjectsPage.tsx": 3,
+        "openspec/changes/add-launchpad-observation/.openspec.yaml": 2,
+        "openspec/changes/add-launchpad-observation/design.md": 434,
+        "openspec/changes/add-launchpad-observation/proposal.md": 74,
+        "openspec/changes/add-launchpad-observation/tasks.md": 95,
+        "package.json": 5,
+        "project-health.example.yaml": 10,
+        "src/project_health/aggregation/cache.py": 7,
+        "src/project_health/aggregation/core.py": 20,
+        "src/project_health/aggregation/queries.py": 83,
+        "src/project_health/api/deps.py": 4,
+        "src/project_health/api/routes/metrics.py": 1,
+        "src/project_health/api/routes/persons.py": 3,
+        "src/project_health/api/routes/projects.py": 4,
+        "src/project_health/api/routes/sync.py": 15,
+        "src/project_health/api/server.py": 2,
+        "src/project_health/cli/backfill.py": 11,
+        "src/project_health/config/loader.py": 136,
+        "src/project_health/db/models.py": 3,
+        "src/project_health/db/reconcile.py": 12,
+        "src/project_health/db/session.py": 8,
+        "src/project_health/ingestion/scheduler.py": 24,
+        "src/project_health/ingestion/writer.py": 68,
+        "src/project_health/providers/github.py": 124,
+        "src/project_health/providers/jira.py": 22,
+        "src/project_health/providers/launchpad.py": 479,
+        "src/project_health/providers/protocol.py": 96,
+        "src/project_health/providers/registry.py": 11,
+        "tests/cassettes/launchpad_public.json": 107,
+        "tests/test_config.py": 80,
+        "tests/test_ingestion.py": 58,
+        "tests/test_launchpad_provider.py": 137,
+        "tests/test_unified_contributions.py": 107
+      },
+      "user_removed_per_file": {
+        "frontend/src/components/DatasourceProjectFilter.tsx": 19,
+        "frontend/src/components/GroupedWorkItemsView.tsx": 3,
+        "frontend/src/components/TimeframeSelector.tsx": 5,
+        "frontend/src/components/WorkItemCard.tsx": 2,
+        "frontend/src/pages/PersonDetailPage.tsx": 3,
+        "frontend/src/pages/ProjectsPage.tsx": 3,
+        "project-health.example.yaml": 2,
+        "src/project_health/aggregation/cache.py": 4,
+        "src/project_health/aggregation/core.py": 1,
+        "src/project_health/aggregation/queries.py": 45,
+        "src/project_health/api/deps.py": 2,
+        "src/project_health/api/routes/persons.py": 1,
+        "src/project_health/api/routes/sync.py": 1,
+        "src/project_health/api/server.py": 1,
+        "src/project_health/cli/backfill.py": 1,
+        "src/project_health/config/loader.py": 6,
+        "src/project_health/db/session.py": 3,
+        "src/project_health/ingestion/scheduler.py": 1,
+        "src/project_health/ingestion/writer.py": 3,
+        "src/project_health/providers/jira.py": 3,
+        "src/project_health/providers/protocol.py": 2,
+        "src/project_health/providers/registry.py": 2,
+        "tests/test_ingestion.py": 1,
+        "tests/test_unified_contributions.py": 2
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2541,
+      "agent_lines_removed": 116,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2554,
+      "agent_lines_removed": 116,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2554,
+      "agent_lines_removed": 116,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2554,
+      "agent_lines_removed": 116,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2866,
+      "agent_lines_removed": 119,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2925,
+      "agent_lines_removed": 119,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2925,
+      "agent_lines_removed": 119,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3005,
+      "agent_lines_removed": 119,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3059,
+      "agent_lines_removed": 119,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3116,
+      "agent_lines_removed": 119,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3159,
+      "agent_lines_removed": 120,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3183,
+      "agent_lines_removed": 120,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    }
+  ]
+}

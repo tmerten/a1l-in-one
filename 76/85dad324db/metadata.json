@@ -3,7 +3,7 @@
   "checkpoint_id": "7685dad324db",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 7,
+  "checkpoints_count": 20,
   "files_touched": [
     "openspec/changes/fix-aggregation-dual-representation/.openspec.yaml",
     "openspec/changes/fix-aggregation-dual-representation/design.md",
@@ -38,13 +38,19 @@
       "transcript": "/76/85dad324db/3/full.jsonl",
       "content_hash": "/76/85dad324db/3/content_hash.txt",
       "prompt": "/76/85dad324db/3/prompt.txt"
+    },
+    {
+      "metadata": "/76/85dad324db/4/metadata.json",
+      "transcript": "/76/85dad324db/4/full.jsonl",
+      "content_hash": "/76/85dad324db/4/content_hash.txt",
+      "prompt": "/76/85dad324db/4/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 706431,
+    "input_tokens": 1674752,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 11273757,
-    "output_tokens": 71220,
-    "api_call_count": 169
+    "cache_read_tokens": 23778845,
+    "output_tokens": 105371,
+    "api_call_count": 295
   }
 }
