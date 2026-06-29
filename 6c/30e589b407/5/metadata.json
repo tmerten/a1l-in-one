@@ -1,0 +1,42 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "6c30e589b407",
+  "session_id": "ses_0fb606980ffegiylS9N33H81aJ",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T15:47:57.985019356Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "alembic/versions/20250513_100000_initial_schema.py",
+    "openspec/changes/add-launchpad-observation/design.md",
+    "src/project_health/providers/launchpad.py",
+    "src/project_health/providers/launchpad_oauth.py",
+    "tests/test_launchpad_oauth.py",
+    "tests/test_launchpad_provider.py"
+  ],
+  "agent": "OpenCode",
+  "model": "gpt-5.5",
+  "turn_id": "8124a36fb489",
+  "token_usage": {
+    "input_tokens": 968321,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 12505088,
+    "output_tokens": 34151,
+    "api_call_count": 126
+  },
+  "session_metrics": {
+    "turn_count": 13
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T15:47:57.956164782Z",
+    "agent_lines": 1666,
+    "agent_removed": 0,
+    "human_added": 354,
+    "human_modified": 3,
+    "human_removed": 0,
+    "total_committed": 2023,
+    "total_lines_changed": 2023,
+    "agent_percentage": 82.35294117647058,
+    "metric_version": 2
+  }
+}
