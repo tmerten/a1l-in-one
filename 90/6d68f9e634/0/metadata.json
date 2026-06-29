@@ -1,0 +1,37 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "906d68f9e634",
+  "session_id": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T15:50:42.768948263Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "openspec/changes/unified-contributions-view/tasks.md"
+  ],
+  "agent": "OpenCode",
+  "model": "claude-opus-4.6",
+  "turn_id": "d69d8eeb0bb8",
+  "token_usage": {
+    "input_tokens": 14240,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10648,
+    "output_tokens": 1230,
+    "api_call_count": 4
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T15:50:42.767807216Z",
+    "agent_lines": 0,
+    "agent_removed": 98,
+    "human_added": 2655,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 2655,
+    "total_lines_changed": 5310,
+    "agent_percentage": 1.8455743879472692,
+    "metric_version": 2
+  }
+}
