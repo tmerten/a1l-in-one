@@ -28,6 +28,8 @@ class SyncRunResponse(BaseModel):
 
 class SyncStatusItem(BaseModel):
     source: str
+    target: str | None = None
+    target_type: str | None = None
     last_success_at: datetime | None
     last_status: str
     events_count: int | None
@@ -49,7 +51,17 @@ async def sync_run(
     """Trigger an immediate ingestion run for all providers (or a specific one)."""
     registry = await build_registry(config)
 
-    event_types = ["commit", "pull_request", "pull_request_review", "issue", "sprint"]
+    event_types = [
+        "commit",
+        "pull_request",
+        "change_request",
+        "pull_request_review",
+        "review_request",
+        "review_decision",
+        "review_comment",
+        "issue",
+        "sprint",
+    ]
     targets: list[tuple] = []
     if source:
         provider = registry.get(source)
@@ -126,6 +138,8 @@ async def sync_status() -> SyncStatusResponse:
             sources.append(
                 SyncStatusItem(
                     source=row.source,
+                    target=None,
+                    target_type=None,
                     last_success_at=run.finished_at,
                     last_status=run.status,
                     events_count=run.events_count,

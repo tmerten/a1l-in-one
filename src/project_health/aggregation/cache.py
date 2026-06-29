@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -70,10 +70,13 @@ class AggregationCache:
 cache = AggregationCache(ttl_seconds=900)
 
 
-def cached_query(endpoint: str, sources: set[str]):
+def cached_query(
+    endpoint: str,
+    sources: set[str],
+) -> Callable[[Callable[..., Awaitable[Any]]], Callable[..., Awaitable[Any]]]:
     """Decorator to cache aggregation query results."""
-    def decorator(func: Callable) -> Callable:
-        async def wrapper(*args, **kwargs) -> Any:
+    def decorator(func: Callable[..., Awaitable[Any]]) -> Callable[..., Awaitable[Any]]:
+        async def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Build params from args/kwargs (simplified)
             params = {**kwargs}
             cached = cache.get(endpoint, params, sources)

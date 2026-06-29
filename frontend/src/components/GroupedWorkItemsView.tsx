@@ -38,11 +38,13 @@ function CollapsibleSection({ title, count, children, defaultOpen = true }: {
 
 export default function GroupedWorkItemsView({ items, personId, from, to }: GroupedWorkItemsViewProps) {
   const jiraIssues = items.filter(i => i.datasource === 'jira' && i.event_type === 'issue')
-  const pullRequests = items.filter(i => i.event_type === 'pull_request')
-  const reviews = items.filter(i => i.event_type === 'pull_request_review')
+  const pullRequests = items.filter(i => i.datasource === 'github' && i.event_type === 'pull_request')
+  const mergeProposals = items.filter(i => i.datasource === 'launchpad' && i.event_type === 'pull_request')
+  const reviews = items.filter(i => i.event_type === 'pull_request_review' || i.event_type === 'review_decision' || i.event_type === 'review_comment')
   const githubIssues = items.filter(i => i.datasource === 'github' && i.event_type === 'issue')
+  const launchpadBugs = items.filter(i => i.datasource === 'launchpad' && i.event_type === 'issue')
   const commitCount = items.filter(i => i.event_type === 'commit').length
-  const prCount = pullRequests.length
+  const prCount = pullRequests.length + mergeProposals.length
 
   return (
     <div className="space-y-4">
@@ -58,6 +60,12 @@ export default function GroupedWorkItemsView({ items, personId, from, to }: Grou
         ))}
       </CollapsibleSection>
 
+      <CollapsibleSection title="Merge Proposals" count={mergeProposals.length}>
+        {mergeProposals.map(item => (
+          <WorkItemCard key={item.id} item={item} />
+        ))}
+      </CollapsibleSection>
+
       <CollapsibleSection title="Reviews" count={reviews.length}>
         {reviews.map(item => (
           <WorkItemCard key={item.id} item={item} />
@@ -66,6 +74,12 @@ export default function GroupedWorkItemsView({ items, personId, from, to }: Grou
 
       <CollapsibleSection title="GitHub Issues" count={githubIssues.length}>
         {githubIssues.map(item => (
+          <WorkItemCard key={item.id} item={item} />
+        ))}
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Launchpad Bugs" count={launchpadBugs.length}>
+        {launchpadBugs.map(item => (
           <WorkItemCard key={item.id} item={item} />
         ))}
       </CollapsibleSection>

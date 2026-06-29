@@ -16,6 +16,52 @@ app = typer.Typer(
 )
 
 
+@app.command(name="launchpad-login")
+def launchpad_login(
+    consumer_key: str = typer.Option(
+        "project-health-dashboard",
+        "--consumer-key",
+        help="OAuth consumer key identifying this app in Launchpad",
+    ),
+) -> None:
+    """Authorize Launchpad access and print environment/config values."""
+    from project_health.providers.launchpad_oauth import (
+        LaunchpadOAuthError,
+        authorize_url,
+        exchange_request_token,
+        request_token,
+    )
+
+    typer.echo("Requesting a Launchpad OAuth token...")
+    try:
+        request = request_token(consumer_key)
+    except LaunchpadOAuthError as exc:
+        typer.echo(f"Launchpad login failed: {exc}", err=True)
+        typer.echo("Check local network/proxy/TLS access to https://launchpad.net/.", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo("Open this URL in a browser and authorize access:")
+    typer.echo(authorize_url(request.token))
+    typer.echo("Press Enter after authorization is complete.")
+    typer.prompt("", default="", show_default=False)
+
+    try:
+        credentials = exchange_request_token(consumer_key, request)
+    except LaunchpadOAuthError as exc:
+        typer.echo(f"Launchpad login failed: {exc}", err=True)
+        typer.echo("If you authorized the URL, retry the command to start a fresh OAuth flow.", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo("Launchpad authorization complete.")
+    typer.echo("Add these environment variables to your shell:")
+    typer.echo(f"export LAUNCHPAD_ACCESS_TOKEN={credentials.access_token}")
+    typer.echo(f"export LAUNCHPAD_ACCESS_TOKEN_SECRET={credentials.access_token_secret}")
+    typer.echo("Then configure project-health.yaml:")
+    typer.echo("credentials:")
+    typer.echo("  launchpad:")
+    typer.echo(f"    consumer_key: {credentials.consumer_key}")
+    typer.echo("    access_token: ${LAUNCHPAD_ACCESS_TOKEN}")
+    typer.echo("    access_token_secret: ${LAUNCHPAD_ACCESS_TOKEN_SECRET}")
+
+
 @app.command()
 def serve(
     config: Path = typer.Option(

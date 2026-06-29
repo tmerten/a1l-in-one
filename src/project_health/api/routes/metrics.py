@@ -53,6 +53,7 @@ def _configured_sources(registry: DataSourceRegistry, datasource: str | None) ->
 class ContributionVolumeResponse(BaseModel):
     commits: int
     pull_requests: int
+    change_requests: int = 0
     additions: int
     deletions: int
     issues_opened: int

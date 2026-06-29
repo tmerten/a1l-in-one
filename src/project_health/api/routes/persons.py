@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -50,6 +50,8 @@ async def _resolve_timeframe(
 class IdentityInfo(BaseModel):
     source: str
     external_id: str
+    display_name: str | None = None
+    profile_url: str | None = None
 
 
 class PersonMetrics(BaseModel):

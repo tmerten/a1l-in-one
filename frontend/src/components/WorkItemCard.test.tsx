@@ -109,4 +109,22 @@ describe('WorkItemCard', () => {
     const prLink = screen.getByRole('link', { name: /PR #42/ })
     expect(prLink).toHaveAttribute('href', 'https://github.com/owner/repo/pull/42')
   })
+
+  it('renders Launchpad merge proposal as MP', () => {
+    render(<WorkItemCard item={{
+      ...defaultItem,
+      datasource: 'launchpad',
+      event_type: 'pull_request',
+      external_id: '505857',
+      project: '~maas-committers/maas/+git/maas',
+      title: 'feat: add FIPS compliance',
+      url: 'https://code.launchpad.net/~example/maas/+git/maas/+merge/505857',
+    }} />)
+
+    expect(screen.getByText('LP')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /MP 505857/ })).toHaveAttribute(
+      'href',
+      'https://code.launchpad.net/~example/maas/+git/maas/+merge/505857',
+    )
+  })
 })

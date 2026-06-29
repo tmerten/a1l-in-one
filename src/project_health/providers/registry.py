@@ -48,8 +48,15 @@ async def build_registry(config: Config) -> DataSourceRegistry:
         from project_health.providers.jira import JiraProvider
         providers.append(JiraProvider(config))
 
-    launchpad_projects = [p.name for p in (config.projects.launchpad or [])]
-    launchpad_configured = bool(launchpad_projects) and bool(config.credentials.launchpad)
+    launchpad_bug_targets = [p.name for p in config.all_launchpad_bug_targets]
+    launchpad_repositories = [p.path for p in config.all_launchpad_repositories]
+    legacy_launchpad_projects = [p.name for p in (config.projects.launchpad or [])]
+    launchpad_projects = launchpad_bug_targets or legacy_launchpad_projects
+    launchpad_configured = bool(launchpad_projects or launchpad_repositories)
+
+    if launchpad_configured:
+        from project_health.providers.launchpad import LaunchpadProvider
+        providers.append(LaunchpadProvider(config))
 
     datasources = [
         Datasource(
@@ -71,6 +78,8 @@ async def build_registry(config: Config) -> DataSourceRegistry:
             role=DatasourceRole.CODE,
             display_name="Launchpad",
             projects=launchpad_projects,
+            bug_targets=launchpad_bug_targets,
+            repositories=launchpad_repositories,
             is_configured=launchpad_configured,
         ),
     ]

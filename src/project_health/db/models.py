@@ -86,6 +86,9 @@ class PersonIdentity(Base):
     person_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     source: Mapped[str] = mapped_column(String, nullable=False)
     external_id: Mapped[str] = mapped_column(String, nullable=False)
+    display_name: Mapped[str | None] = mapped_column(String, nullable=True)
+    profile_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    data: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
 
     __table_args__ = (
         UniqueConstraint("source", "external_id", name="uq_person_identity_source_ext"),

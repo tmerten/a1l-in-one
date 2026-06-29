@@ -4,6 +4,7 @@ import { useSprints } from '../hooks/useMetrics'
 
 const RELATIVE_PRESETS = [
   { label: 'Last 7 days', days: 7 },
+  { label: 'Last 14 days', days: 14 },
   { label: 'Last 30 days', days: 30 },
   { label: 'Last 90 days', days: 90 },
   { label: 'This month', days: 0, thisMonth: true },
@@ -99,11 +100,20 @@ export default function TimeframeSelector() {
         </optgroup>
         {sprints && sprints.length > 0 && (
           <optgroup label="Sprints">
-            {(sprints as Array<{id: string; name: string; is_active: boolean}>).map(s => (
-              <option key={s.id} value={s.id}>
-                {s.name}{s.is_active ? ' (active)' : ''}
-              </option>
-            ))}
+            {(() => {
+              const now = new Date().toISOString()
+              const recentSprints = (sprints as Array<{
+                id: string; name: string; is_active: boolean; start_date: string
+              }>)
+                .filter(s => s.start_date <= now)
+                .sort((a, b) => b.start_date.localeCompare(a.start_date))
+                .slice(0, 5)
+              return recentSprints.map(s => (
+                <option key={s.id} value={s.id}>
+                  {s.name}{s.is_active ? ' (active)' : ''}
+                </option>
+              ))
+            })()}
           </optgroup>
         )}
       </select>

@@ -9,10 +9,15 @@ import httpx
 
 from project_health.config.loader import Config
 from project_health.providers.protocol import (
+    REVIEW_CAPABILITIES,
+    RawChangeRequestEvent,
     RawCommitEvent,
     RawIssueEvent,
     RawPREvent,
+    RawReviewCommentEvent,
+    RawReviewDecisionEvent,
     RawReviewEvent,
+    RawReviewRequestEvent,
     SprintDefinition,
 )
 
@@ -84,6 +89,10 @@ class GitHubProvider:
                                     "author_name": commit["commit"]["author"]["name"],
                                     "committer_name": commit["commit"]["committer"]["name"],
                                     "html_url": f"https://github.com/{repo}/commit/{commit['sha']}",
+                                    "change_request": {
+                                        "kind": "pull_request",
+                                        "external_id": str(pr["number"]),
+                                    },
                                 },
                             )
                         )
@@ -130,10 +139,35 @@ class GitHubProvider:
                             "reviewers": reviewers,
                             "draft": pr.get("draft", False),
                             "html_url": pr["html_url"],
+                            "change_request": {
+                                "source": "github",
+                                "kind": "pull_request",
+                                "external_id": str(pr["number"]),
+                                "state": pr["state"],
+                                "capabilities": REVIEW_CAPABILITIES["github"],
+                            },
                         },
                     )
                 )
         return events
+
+    async def fetch_change_requests(self, since: datetime) -> list[RawChangeRequestEvent]:
+        prs = await self.fetch_pull_requests(since)
+        return [
+            RawChangeRequestEvent(
+                external_id=pr.external_id,
+                timestamp=pr.timestamp,
+                actor=pr.actor,
+                project=pr.project,
+                data={
+                    **pr.data,
+                    "source_kind": "pull_request",
+                    "normalized_kind": "change_request",
+                    "capabilities": REVIEW_CAPABILITIES["github"],
+                },
+            )
+            for pr in prs
+        ]
 
     # ------------------------------------------------------------------
     # 5.4 fetch_pull_request_reviews
@@ -175,14 +209,95 @@ class GitHubProvider:
                                 project=repo,
                                 data={
                                     "review_state": review["state"],  # APPROVED, CHANGES_REQUESTED, COMMENTED
+                                    "normalized_state": _normalize_github_review_state(review["state"]),
                                     "comment_count": len(comments),
                                     "pr_external_id": str(pr["number"]),
                                     "body": review.get("body", ""),
                                     "html_url": f"https://github.com/{repo}/pull/{pr['number']}#pullrequestreview-{review['id']}",
+                                    "review": {
+                                        "source_kind": "pull_request_review",
+                                        "normalized_kind": "review_decision",
+                                        "comment_kind": "review_body",
+                                        "capabilities": REVIEW_CAPABILITIES["github"],
+                                    },
                                 },
                             )
                         )
         return events
+
+    async def fetch_review_requests(self, since: datetime) -> list[RawReviewRequestEvent]:
+        client = await self._get_client()
+        events: list[RawReviewRequestEvent] = []
+
+        for repo in self._repos:
+            prs = await self._paginate(
+                client,
+                f"/repos/{repo}/pulls",
+                params={"state": "all", "sort": "updated", "direction": "desc", "per_page": "100"},
+            )
+            for pr in prs:
+                pr_updated = datetime.fromisoformat(pr["updated_at"].replace("Z", "+00:00"))
+                if pr_updated < since:
+                    break
+                for reviewer in pr.get("requested_reviewers", []):
+                    login = reviewer.get("login")
+                    if not login:
+                        continue
+                    events.append(
+                        RawReviewRequestEvent(
+                            external_id=f"{pr['number']}:{login}",
+                            timestamp=datetime.fromisoformat(pr["created_at"].replace("Z", "+00:00")),
+                            actor=login,
+                            project=repo,
+                            data={
+                                "pr_external_id": str(pr["number"]),
+                                "author": pr["user"]["login"] if pr.get("user") else None,
+                                "source_kind": "requested_reviewer",
+                                "normalized_kind": "review_request",
+                                "html_url": pr["html_url"],
+                            },
+                        )
+                    )
+        return events
+
+    async def fetch_review_decisions(self, since: datetime) -> list[RawReviewDecisionEvent]:
+        reviews = await self.fetch_pull_request_reviews(since)
+        return [
+            RawReviewDecisionEvent(
+                external_id=review.external_id,
+                timestamp=review.timestamp,
+                actor=review.actor,
+                project=review.project,
+                data={
+                    **review.data,
+                    "source_kind": "pull_request_review",
+                    "normalized_kind": "review_decision",
+                },
+            )
+            for review in reviews
+            if review.data.get("normalized_state")
+        ]
+
+    async def fetch_review_comments(self, since: datetime) -> list[RawReviewCommentEvent]:
+        reviews = await self.fetch_pull_request_reviews(since)
+        return [
+            RawReviewCommentEvent(
+                external_id=f"{review.external_id}:body",
+                timestamp=review.timestamp,
+                actor=review.actor,
+                project=review.project,
+                data={
+                    "pr_external_id": review.data.get("pr_external_id"),
+                    "body": review.data.get("body", ""),
+                    "html_url": review.data.get("html_url", ""),
+                    "source_kind": "pull_request_review_body",
+                    "normalized_kind": "review_comment",
+                    "is_inline": False,
+                },
+            )
+            for review in reviews
+            if review.data.get("body")
+        ]
 
     # ------------------------------------------------------------------
     # 5.5 fetch_issues
@@ -366,3 +481,12 @@ def _is_linguist_generated(filename: str) -> bool:
         "generated.",
     )
     return any(pat in filename for pat in generated_patterns)
+
+
+def _normalize_github_review_state(state: str) -> str | None:
+    return {
+        "APPROVED": "approved",
+        "CHANGES_REQUESTED": "changes_requested",
+        "COMMENTED": "commented",
+        "DISMISSED": "dismissed",
+    }.get(state)

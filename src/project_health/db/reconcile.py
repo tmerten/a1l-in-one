@@ -69,11 +69,17 @@ async def reconcile_persons_from_config(session: AsyncSession, config: Config) -
                 )
                 identity = identity_result.scalar_one()
                 identity.person_id = person_id
+                if source == "launchpad":
+                    identity.display_name = identity.display_name or name
+                    identity.profile_url = identity.profile_url or _launchpad_profile_url(external_id)
             else:
                 new_identity = PersonIdentity(
                     person_id=person_id,
                     source=source,
                     external_id=external_id,
+                    display_name=name if source == "launchpad" else None,
+                    profile_url=_launchpad_profile_url(external_id) if source == "launchpad" else None,
+                    data={},
                 )
                 session.add(new_identity)
 
@@ -87,4 +93,10 @@ def _member_identities(member: TeamMember) -> dict[str, str]:
         result["github"] = member.github
     if member.jira:
         result["jira"] = member.jira
+    if member.launchpad:
+        result["launchpad"] = member.launchpad
     return result
+
+
+def _launchpad_profile_url(external_id: str) -> str:
+    return f"https://launchpad.net/{external_id}"

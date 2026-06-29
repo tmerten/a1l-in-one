@@ -11,7 +11,12 @@ from sqlalchemy.orm import sessionmaker
 from project_health.aggregation.cache import AggregationCache
 from project_health.db.models import Base, PersonIdentity, RawEvent
 from project_health.ingestion.writer import EventWriter
-from project_health.providers.protocol import RawIssueEvent
+from project_health.providers.protocol import (
+    RawChangeRequestEvent,
+    RawIssueEvent,
+    RawPREvent,
+    RawReviewDecisionEvent,
+)
 
 
 @pytest_asyncio.fixture
@@ -52,6 +57,39 @@ async def test_event_writer_dedupe(db_session: AsyncSession):
 
 
 @pytest.mark.asyncio
+async def test_event_writer_allows_same_external_id_across_event_types(db_session: AsyncSession):
+    writer = EventWriter(db_session)
+    now = datetime.now(UTC)
+    await writer.write_pull_requests("launchpad", [
+        RawPREvent(
+            external_id="mp-1",
+            timestamp=now,
+            actor="~alice",
+            project="repo",
+            data={},
+        )
+    ])
+    await writer.write_change_requests("launchpad", [
+        RawChangeRequestEvent(
+            external_id="mp-1",
+            timestamp=now,
+            actor="~alice",
+            project="repo",
+            data={},
+        )
+    ])
+
+    result = await db_session.execute(select(RawEvent).order_by(RawEvent.event_type))
+    rows = result.scalars().all()
+
+    assert [row.event_type for row in rows] == ["change_request", "pull_request"]
+    assert {row.id for row in rows} == {
+        "launchpad:change_request:mp-1",
+        "launchpad:pull_request:mp-1",
+    }
+
+
+@pytest.mark.asyncio
 async def test_auto_discovery_unmapped_identity(db_session: AsyncSession):
     writer = EventWriter(db_session)
     events = [
@@ -72,6 +110,32 @@ async def test_auto_discovery_unmapped_identity(db_session: AsyncSession):
     assert identity is not None
     assert identity.person_id is None
     assert identity.source == "jira"
+
+
+@pytest.mark.asyncio
+async def test_auto_discovery_launchpad_identity_details(db_session: AsyncSession):
+    writer = EventWriter(db_session)
+    await writer.write_issues("launchpad", [
+        RawIssueEvent(
+            external_id="maas:1",
+            timestamp=datetime.now(UTC),
+            actor="~alice",
+            project="maas",
+            data={
+                "actor_identity": {
+                    "display_name": "Alice Example",
+                    "profile_url": "https://launchpad.net/~alice",
+                }
+            },
+        )
+    ])
+
+    result = await db_session.execute(
+        select(PersonIdentity).where(PersonIdentity.external_id == "~alice")
+    )
+    identity = result.scalar_one()
+    assert identity.display_name == "Alice Example"
+    assert identity.profile_url == "https://launchpad.net/~alice"
 
 
 @pytest.mark.asyncio
@@ -110,3 +174,34 @@ def test_get_bot_set_uses_passed_config():
     })
     bots = get_bot_set(config)
     assert "my-bot[bot]" in bots
+
+
+@pytest.mark.asyncio
+async def test_event_writer_stores_provider_neutral_events(db_session: AsyncSession):
+    writer = EventWriter(db_session)
+    now = datetime.now(UTC)
+
+    await writer.write_change_requests("github", [
+        RawChangeRequestEvent(
+            external_id="42",
+            timestamp=now,
+            actor="alice",
+            project="owner/repo",
+            data={"normalized_kind": "change_request", "source_kind": "pull_request"},
+        )
+    ])
+    await writer.write_review_decisions("github", [
+        RawReviewDecisionEvent(
+            external_id="review-1",
+            timestamp=now,
+            actor="bob",
+            project="owner/repo",
+            data={"normalized_kind": "review_decision", "normalized_state": "approved"},
+        )
+    ])
+
+    result = await db_session.execute(select(RawEvent).order_by(RawEvent.event_type))
+    rows = result.scalars().all()
+
+    assert [row.event_type for row in rows] == ["change_request", "review_decision"]
+    assert rows[0].data["source_kind"] == "pull_request"

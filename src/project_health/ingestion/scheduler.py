@@ -37,7 +37,7 @@ class IngestionRunner:
 
         Args:
             provider: The data source provider instance.
-            event_type: One of commit, pull_request, pull_request_review, issue, sprint.
+            event_type: Provider event type such as commit, change_request, review_decision, issue, sprint.
             trigger: scheduled | manual | backfill
             force_since: Override the since parameter (used by backfill).
         """
@@ -110,8 +110,16 @@ class IngestionRunner:
                     return await provider.fetch_commits(since)
                 if event_type == "pull_request":
                     return await provider.fetch_pull_requests(since)
+                if event_type == "change_request":
+                    return await provider.fetch_change_requests(since)
                 if event_type == "pull_request_review":
                     return await provider.fetch_pull_request_reviews(since)
+                if event_type == "review_request":
+                    return await provider.fetch_review_requests(since)
+                if event_type == "review_decision":
+                    return await provider.fetch_review_decisions(since)
+                if event_type == "review_comment":
+                    return await provider.fetch_review_comments(since)
                 if event_type == "issue":
                     return await provider.fetch_issues(since)
                 if event_type == "sprint":
@@ -144,8 +152,16 @@ class IngestionRunner:
             return await self._writer.write_commits(source, events)
         if event_type == "pull_request":
             return await self._writer.write_pull_requests(source, events)
+        if event_type == "change_request":
+            return await self._writer.write_change_requests(source, events)
         if event_type == "pull_request_review":
             return await self._writer.write_pull_request_reviews(source, events)
+        if event_type == "review_request":
+            return await self._writer.write_review_requests(source, events)
+        if event_type == "review_decision":
+            return await self._writer.write_review_decisions(source, events)
+        if event_type == "review_comment":
+            return await self._writer.write_review_comments(source, events)
         if event_type == "issue":
             return await self._writer.write_issues(source, events)
         if event_type == "sprint":
@@ -185,7 +201,11 @@ class SchedulerManager:
         event_types = [
             "commit",
             "pull_request",
+            "change_request",
             "pull_request_review",
+            "review_request",
+            "review_decision",
+            "review_comment",
             "issue",
             "sprint",
         ]
@@ -199,6 +219,9 @@ class SchedulerManager:
         if self._config.projects.jira:
             from project_health.providers.jira import JiraProvider
             providers.append(JiraProvider(self._config))
+        if self._config.launchpad_bugs or self._config.launchpad_repos:
+            from project_health.providers.launchpad import LaunchpadProvider
+            providers.append(LaunchpadProvider(self._config))
 
         for provider in providers:
             for et in event_types:

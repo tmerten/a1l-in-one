@@ -9,10 +9,14 @@ import httpx
 
 from project_health.config.loader import Config
 from project_health.providers.protocol import (
+    RawChangeRequestEvent,
     RawCommitEvent,
     RawIssueEvent,
     RawPREvent,
+    RawReviewCommentEvent,
+    RawReviewDecisionEvent,
     RawReviewEvent,
+    RawReviewRequestEvent,
     SprintDefinition,
 )
 
@@ -155,7 +159,19 @@ class JiraProvider:
     async def fetch_pull_requests(self, _since: datetime) -> list[RawPREvent]:
         return []
 
+    async def fetch_change_requests(self, _since: datetime) -> list[RawChangeRequestEvent]:
+        return []
+
     async def fetch_pull_request_reviews(self, _since: datetime) -> list[RawReviewEvent]:
+        return []
+
+    async def fetch_review_requests(self, _since: datetime) -> list[RawReviewRequestEvent]:
+        return []
+
+    async def fetch_review_decisions(self, _since: datetime) -> list[RawReviewDecisionEvent]:
+        return []
+
+    async def fetch_review_comments(self, _since: datetime) -> list[RawReviewCommentEvent]:
         return []
 
     # ------------------------------------------------------------------
@@ -206,10 +222,12 @@ class JiraProvider:
         """Extract actor from reporter or assignee."""
         reporter = fields.get("reporter")
         if reporter:
-            return reporter.get("accountId")
+            account_id = reporter.get("accountId")
+            return str(account_id) if account_id is not None else None
         assignee = fields.get("assignee")
         if assignee:
-            return assignee.get("accountId")
+            account_id = assignee.get("accountId")
+            return str(account_id) if account_id is not None else None
         return None
 
     def _extract_story_points(self, fields: dict[str, Any]) -> float | None:
@@ -230,5 +248,6 @@ class JiraProvider:
             return desc
         # Minimal ADF to text (v1)
         if isinstance(desc, dict):
-            return desc.get("text", "")
+            text_value = desc.get("text", "")
+            return str(text_value)
         return ""

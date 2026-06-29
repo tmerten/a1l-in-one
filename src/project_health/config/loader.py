@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 ENV_REF_PATTERN = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
@@ -57,10 +57,88 @@ class JiraProject(BaseModel):
     board_id: int = Field(..., description="Board ID for sprint integration")
 
 
-class LaunchpadProject(BaseModel):
-    """Launchpad project reference."""
+class LaunchpadConfig(BaseModel):
+    """Launchpad API settings."""
 
-    name: str = Field(..., description="Launchpad project name")
+    model_config = ConfigDict(extra="forbid")
+
+
+class LaunchpadBugTargetConfig(BaseModel):
+    """Launchpad bug target reference."""
+
+    name: str = Field(..., description="Launchpad bug target name")
+    display_name: str | None = Field(default=None)
+    statuses: list[str] | None = Field(default=None)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _coerce_string(cls, value: object) -> object:
+        if isinstance(value, str):
+            return {"name": value}
+        return value
+
+
+class LaunchpadRepositoryConfig(BaseModel):
+    """Launchpad Git repository reference."""
+
+    path: str = Field(..., description="Canonical ~owner/context/+git/repository path")
+    owner: str | None = Field(default=None, description="Launchpad person/team owner")
+    context: str | None = Field(default=None, description="Launchpad project or context")
+    repository: str = Field(..., description="Launchpad repository name")
+    display_name: str | None = Field(default=None)
+
+    @field_validator("path")
+    @classmethod
+    def _validate_path(cls, value: str) -> str:
+        if "/+git/" in value:
+            parse_launchpad_repo_path(value)
+        return value
+
+    @model_validator(mode="before")
+    @classmethod
+    def _coerce_and_parse(cls, value: object) -> object:
+        if isinstance(value, str):
+            if "/+git/" not in value:
+                return {
+                    "path": value,
+                    "owner": None,
+                    "context": None,
+                    "repository": value,
+                }
+            owner, context, repository = parse_launchpad_repo_path(value)
+            return {
+                "path": value,
+                "owner": owner,
+                "context": context,
+                "repository": repository,
+            }
+        if isinstance(value, dict) and "path" in value:
+            path = str(value["path"])
+            if "/+git/" not in path:
+                return {
+                    **value,
+                    "owner": value.get("owner"),
+                    "context": value.get("context"),
+                    "repository": value.get("repository", path),
+                }
+            owner, context, repository = parse_launchpad_repo_path(path)
+            return {
+                **value,
+                "owner": value.get("owner", owner),
+                "context": value.get("context", context),
+                "repository": value.get("repository", repository),
+            }
+        return value
+
+
+def parse_launchpad_repo_path(path: str) -> tuple[str, str, str]:
+    """Parse a canonical Launchpad Git repo path into owner, context, repository."""
+    match = re.fullmatch(r"(?P<owner>~[^/]+)/(?P<context>[^/]+)/\+git/(?P<repo>[^/]+)", path)
+    if match is None:
+        raise ValueError(
+            "Launchpad repository paths must use '~owner/context/+git/repository' format"
+        )
+    return match.group("owner"), match.group("context"), match.group("repo")
 
 
 class JiraCredentials(BaseModel):
@@ -74,7 +152,9 @@ class JiraCredentials(BaseModel):
 class LaunchpadCredentials(BaseModel):
     """Launchpad API credentials."""
 
-    oauth_token: str = Field(..., description="Launchpad OAuth token")
+    consumer_key: str = Field(..., description="Launchpad OAuth consumer key")
+    access_token: str = Field(..., description="Launchpad OAuth access token")
+    access_token_secret: str = Field(..., description="Launchpad OAuth access token secret")
 
 
 class Credentials(BaseModel):
@@ -109,6 +189,7 @@ class BotsConfig(BaseModel):
             "github-actions[bot]",
         ]
     )
+    launchpad: list[str] = Field(default_factory=list)
 
 
 class Config(BaseModel):
@@ -116,12 +197,40 @@ class Config(BaseModel):
 
     team: list[TeamMember] = Field(default_factory=list)
     projects: ProjectsConfig = Field(default_factory=lambda: ProjectsConfig.model_validate({}))
+    launchpad: LaunchpadConfig = Field(default_factory=lambda: LaunchpadConfig.model_validate({}))
+    launchpad_bugs: list[LaunchpadBugTargetConfig] = Field(
+        default_factory=list,
+        validation_alias=AliasChoices("launchpad-bugs", "launchpad_bugs"),
+    )
+    launchpad_repos: list[LaunchpadRepositoryConfig] = Field(
+        default_factory=list,
+        validation_alias=AliasChoices("launchpad-repos", "launchpad_repos"),
+    )
     credentials: Credentials
     ingestion: IngestionSettings = Field(default_factory=lambda: IngestionSettings.model_validate({}))
     issue_type_mapping: IssueTypeMapping = Field(
         default_factory=lambda: IssueTypeMapping.model_validate({})
     )
     bots: BotsConfig = Field(default_factory=lambda: BotsConfig.model_validate({}))
+
+    @model_validator(mode="before")
+    @classmethod
+    def _pull_nested_launchpad_targets(cls, data: object) -> object:
+        if not isinstance(data, dict):
+            return data
+        projects = data.get("projects")
+        if not isinstance(projects, dict):
+            return data
+        normalized = dict(data)
+        if "launchpad-bugs" not in normalized and "launchpad_bugs" not in normalized:
+            nested_bugs = projects.get("launchpad-bugs") or projects.get("launchpad_bugs")
+            if nested_bugs is not None:
+                normalized["launchpad-bugs"] = nested_bugs
+        if "launchpad-repos" not in normalized and "launchpad_repos" not in normalized:
+            nested_repos = projects.get("launchpad-repos") or projects.get("launchpad_repos")
+            if nested_repos is not None:
+                normalized["launchpad-repos"] = nested_repos
+        return normalized
 
     @model_validator(mode="after")
     def _validate_credentials_match_projects(self) -> Config:
@@ -141,8 +250,27 @@ class Config(BaseModel):
         return self.projects.jira
 
     @property
+    def all_launchpad_bug_targets(self) -> list[LaunchpadBugTargetConfig]:
+        return self.launchpad_bugs
+
+    @property
+    def all_launchpad_repositories(self) -> list[LaunchpadRepositoryConfig]:
+        return self.launchpad_repos
+
+    @property
     def github_bots(self) -> set[str]:
         return set(self.bots.github)
+
+    @property
+    def launchpad_bots(self) -> set[str]:
+        return set(self.bots.launchpad)
+
+    @model_validator(mode="after")
+    def _validate_launchpad_targets(self) -> Config:
+        repo_paths = [repo.path for repo in self.launchpad_repos]
+        if len(repo_paths) != len(set(repo_paths)):
+            raise ValueError("Duplicate Launchpad repository targets are not allowed")
+        return self
 
 
 class ProjectsConfig(BaseModel):
@@ -150,7 +278,7 @@ class ProjectsConfig(BaseModel):
 
     github: list[GithubProject] = Field(default_factory=list)
     jira: list[JiraProject] = Field(default_factory=list)
-    launchpad: list[LaunchpadProject] | None = Field(default=None)
+    launchpad: list[LaunchpadBugTargetConfig] | None = Field(default=None)
 
     @field_validator("github", mode="before")
     @classmethod

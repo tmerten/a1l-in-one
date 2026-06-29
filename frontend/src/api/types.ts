@@ -360,6 +360,11 @@ export interface components {
             commits: number;
             /** Pull Requests */
             pull_requests: number;
+            /**
+             * Change Requests
+             * @default 0
+             */
+            change_requests: number;
             /** Additions */
             additions: number;
             /** Deletions */
@@ -398,6 +403,16 @@ export interface components {
             display_name: string;
             /** Projects */
             projects: string[];
+            /**
+             * Bug Targets
+             * @default []
+             */
+            bug_targets: string[];
+            /**
+             * Repositories
+             * @default []
+             */
+            repositories: string[];
         };
         /** GroupedProjectsResponse */
         GroupedProjectsResponse: {
@@ -415,6 +430,10 @@ export interface components {
             source: string;
             /** External Id */
             external_id: string;
+            /** Display Name */
+            display_name?: string | null;
+            /** Profile Url */
+            profile_url?: string | null;
         };
         /** PersonContributionsResponse */
         PersonContributionsResponse: {
@@ -599,6 +618,10 @@ export interface components {
         SyncStatusItem: {
             /** Source */
             source: string;
+            /** Target */
+            target?: string | null;
+            /** Target Type */
+            target_type?: string | null;
             /** Last Success At */
             last_success_at: string | null;
             /** Last Status */

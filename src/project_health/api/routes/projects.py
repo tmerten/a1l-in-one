@@ -19,6 +19,8 @@ class DatasourceProjectGroup(BaseModel):
     role: str
     display_name: str
     projects: list[str]
+    bug_targets: list[str] = []
+    repositories: list[str] = []
 
 
 class GroupedProjectsResponse(BaseModel):
@@ -51,6 +53,8 @@ async def list_projects(
             role=ds.role.value,
             display_name=ds.display_name,
             projects=ds.projects,
+            bug_targets=ds.bug_targets,
+            repositories=ds.repositories,
         )
         for ds in registry.datasources
         if ds.is_configured

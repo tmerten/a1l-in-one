@@ -87,6 +87,51 @@ describe('WorkItemsSection', () => {
     expect(screen.getAllByText('Fix the bug')[0]).toBeInTheDocument()
   })
 
+  it('groups Launchpad bugs and merge proposals', () => {
+    vi.spyOn(hooks, 'useWorkItems').mockReturnValue({
+      data: {
+        items: [
+          {
+            id: '1',
+            datasource: 'launchpad',
+            event_type: 'issue',
+            external_id: 'maas:2132663',
+            project: 'maas',
+            title: 'Custom images fail to deploy',
+            status: 'done',
+            timestamp: '2026-06-15T10:00:00Z',
+            url: 'https://bugs.launchpad.net/maas/+bug/2132663',
+          },
+          {
+            id: '2',
+            datasource: 'launchpad',
+            event_type: 'pull_request',
+            external_id: '505857',
+            project: '~maas-committers/maas/+git/maas',
+            title: 'feat: add FIPS compliance',
+            status: 'open',
+            timestamp: '2026-06-15T10:00:00Z',
+            url: 'https://code.launchpad.net/~example/maas/+git/maas/+merge/505857',
+          },
+        ],
+        total: 2,
+        page: 1,
+        per_page: 20,
+        person_id: 'p-1',
+        status: 'completed',
+      },
+      isLoading: false,
+      error: null,
+    } as ReturnType<typeof hooks.useWorkItems>)
+
+    renderSection()
+
+    expect(screen.getByText('Launchpad Bugs (1)')).toBeInTheDocument()
+    expect(screen.getByText('Merge Proposals (1)')).toBeInTheDocument()
+    expect(screen.getAllByText('Custom images fail to deploy')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('feat: add FIPS compliance')[0]).toBeInTheDocument()
+  })
+
   it('shows grouped view by default', () => {
     renderSection()
     expect(screen.getByRole('button', { name: 'Grouped' })).toBeInTheDocument()

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+from collections.abc import AsyncIterator
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -22,7 +23,7 @@ def build_app(config_path: Path) -> FastAPI:
     scheduler = SchedulerManager(config)
 
     @contextlib.asynccontextmanager
-    async def lifespan(app: FastAPI):
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         registry = await build_registry(config)
         app.state.registry = registry
 

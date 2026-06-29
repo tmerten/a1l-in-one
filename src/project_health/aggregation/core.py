@@ -88,6 +88,25 @@ def normalize_issue_type(source: str, raw_type: str, config: Config) -> str:
     return "other"
 
 
+def issue_completed_sql(alias: str = "") -> str:
+    """SQL predicate for issue completion semantics by source."""
+    source_col = f"{alias}.source" if alias else "source"
+    data_col = f"{alias}.data" if alias else "data"
+    return f"""(
+        ({source_col} = 'launchpad' AND json_extract({data_col}, '$.completed_contribution') = 1)
+        OR ({source_col} != 'launchpad' AND (
+            json_extract({data_col}, '$.closed_at') IS NOT NULL
+            OR json_extract({data_col}, '$.resolutiondate') IS NOT NULL
+            OR LOWER(json_extract({data_col}, '$.status')) IN ('done', 'closed', 'resolved', 'completed')
+        ))
+    )"""
+
+
+def issue_open_sql(alias: str = "") -> str:
+    """SQL predicate for issue open/incomplete semantics by source."""
+    return f"NOT {issue_completed_sql(alias)}"
+
+
 def get_bot_set(config: Config) -> set[str]:
     """Return the set of bot identifiers from config."""
-    return config.github_bots
+    return config.github_bots | config.launchpad_bots

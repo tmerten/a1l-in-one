@@ -16,8 +16,16 @@ projects:
   jira:
     - key: PROJ
       board_id: 42
-  # launchpad:
-  #   - name: my-project
+
+# Launchpad observation keeps bug targets and repositories separate.
+# The app always uses the current Launchpad API: https://api.launchpad.net/devel
+# Bug targets are comparable to Jira projects/work items.
+# launchpad-bugs:
+#   - maas
+
+# Repository targets are canonical Launchpad Git repository paths.
+# launchpad-repos:
+#   - ~maas-committers/maas/+git/maas-release-tools
 
 bots:
   github:
@@ -32,7 +40,11 @@ credentials:
     email: user@example.com
     api_token: ${JIRA_API_TOKEN}
   # launchpad:
-  #   oauth_token: ${LAUNCHPAD_OAUTH_TOKEN}
+  #   # Optional; public Launchpad data can be read without credentials.
+  #   # Generate these with: uv run project-health launchpad-login
+  #   consumer_key: project-health-dashboard
+  #   access_token: ${LAUNCHPAD_ACCESS_TOKEN}
+  #   access_token_secret: ${LAUNCHPAD_ACCESS_TOKEN_SECRET}
 
 ingestion:
   interval_minutes: 15

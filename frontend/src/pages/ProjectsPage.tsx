@@ -103,7 +103,7 @@ export default function ProjectsPage() {
             <>
               <div className="grid grid-cols-4 gap-4">
                 <MetricCard title="Commits" value={volume?.commits ?? 0} loading={vLoading} error={vError?.message} />
-                <MetricCard title="PRs" value={volume?.pull_requests ?? 0} loading={vLoading} error={vError?.message} />
+                <MetricCard title="Change Requests" value={volume?.change_requests ?? volume?.pull_requests ?? 0} loading={vLoading} error={vError?.message} />
                 <MetricCard title="Issues Opened" value={volume?.issues_opened ?? 0} loading={vLoading} error={vError?.message} />
                 <MetricCard title="Issues Resolved" value={volume?.issues_resolved ?? 0} loading={vLoading} error={vError?.message} />
               </div>
@@ -121,7 +121,7 @@ export default function ProjectsPage() {
               bucketSize={volumeTs?.bucket_size ?? 'day'}
               series={[
                 { key: 'commits', label: 'Commits', color: '#6366f1', visible: volumeSeries.commits },
-                { key: 'prs', label: 'PRs', color: '#10b981', visible: volumeSeries.prs },
+                { key: 'prs', label: 'Change Requests', color: '#10b981', visible: volumeSeries.prs },
                 { key: 'issues', label: 'Issues', color: '#f59e0b', visible: volumeSeries.issues },
               ]}
               onToggle={key => toggleSeries(setVolumeSeries, key as keyof typeof volumeSeries)}
@@ -172,7 +172,7 @@ export default function ProjectsPage() {
               error={cError?.message}
             />
             <MetricCard
-              title="PR Sizes"
+              title="Change Request Sizes"
               value={Object.entries(composition?.pr_sizes || {}).map(([k, v]) => `${k}: ${v}`).join(', ') || '—'}
               loading={cLoading}
               error={cError?.message}

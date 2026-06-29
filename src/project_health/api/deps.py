@@ -21,9 +21,11 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 def get_config(request: Request) -> Config:
     """Return the app-level Config stored on app.state."""
-    return request.app.state.config
+    config: Config = request.app.state.config
+    return config
 
 
 def get_registry(request: Request) -> DataSourceRegistry:
     """Return the app-level DataSourceRegistry stored on app.state."""
-    return request.app.state.registry
+    registry: DataSourceRegistry = request.app.state.registry
+    return registry

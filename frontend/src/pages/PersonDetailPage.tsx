@@ -72,7 +72,7 @@ export default function PersonDetailPage() {
   // Aggregate totals from contributions
   const dsContributions: DatasourceContribution[] = contributions.contributions ?? []
   const totalCommits = dsContributions.reduce((s, ds) => s + ds.projects.reduce((sp, p) => sp + p.commits, 0), 0)
-  const totalPRs = dsContributions.reduce((s, ds) => s + ds.projects.reduce((sp, p) => sp + p.pull_requests, 0), 0)
+  const totalChangeRequests = dsContributions.reduce((s, ds) => s + ds.projects.reduce((sp, p) => sp + p.pull_requests, 0), 0)
   const totalIssuesResolved = dsContributions.reduce((s, ds) => s + ds.projects.reduce((sp, p) => sp + p.issues_resolved, 0), 0)
   const totalReviews = dsContributions.reduce((s, ds) => s + ds.projects.reduce((sp, p) => sp + p.reviews_given, 0), 0)
 
@@ -122,7 +122,7 @@ export default function PersonDetailPage() {
       <section className="mb-6">
         <div className="grid grid-cols-4 gap-4">
           <MetricCard title="Commits" value={totalCommits} loading={cLoading} />
-          <MetricCard title="PRs Merged" value={totalPRs} loading={cLoading} />
+          <MetricCard title="Change Requests" value={totalChangeRequests} loading={cLoading} />
           <MetricCard title="Issues Resolved" value={totalIssuesResolved} loading={cLoading} />
           <MetricCard title="Reviews Given" value={totalReviews} loading={cLoading} />
         </div>
@@ -143,7 +143,7 @@ export default function PersonDetailPage() {
                 bucketSize={volumeTs?.bucket_size ?? 'day'}
                 series={[
                   { key: 'commits', label: 'Commits', color: '#6366f1', visible: volumeSeries.commits },
-                  { key: 'prs', label: 'PRs', color: '#10b981', visible: volumeSeries.prs },
+                  { key: 'prs', label: 'Change Requests', color: '#10b981', visible: volumeSeries.prs },
                   { key: 'issues', label: 'Issues', color: '#f59e0b', visible: volumeSeries.issues },
                 ]}
                 onToggle={key => toggleSeries(setVolumeSeries, key as keyof typeof volumeSeries)}

@@ -50,7 +50,17 @@ async def run_backfill(
         providers = [provider]
 
     any_failure = False
-    event_types = ["commit", "pull_request", "pull_request_review", "issue", "sprint"]
+    event_types = [
+        "commit",
+        "pull_request",
+        "change_request",
+        "pull_request_review",
+        "review_request",
+        "review_decision",
+        "review_comment",
+        "issue",
+        "sprint",
+    ]
 
     maker = get_session_maker()
     for provider in providers:

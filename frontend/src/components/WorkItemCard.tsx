@@ -50,10 +50,10 @@ export default function WorkItemCard({ item, compact = false }: WorkItemCardProp
   const { datasource, event_type, external_id, project, title, description, status, timestamp, url, metadata } = item
 
   let iconLabel = ''
-  if (event_type === 'pull_request') iconLabel = 'PR'
+  if (event_type === 'pull_request') iconLabel = datasource === 'launchpad' ? 'MP' : 'PR'
   else if (event_type === 'issue') iconLabel = 'Issue'
   else if (event_type === 'commit') iconLabel = 'Commit'
-  else if (event_type === 'pull_request_review') iconLabel = 'Review'
+  else if (event_type === 'pull_request_review' || event_type === 'review_decision' || event_type === 'review_comment') iconLabel = 'Review'
   else iconLabel = event_type
 
   const chips: string[] = []

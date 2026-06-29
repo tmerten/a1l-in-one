@@ -64,7 +64,7 @@
 ## 8. Config Schema Extension
 
 - [x] 8.1 Add `launchpad` section to `ProjectsConfig` Pydantic model (optional, with `base_url` and list of project names)
-- [x] 8.2 Add `launchpad` section to `Credentials` Pydantic model (optional, with `oauth_token` env var ref)
+- [x] 8.2 Add `launchpad` section to `Credentials` Pydantic model (optional OAuth consumer key, access token, and access token secret env var refs)
 - [x] 8.3 Update `build_registry()` to recognize `launchpad` config but skip provider instantiation if `is_configured=False`
 - [x] 8.4 Update `project-health.example.yaml` with commented-out Launchpad section
 - [x] 8.5 `Datasource(id="launchpad", role=CODE, is_configured=False)` appears in datasources list when Launchpad is declared in config but credentials are missing

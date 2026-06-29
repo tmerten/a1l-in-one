@@ -19,13 +19,51 @@ class Datasource(BaseModel):
     role: DatasourceRole
     display_name: str
     projects: list[str] = Field(default_factory=list)
+    bug_targets: list[str] = Field(default_factory=list)
+    repositories: list[str] = Field(default_factory=list)
     is_configured: bool = False
 
 
 SOURCE_CAPABILITIES: dict[str, set[str]] = {
-    "github": {"commit", "pull_request", "pull_request_review", "issue"},
+    "github": {
+        "commit",
+        "pull_request",
+        "pull_request_review",
+        "issue",
+        "change_request",
+        "review_request",
+        "review_decision",
+        "review_comment",
+    },
     "jira": {"issue", "sprint"},
-    "launchpad": {"pull_request", "pull_request_review", "commit", "issue"},
+    "launchpad": {
+        "pull_request",
+        "pull_request_review",
+        "commit",
+        "issue",
+        "change_request",
+        "review_request",
+        "review_decision",
+        "review_comment",
+    },
+}
+
+
+REVIEW_CAPABILITIES: dict[str, dict[str, object]] = {
+    "github": {
+        "review_comments": True,
+        "inline_comments": True,
+        "review_requests": True,
+        "review_decisions": True,
+        "approval_state": "native",
+    },
+    "launchpad": {
+        "review_comments": True,
+        "inline_comments": "unknown",
+        "review_requests": True,
+        "review_decisions": True,
+        "approval_state": "source_specific",
+    },
 }
 
 
@@ -67,6 +105,46 @@ class RawReviewEvent(BaseModel):
     data: dict = Field(default_factory=dict)
 
 
+class RawChangeRequestEvent(BaseModel):
+    """A provider-neutral change request event."""
+
+    external_id: str = Field(..., description="Source-native change request ID")
+    timestamp: datetime = Field(..., description="Change request creation timestamp")
+    actor: str | None = Field(default=None, description="Author identifier")
+    project: str = Field(..., description="Repository or project identifier")
+    data: dict = Field(default_factory=dict)
+
+
+class RawReviewRequestEvent(BaseModel):
+    """A provider-neutral review request event."""
+
+    external_id: str = Field(..., description="Source-native review request ID")
+    timestamp: datetime = Field(..., description="Review request timestamp")
+    actor: str | None = Field(default=None, description="Reviewer identifier")
+    project: str = Field(..., description="Repository or project identifier")
+    data: dict = Field(default_factory=dict)
+
+
+class RawReviewDecisionEvent(BaseModel):
+    """A provider-neutral review decision event."""
+
+    external_id: str = Field(..., description="Source-native review decision ID")
+    timestamp: datetime = Field(..., description="Review decision timestamp")
+    actor: str | None = Field(default=None, description="Reviewer identifier")
+    project: str = Field(..., description="Repository or project identifier")
+    data: dict = Field(default_factory=dict)
+
+
+class RawReviewCommentEvent(BaseModel):
+    """A provider-neutral review comment event."""
+
+    external_id: str = Field(..., description="Source-native review comment ID")
+    timestamp: datetime = Field(..., description="Review comment timestamp")
+    actor: str | None = Field(default=None, description="Comment author identifier")
+    project: str = Field(..., description="Repository or project identifier")
+    data: dict = Field(default_factory=dict)
+
+
 class RawIssueEvent(BaseModel):
     """An issue event (GitHub issue or Jira ticket)."""
 
@@ -102,8 +180,24 @@ class DataSourceProvider(Protocol):
         """Fetch pull requests created/updated since `since`."""
         ...
 
+    async def fetch_change_requests(self, since: datetime) -> list[RawChangeRequestEvent]:
+        """Fetch provider-neutral change requests created/updated since `since`."""
+        ...
+
     async def fetch_pull_request_reviews(self, since: datetime) -> list[RawReviewEvent]:
         """Fetch PR reviews submitted since `since`."""
+        ...
+
+    async def fetch_review_requests(self, since: datetime) -> list[RawReviewRequestEvent]:
+        """Fetch provider-neutral review requests created/updated since `since`."""
+        ...
+
+    async def fetch_review_decisions(self, since: datetime) -> list[RawReviewDecisionEvent]:
+        """Fetch provider-neutral review decisions submitted since `since`."""
+        ...
+
+    async def fetch_review_comments(self, since: datetime) -> list[RawReviewCommentEvent]:
+        """Fetch provider-neutral review comments submitted since `since`."""
         ...
 
     async def fetch_issues(self, since: datetime) -> list[RawIssueEvent]:

@@ -1,13 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useProjects } from '../hooks/useMetrics'
+import type { components } from '../api/types'
 
-type DatasourceGroup = {
-  id: string
-  role: string
-  display_name: string
-  projects: string[]
-}
+type DatasourceGroup = components['schemas']['DatasourceProjectGroup']
 
 export default function DatasourceProjectFilter() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -118,19 +114,7 @@ export default function DatasourceProjectFilter() {
                     {expandedGroups[ds.id] ? '−' : '+'}
                   </button>
                 </button>
-                {expandedGroups[ds.id] && ds.projects.map(p => (
-                  <button
-                    key={p}
-                    className={`w-full px-3 py-1.5 text-left pl-9 ${
-                      effectiveDatasource === ds.id && effectiveProject === p
-                        ? 'bg-blue-50 text-blue-700 font-medium'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setFilter(ds.id, p)}
-                  >
-                    {p}
-                  </button>
-                ))}
+                {expandedGroups[ds.id] && renderDatasourceTargets(ds, effectiveDatasource, effectiveProject, setFilter)}
               </div>
             ))}
           </div>
@@ -140,9 +124,101 @@ export default function DatasourceProjectFilter() {
   )
 }
 
+function renderDatasourceTargets(
+  ds: DatasourceGroup,
+  effectiveDatasource: string,
+  effectiveProject: string,
+  setFilter: (dsId: string, proj: string) => void,
+) {
+  if (ds.id === 'launchpad' && ((ds.bug_targets?.length ?? 0) > 0 || (ds.repositories?.length ?? 0) > 0)) {
+    return (
+      <>
+        <TargetGroup
+          label="Bug targets"
+          targets={ds.bug_targets ?? []}
+          datasourceId={ds.id}
+          effectiveDatasource={effectiveDatasource}
+          effectiveProject={effectiveProject}
+          setFilter={setFilter}
+        />
+        <TargetGroup
+          label="Repositories"
+          targets={ds.repositories ?? []}
+          datasourceId={ds.id}
+          effectiveDatasource={effectiveDatasource}
+          effectiveProject={effectiveProject}
+          setFilter={setFilter}
+        />
+      </>
+    )
+  }
+
+  return (ds.projects ?? []).map(p => (
+    <TargetButton
+      key={p}
+      datasourceId={ds.id}
+      target={p}
+      effectiveDatasource={effectiveDatasource}
+      effectiveProject={effectiveProject}
+      setFilter={setFilter}
+    />
+  ))
+}
+
+function TargetGroup({ label, targets, datasourceId, effectiveDatasource, effectiveProject, setFilter }: {
+  label: string
+  targets: string[]
+  datasourceId: string
+  effectiveDatasource: string
+  effectiveProject: string
+  setFilter: (dsId: string, proj: string) => void
+}) {
+  if (targets.length === 0) return null
+  return (
+    <div>
+      <div className="px-3 py-1 pl-9 text-[11px] uppercase tracking-wide text-gray-400 bg-gray-50">
+        {label}
+      </div>
+      {targets.map(target => (
+        <TargetButton
+          key={target}
+          datasourceId={datasourceId}
+          target={target}
+          effectiveDatasource={effectiveDatasource}
+          effectiveProject={effectiveProject}
+          setFilter={setFilter}
+        />
+      ))}
+    </div>
+  )
+}
+
+function TargetButton({ datasourceId, target, effectiveDatasource, effectiveProject, setFilter }: {
+  datasourceId: string
+  target: string
+  effectiveDatasource: string
+  effectiveProject: string
+  setFilter: (dsId: string, proj: string) => void
+}) {
+  return (
+    <button
+      className={`w-full px-3 py-1.5 text-left pl-9 ${
+        effectiveDatasource === datasourceId && effectiveProject === target
+          ? 'bg-blue-50 text-blue-700 font-medium'
+          : 'text-gray-600 hover:bg-gray-50'
+      }`}
+      onClick={() => setFilter(datasourceId, target)}
+    >
+      {target}
+    </button>
+  )
+}
+
 function inferDatasource(projectName: string, datasources: DatasourceGroup[]): string {
   for (const ds of datasources) {
     if (ds.projects.includes(projectName)) return ds.id
+    if ((ds.bug_targets ?? []).includes(projectName)) return ds.id
+    if ((ds.repositories ?? []).includes(projectName)) return ds.id
   }
   return ''
 }
