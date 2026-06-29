@@ -1,0 +1,141 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "7685dad324db",
+  "session_id": "ses_0fcaab38dffew1caUhO6tWbIsz",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T15:40:06.449229653Z",
+  "branch": "main",
+  "checkpoints_count": 7,
+  "files_touched": [
+    "src/project_health/aggregation/queries.py",
+    "tests/test_unified_contributions.py"
+  ],
+  "agent": "OpenCode",
+  "model": "gpt-5.5",
+  "turn_id": "e9c5fadf1e7e",
+  "token_usage": {
+    "input_tokens": 1458006,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 20157952,
+    "output_tokens": 48656,
+    "api_call_count": 171
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T15:40:06.411868833Z",
+    "agent_lines": 409,
+    "agent_removed": 60,
+    "human_added": 353,
+    "human_modified": 2,
+    "human_removed": 0,
+    "total_committed": 764,
+    "total_lines_changed": 829,
+    "agent_percentage": 56.57418576598311,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 627,
+      "user_lines_removed": 5,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7,
+        "frontend/src/components/TimeframeSelector.tsx": 15,
+        "openspec/changes/add-launchpad-observation/.openspec.yaml": 2,
+        "openspec/changes/add-launchpad-observation/design.md": 434,
+        "openspec/changes/add-launchpad-observation/proposal.md": 74,
+        "openspec/changes/add-launchpad-observation/tasks.md": 95
+      },
+      "user_removed_per_file": {
+        "frontend/src/components/TimeframeSelector.tsx": 5
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 505,
+      "user_lines_removed": 24,
+      "agent_lines_added": 625,
+      "agent_lines_removed": 5,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7,
+        "AGENTS.md": 2,
+        "openspec/changes/add-launchpad-observation/tasks.md": 8,
+        "project-health.example.yaml": 10,
+        "src/project_health/api/routes/projects.py": 4,
+        "src/project_health/config/loader.py": 101,
+        "src/project_health/ingestion/scheduler.py": 21,
+        "src/project_health/ingestion/writer.py": 34,
+        "src/project_health/providers/github.py": 124,
+        "src/project_health/providers/jira.py": 16,
+        "src/project_health/providers/protocol.py": 96,
+        "src/project_health/providers/registry.py": 7,
+        "tests/test_config.py": 56,
+        "tests/test_unified_contributions.py": 19
+      },
+      "user_removed_per_file": {
+        "openspec/changes/add-launchpad-observation/tasks.md": 8,
+        "project-health.example.yaml": 2,
+        "src/project_health/config/loader.py": 6,
+        "src/project_health/ingestion/scheduler.py": 1,
+        "src/project_health/ingestion/writer.py": 1,
+        "src/project_health/providers/protocol.py": 2,
+        "src/project_health/providers/registry.py": 2,
+        "tests/test_unified_contributions.py": 2
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2061,
+      "agent_lines_removed": 110,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2061,
+      "agent_lines_removed": 110,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2061,
+      "agent_lines_removed": 110,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2454,
+      "agent_lines_removed": 116,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2454,
+      "agent_lines_removed": 116,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    }
+  ]
+}
