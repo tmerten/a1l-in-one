@@ -3,7 +3,7 @@
   "checkpoint_id": "906d68f9e634",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "openspec/changes/unified-contributions-view/tasks.md"
   ],
@@ -31,13 +31,19 @@
       "transcript": "/90/6d68f9e634/3/full.jsonl",
       "content_hash": "/90/6d68f9e634/3/content_hash.txt",
       "prompt": "/90/6d68f9e634/3/prompt.txt"
+    },
+    {
+      "metadata": "/90/6d68f9e634/4/metadata.json",
+      "transcript": "/90/6d68f9e634/4/full.jsonl",
+      "content_hash": "/90/6d68f9e634/4/content_hash.txt",
+      "prompt": "/90/6d68f9e634/4/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 14240,
+    "input_tokens": 19606,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 10648,
-    "output_tokens": 1230,
-    "api_call_count": 4
+    "cache_read_tokens": 735833,
+    "output_tokens": 3578,
+    "api_call_count": 21
   }
 }

@@ -1,0 +1,1 @@
+This project combines developer and project metrics from github, launchpad and jira. Launchpad has recently been integrated. Veryfiy the project and search for bugs. Especially check if launchpad MPs and github PRs are mapped well on a higher abstraction level.
