@@ -1,0 +1,27 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "5f803f3b06a1",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "frontend/src/api/client.ts",
+    "frontend/src/components/TimeframeSelector.tsx",
+    "src/project_health/api/routes/sprints.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5f/803f3b06a1/0/metadata.json",
+      "transcript": "/5f/803f3b06a1/0/full.jsonl",
+      "content_hash": "/5f/803f3b06a1/0/content_hash.txt",
+      "prompt": "/5f/803f3b06a1/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 79561,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1484017,
+    "output_tokens": 24628,
+    "api_call_count": 40
+  }
+}
