@@ -1,0 +1,58 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "6c30e589b407",
+  "session_id": "ses_0ec8c95c1ffemPtnyQd0XkHEJG",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T15:47:56.594156251Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "alembic/versions/20250513_100000_initial_schema.py"
+  ],
+  "agent": "OpenCode",
+  "model": "claude-opus-4.6",
+  "turn_id": "3c0a5e2b86d0",
+  "checkpoint_transcript_start": 131,
+  "transcript_lines_at_start": 131,
+  "token_usage": {
+    "input_tokens": 45453,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 481137,
+    "output_tokens": 4144,
+    "api_call_count": 14
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T15:47:56.575459829Z",
+    "agent_lines": 3,
+    "agent_removed": 0,
+    "human_added": 2020,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 2023,
+    "total_lines_changed": 2023,
+    "agent_percentage": 0.14829461196243204,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 7,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3095,
+      "agent_lines_removed": 73,
+      "user_added_per_file": {
+        ".claude/settings.local.json": 7
+      }
+    }
+  ]
+}

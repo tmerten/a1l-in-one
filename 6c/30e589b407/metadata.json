@@ -3,7 +3,7 @@
   "checkpoint_id": "6c30e589b407",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "alembic/versions/20250513_100000_initial_schema.py",
     "alembic/versions/20260626_120000_add_identity_details.py",
@@ -42,13 +42,19 @@
       "transcript": "/6c/30e589b407/3/full.jsonl",
       "content_hash": "/6c/30e589b407/3/content_hash.txt",
       "prompt": "/6c/30e589b407/3/prompt.txt"
+    },
+    {
+      "metadata": "/6c/30e589b407/4/metadata.json",
+      "transcript": "/6c/30e589b407/4/full.jsonl",
+      "content_hash": "/6c/30e589b407/4/content_hash.txt",
+      "prompt": "/6c/30e589b407/4/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 73169,
+    "input_tokens": 118622,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 422665,
-    "output_tokens": 7378,
-    "api_call_count": 16
+    "cache_read_tokens": 903802,
+    "output_tokens": 11522,
+    "api_call_count": 30
   }
 }
