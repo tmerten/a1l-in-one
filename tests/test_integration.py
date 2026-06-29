@@ -12,7 +12,7 @@ from project_health.db.models import Base, RawEvent
 from project_health.ingestion.writer import EventWriter
 from project_health.aggregation.queries import AggregationQueries
 from project_health.aggregation.core import Timeframe
-from project_health.providers.protocol import RawPREvent, RawReviewEvent
+from project_health.providers.protocol import RawPREvent, RawReviewDecisionEvent, RawIssueEvent
 
 
 @pytest_asyncio.fixture
@@ -294,14 +294,13 @@ async def test_collaboration_review_matrix(db_session: AsyncSession, minimal_con
             data={"merged_at": now.isoformat(), "additions": 5, "deletions": 1},
         )
     ])
-    from project_health.providers.protocol import RawReviewEvent
-    await writer.write_pull_request_reviews("github", [
-        RawReviewEvent(
+    await writer.write_review_decisions("github", [
+        RawReviewDecisionEvent(
             external_id="REV-1",
             timestamp=now,
             actor="bob",
             project="repo-a",
-            data={"review_state": "APPROVED", "comment_count": 2, "pr_external_id": "PR-20"},
+            data={"review_state": "APPROVED", "normalized_state": "approved", "comment_count": 2, "pr_external_id": "PR-20"},
         )
     ])
 
@@ -336,3 +335,26 @@ async def test_bot_filter_with_special_chars(db_session: AsyncSession, minimal_c
     ctx = Timeframe(kind="date_range", start=now - timedelta(days=1), end=now + timedelta(days=1))
     volume = await queries.contribution_volume(ctx)
     assert volume["pull_requests"] == 1
+
+
+@pytest.mark.asyncio
+async def test_composition_empty_labels(db_session, minimal_config):
+    """composition must not crash when an issue has an empty labels list."""
+    writer = EventWriter(db_session)
+    now = datetime.now(timezone.utc)
+
+    await writer.write_issues("github", [
+        RawIssueEvent(
+            external_id="ISS-empty",
+            timestamp=now,
+            actor="alice",
+            project="repo-a",
+            data={"labels": [], "closed_at": now.isoformat()},
+        ),
+    ])
+
+    queries = AggregationQueries(db_session, minimal_config)
+    ctx = Timeframe(kind="date_range", start=now - timedelta(days=1), end=now + timedelta(days=1))
+    result = await queries.composition(ctx)
+    # Should not raise; the issue falls into "other"
+    assert result["issue_types"]["other"] == 1

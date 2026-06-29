@@ -346,3 +346,53 @@ async def test_work_items_unknown_person_returns_empty(db_session: AsyncSession,
 
     assert items == []
     assert total == 0
+
+
+@pytest.mark.asyncio
+async def test_active_work_items_includes_launchpad_merge_proposals(db_session: AsyncSession):
+    """Open Launchpad merge proposals must appear as active work items."""
+    config = Config.model_validate({
+        "credentials": {"github_token": "test"},
+        "launchpad-repos": ["~maas-committers/maas/+git/maas-release-tools"],
+    })
+    writer = EventWriter(db_session)
+    now = datetime.now(timezone.utc)
+
+    person = Person(id="p-lp", display_name="Alice", active=True)
+    db_session.add(person)
+    await db_session.commit()
+    db_session.add(PersonIdentity(person_id="p-lp", source="launchpad", external_id="~alice"))
+    await db_session.commit()
+
+    await writer.write_pull_requests("launchpad", [
+        RawPREvent(
+            external_id="mp-open",
+            timestamp=now,
+            actor="~alice",
+            project="~maas-committers/maas/+git/maas-release-tools",
+            data={"title": "Open MP", "state": "open", "queue_status": "Needs review"},
+        ),
+        RawPREvent(
+            external_id="mp-merged",
+            timestamp=now,
+            actor="~alice",
+            project="~maas-committers/maas/+git/maas-release-tools",
+            data={"title": "Merged MP", "state": "merged", "merged_at": now.isoformat()},
+        ),
+    ])
+
+    queries = AggregationQueries(db_session, config, {"launchpad"})
+    items, total = await queries.work_items(
+        person_id="p-lp",
+        status="active",
+        datasource=None,
+        event_type=None,
+        from_ts=None,
+        to_ts=None,
+        page=1,
+        per_page=20,
+    )
+
+    assert total == 1, "only the open MP is active"
+    assert items[0].external_id == "mp-open"
+    assert items[0].status == "open"
