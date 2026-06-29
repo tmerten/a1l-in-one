@@ -3,7 +3,7 @@
   "checkpoint_id": "6c30e589b407",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 4,
+  "checkpoints_count": 5,
   "files_touched": [
     "alembic/versions/20250513_100000_initial_schema.py",
     "alembic/versions/20260626_120000_add_identity_details.py",
@@ -15,6 +15,7 @@
     "package.json",
     "src/project_health/providers/launchpad.py",
     "src/project_health/providers/launchpad_oauth.py",
+    "tests/cassettes/launchpad_public.json",
     "tests/test_launchpad_oauth.py",
     "tests/test_launchpad_provider.py"
   ],
@@ -54,13 +55,19 @@
       "transcript": "/6c/30e589b407/5/full.jsonl",
       "content_hash": "/6c/30e589b407/5/content_hash.txt",
       "prompt": "/6c/30e589b407/5/prompt.txt"
+    },
+    {
+      "metadata": "/6c/30e589b407/6/metadata.json",
+      "transcript": "/6c/30e589b407/6/full.jsonl",
+      "content_hash": "/6c/30e589b407/6/content_hash.txt",
+      "prompt": "/6c/30e589b407/6/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1086943,
+    "input_tokens": 2544949,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 13408890,
-    "output_tokens": 45673,
-    "api_call_count": 156
+    "cache_read_tokens": 33566842,
+    "output_tokens": 94329,
+    "api_call_count": 327
   }
 }
