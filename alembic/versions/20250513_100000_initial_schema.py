@@ -64,6 +64,9 @@ def upgrade() -> None:
         sa.Column("person_id", sa.String(36), nullable=True),
         sa.Column("source", sa.String(), nullable=False),
         sa.Column("external_id", sa.String(), nullable=False),
+        sa.Column("display_name", sa.String(), nullable=True),
+        sa.Column("profile_url", sa.String(), nullable=True),
+        sa.Column("data", sa.JSON(), nullable=False, server_default="{}"),
     )
     with op.batch_alter_table("person_identities") as batch_op:
         batch_op.create_unique_constraint("uq_person_identity_source_ext", ["source", "external_id"])

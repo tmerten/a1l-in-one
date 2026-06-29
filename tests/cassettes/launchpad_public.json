@@ -1,0 +1,107 @@
+{
+  "repository": {
+    "self_link": "https://api.launchpad.net/1.0/~team-devs/project/+git/project-tools",
+    "web_link": "https://code.launchpad.net/~team-devs/project/+git/project-tools",
+    "resource_type_link": "https://api.launchpad.net/1.0/#git_repository",
+    "owner_link": "https://api.launchpad.net/1.0/~team-devs",
+    "name": "project-tools",
+    "information_type": "Public",
+    "unique_name": "~team-devs/project/+git/project-tools",
+    "display_name": "lp:~team-devs/project/+git/project-tools",
+    "git_https_url": "https://git.launchpad.net/~team-devs/project/+git/project-tools",
+    "default_branch": "refs/heads/main",
+    "private": false
+  },
+  "refs": {
+    "start": 0,
+    "total_size": 1,
+    "entries": [
+      {
+        "self_link": "https://api.launchpad.net/1.0/~team-devs/project/+git/project-tools/+ref/main",
+        "web_link": "https://code.launchpad.net/~team-devs/project/+git/project-tools/+ref/main",
+        "resource_type_link": "https://api.launchpad.net/1.0/#git_ref",
+        "path": "refs/heads/main",
+        "commit_sha1": "c5d4272a64ae9ec9bb57723b403d33bef07704f5"
+      }
+    ]
+  },
+  "bug_tasks": {
+    "entries": [
+      {
+        "self_link": "https://api.launchpad.net/1.0/project/+bug/2132663",
+        "web_link": "https://bugs.launchpad.net/project/+bug/2132663",
+        "resource_type_link": "https://api.launchpad.net/1.0/#bug_task",
+        "bug_link": "https://api.launchpad.net/1.0/bugs/2132663",
+        "milestone_link": "https://api.launchpad.net/1.0/project/+milestone/3.8.0",
+        "status": "Fix Committed",
+        "importance": "Critical",
+        "assignee_link": "https://api.launchpad.net/1.0/~dev-bob",
+        "bug_target_display_name": "Project",
+        "bug_target_name": "project",
+        "date_created": "2025-11-25T18:10:13.313995+00:00",
+        "date_fix_committed": "2025-12-01T15:32:17.159158+00:00",
+        "owner_link": "https://api.launchpad.net/1.0/~dev-carol",
+        "title": "Bug #2132663 in Project: \"Custom images fail to deploy in memory\""
+      }
+    ]
+  },
+  "merge_proposals": {
+    "entries": [
+      {
+        "self_link": "https://api.launchpad.net/1.0/~dev-alice/project/+git/project-test-db/+merge/505857",
+        "web_link": "https://code.launchpad.net/~dev-alice/project/+git/project-test-db/+merge/505857",
+        "resource_type_link": "https://api.launchpad.net/1.0/#branch_merge_proposal",
+        "source_git_path": "refs/heads/fips",
+        "target_git_path": "refs/heads/main",
+        "registrant_link": "https://api.launchpad.net/1.0/~dev-alice",
+        "queue_status": "Needs review",
+        "commit_message": "feat: add FIPS compliance for PostgreSQL",
+        "date_merged": null,
+        "date_created": "2026-06-02T20:10:58.742967+00:00",
+        "date_review_requested": "2026-06-02T20:10:58.742967+00:00",
+        "all_comments_collection_link": "https://api.launchpad.net/1.0/~dev-alice/project/+git/project-test-db/+merge/505857/all_comments",
+        "votes_collection_link": "https://api.launchpad.net/1.0/~dev-alice/project/+git/project-test-db/+merge/505857/votes"
+      }
+    ]
+  },
+  "vote_references": {
+    "entries": [
+      {
+        "self_link": "https://api.launchpad.net/1.0/~dev-alice/project/+git/project-test-db/+merge/505857/+review/763699",
+        "web_link": "https://code.launchpad.net/~dev-alice/project/+git/project-test-db/+merge/505857/+review/763699",
+        "resource_type_link": "https://api.launchpad.net/1.0/#code_review_vote_reference",
+        "date_created": "2026-06-02T20:10:58.742967+00:00",
+        "registrant_link": "https://api.launchpad.net/1.0/~dev-alice",
+        "reviewer_link": "https://api.launchpad.net/1.0/~team-devs",
+        "is_pending": true
+      }
+    ]
+  },
+  "code_review_comments": {
+    "entries": [
+      {
+        "id": "comment-1",
+        "date_created": "2026-06-03T10:00:00+00:00",
+        "owner_link": "https://api.launchpad.net/1.0/~team-devs",
+        "vote": "Approve",
+        "content": "Looks good."
+      }
+    ]
+  },
+  "person": {
+    "self_link": "https://api.launchpad.net/1.0/~dev-dana",
+    "web_link": "https://launchpad.net/~dev-dana",
+    "resource_type_link": "https://api.launchpad.net/1.0/#person",
+    "name": "dev-dana",
+    "display_name": "Dana Dev",
+    "is_team": false
+  },
+  "team": {
+    "self_link": "https://api.launchpad.net/1.0/~team-devs",
+    "web_link": "https://launchpad.net/~team-devs",
+    "resource_type_link": "https://api.launchpad.net/1.0/#team",
+    "name": "team-devs",
+    "display_name": "Project Committers",
+    "is_team": true
+  }
+}
