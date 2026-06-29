@@ -1,0 +1,9 @@
+Search the /project/tests/cassettes/ directory and the test files to understand:
+1. What cassette files exist (list them all with glob)
+2. Which test files reference or use cassettes (grep for "cassette", "vcr", "pytest_recording", "recorded" in tests/)
+3. Look for any identifiable names like "Alberto" in the cassettes directory
+
+Return:
+- Full list of cassette files
+- Which tests use them and how
+- All occurrences of "Alberto" or other real-looking personal names in the cassettes

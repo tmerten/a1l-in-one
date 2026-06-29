@@ -1,0 +1,537 @@
+{
+  "info": {
+    "id": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+    "slug": "lucky-moon",
+    "projectID": "12ff8f92be4c145e276a7200e069c2efbfddfbbc",
+    "directory": "/project",
+    "path": "",
+    "parentID": "ses_0ec8c95c1ffemPtnyQd0XkHEJG",
+    "title": "Find test cassette usage (@explore subagent)",
+    "agent": "explore",
+    "model": {
+      "id": "claude-opus-4.6",
+      "providerID": "github-copilot",
+      "variant": "default"
+    },
+    "version": "1.15.10",
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    },
+    "cost": 0.10727400000000001,
+    "tokens": {
+      "input": 14240,
+      "output": 1230,
+      "reasoning": 0,
+      "cache": {
+        "read": 10648,
+        "write": 0
+      }
+    },
+    "permission": [
+      {
+        "permission": "todowrite",
+        "action": "deny",
+        "pattern": "*"
+      },
+      {
+        "permission": "task",
+        "action": "deny",
+        "pattern": "*"
+      }
+    ],
+    "time": {
+      "created": 1782747960621,
+      "updated": 1782747987717
+    }
+  },
+  "messages": [
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1782747960626
+        },
+        "tools": {
+          "todowrite": false,
+          "task": false
+        },
+        "agent": "explore",
+        "model": {
+          "providerID": "github-copilot",
+          "modelID": "claude-opus-4.6"
+        },
+        "summary": {
+          "diffs": []
+        },
+        "id": "msg_f140f1531001jyLvb4IviN7ARu",
+        "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Search the /project/tests/cassettes/ directory and the test files to understand:\n1. What cassette files exist (list them all with glob)\n2. Which test files reference or use cassettes (grep for \"cassette\", \"vcr\", \"pytest_recording\", \"recorded\" in tests/)\n3. Look for any identifiable names like \"Alberto\" in the cassettes directory\n\nReturn:\n- Full list of cassette files\n- Which tests use them and how\n- All occurrences of \"Alberto\" or other real-looking personal names in the cassettes",
+          "id": "prt_f140f153f0014jT3rRrBmcoeFX",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f1531001jyLvb4IviN7ARu"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_f140f1531001jyLvb4IviN7ARu",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.031275,
+        "tokens": {
+          "total": 5135,
+          "input": 4855,
+          "output": 280,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1782747960714,
+          "completed": 1782747965800
+        },
+        "finish": "tool-calls",
+        "id": "msg_f140f158a001b8MpW9ee4Mmebt",
+        "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M"
+      },
+      "parts": [
+        {
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-start",
+          "id": "prt_f140f23f00018l5h1pgQJK2oOK",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f158a001b8MpW9ee4Mmebt"
+        },
+        {
+          "type": "reasoning",
+          "text": "The user wants me to search the /project/tests/cassettes/ directory and test files to understand:\n1. What cassette files exist\n2. Which test files reference or use cassettes\n3. Look for identifiable names like \"Alberto\" in cassettes\n\nLet me start by searching for all these things in parallel.",
+          "time": {
+            "start": 1782747964401,
+            "end": 1782747964586
+          },
+          "metadata": {
+            "copilot": {
+              "reasoningOpaque": "REDACTED/Gb85hOJri3GT/REDACTED/oS4YylIQP7KLvzo8ZkZoRTTX/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED"
+            }
+          },
+          "id": "prt_f140f23f1001z6eBfUSPvzuzeN",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f158a001b8MpW9ee4Mmebt"
+        },
+        {
+          "type": "tool",
+          "tool": "glob",
+          "callID": "tooluse_Y7X8JpC97h1LkRJvKAhmdK",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "tests/cassettes/**/*",
+              "path": "/project"
+            },
+            "output": "/project/tests/cassettes/launchpad_public.json",
+            "metadata": {
+              "count": 1,
+              "truncated": false
+            },
+            "title": "",
+            "time": {
+              "start": 1782747964676,
+              "end": 1782747964688
+            }
+          },
+          "metadata": {
+            "copilot": {
+              "reasoningOpaque": "REDACTED/Gb85hOJri3GT/REDACTED/oS4YylIQP7KLvzo8ZkZoRTTX/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED"
+            }
+          },
+          "id": "prt_f140f24ac0010beyCSOLy5friy",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f158a001b8MpW9ee4Mmebt"
+        },
+        {
+          "type": "tool",
+          "tool": "grep",
+          "callID": "tooluse_cDv5jIwZqoMsr9v7bl8Jcm",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "cassette|vcr|pytest_recording|recorded",
+              "path": "/project/tests"
+            },
+            "output": "Found 11 matches\n/project/tests/test_launchpad_provider.py:\n  Line 372: def test_public_launchpad_cassette_shapes_normalize():\n\n  Line 373:     cassette = json.loads(Path(\"tests/cassettes/launchpad_public.json\").read_text())\n\n  Line 374:     repo = LaunchpadRepositoryConfig.model_validate(cassette[\"repository\"][\"unique_name\"])\n\n  Line 375:     bug_task = cassette[\"bug_tasks\"][\"entries\"][0]\n\n  Line 376:     proposal = cassette[\"merge_proposals\"][\"entries\"][0]\n\n  Line 377:     vote = cassette[\"vote_references\"][\"entries\"][0]\n\n  Line 378:     comment = cassette[\"code_review_comments\"][\"entries\"][0]\n\n  Line 386:     assert cassette[\"repository\"][\"private\"] is False\n\n  Line 387:     assert cassette[\"refs\"][\"entries\"][0][\"commit_sha1\"]\n\n  Line 398:     assert cassette[\"person\"][\"display_name\"] == \"Alberto Donato\"\n\n  Line 399:     assert cassette[\"team\"][\"display_name\"] == \"MAAS Committers\"\n",
+            "metadata": {
+              "matches": 11,
+              "truncated": false
+            },
+            "title": "cassette|vcr|pytest_recording|recorded",
+            "time": {
+              "start": 1782747965309,
+              "end": 1782747965323
+            }
+          },
+          "metadata": {
+            "copilot": {
+              "reasoningOpaque": "REDACTED/Gb85hOJri3GT/REDACTED/oS4YylIQP7KLvzo8ZkZoRTTX/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED"
+            }
+          },
+          "id": "prt_f140f2505001v1xC5abE2f0r3t",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f158a001b8MpW9ee4Mmebt"
+        },
+        {
+          "type": "tool",
+          "tool": "grep",
+          "callID": "tooluse_6dqGel8v4FN2lJXyi5acth",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "Alberto",
+              "path": "/project/tests/cassettes"
+            },
+            "output": "Found 1 matches\n/project/tests/cassettes/launchpad_public.json:\n  Line 96:     \"display_name\": \"Alberto Donato\",\n",
+            "metadata": {
+              "matches": 1,
+              "truncated": false
+            },
+            "title": "Alberto",
+            "time": {
+              "start": 1782747965734,
+              "end": 1782747965743
+            }
+          },
+          "metadata": {
+            "copilot": {
+              "reasoningOpaque": "REDACTED/Gb85hOJri3GT/REDACTED/oS4YylIQP7KLvzo8ZkZoRTTX/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED"
+            }
+          },
+          "id": "prt_f140f2783001v8WKRnY9hDYeDl",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f158a001b8MpW9ee4Mmebt"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-finish",
+          "tokens": {
+            "total": 5135,
+            "input": 4855,
+            "output": 280,
+            "reasoning": 0,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "cost": 0.031275,
+          "id": "prt_f140f295e001ZtVeuPAFk0J1NU",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f158a001b8MpW9ee4Mmebt"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_f140f1531001jyLvb4IviN7ARu",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.03006,
+        "tokens": {
+          "total": 5640,
+          "input": 5547,
+          "output": 93,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1782747965802,
+          "completed": 1782747969262
+        },
+        "finish": "tool-calls",
+        "id": "msg_f140f296a001OJwc3AMGfjhvzS",
+        "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M"
+      },
+      "parts": [
+        {
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-start",
+          "id": "prt_f140f34bc001d5wrFTYaYtJDO8",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f296a001OJwc3AMGfjhvzS"
+        },
+        {
+          "type": "tool",
+          "tool": "grep",
+          "callID": "tooluse_yvIjT6nI60W368LfZTeAbz",
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/project/tests/cassettes",
+              "pattern": "\"display_name\"|\"name\"|\"author\"|\"owner\"|\"email\"|\"user\""
+            },
+            "output": "Found 6 matches\n/project/tests/cassettes/launchpad_public.json:\n  Line 7:     \"name\": \"maas-release-tools\",\n\n  Line 10:     \"display_name\": \"lp:~maas-committers/maas/+git/maas-release-tools\",\n\n  Line 95:     \"name\": \"ack\",\n\n  Line 96:     \"display_name\": \"Alberto Donato\",\n\n  Line 103:     \"name\": \"maas-committers\",\n\n  Line 104:     \"display_name\": \"MAAS Committers\",\n",
+            "metadata": {
+              "matches": 6,
+              "truncated": false
+            },
+            "title": "\"display_name\"|\"name\"|\"author\"|\"owner\"|\"email\"|\"user\"",
+            "time": {
+              "start": 1782747969218,
+              "end": 1782747969228
+            }
+          },
+          "id": "prt_f140f34be0014E0N0zQj0yDifq",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f296a001OJwc3AMGfjhvzS"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-finish",
+          "tokens": {
+            "total": 5640,
+            "input": 5547,
+            "output": 93,
+            "reasoning": 0,
+            "cache": {
+              "write": 0,
+              "read": 0
+            }
+          },
+          "cost": 0.03006,
+          "id": "prt_f140f36dd001GxHP3TU3wcJHGC",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f296a001OJwc3AMGfjhvzS"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_f140f1531001jyLvb4IviN7ARu",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.010851,
+        "tokens": {
+          "total": 5945,
+          "input": 945,
+          "output": 148,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 4852
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1782747969264,
+          "completed": 1782747972835
+        },
+        "finish": "tool-calls",
+        "id": "msg_f140f36f0001wSQ4pPjJTe617y",
+        "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M"
+      },
+      "parts": [
+        {
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-start",
+          "id": "prt_f140f41f1001vvSxX6Fhxa6xTb",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f36f0001wSQ4pPjJTe617y"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "tooluse_UmOluzulS3DdHvqwEw276k",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/tests/cassettes/launchpad_public.json"
+            },
+            "output": "<path>/project/tests/cassettes/launchpad_public.json</path>\n<type>file</type>\n<content>\n1: {\n2:   \"repository\": {\n3:     \"self_link\": \"https://api.launchpad.net/1.0/~maas-committers/maas/+git/maas-release-tools\",\n4:     \"web_link\": \"https://code.launchpad.net/~maas-committers/maas/+git/maas-release-tools\",\n5:     \"resource_type_link\": \"https://api.launchpad.net/1.0/#git_repository\",\n6:     \"owner_link\": \"https://api.launchpad.net/1.0/~maas-committers\",\n7:     \"name\": \"maas-release-tools\",\n8:     \"information_type\": \"Public\",\n9:     \"unique_name\": \"~maas-committers/maas/+git/maas-release-tools\",\n10:     \"display_name\": \"lp:~maas-committers/maas/+git/maas-release-tools\",\n11:     \"git_https_url\": \"https://git.launchpad.net/~maas-committers/maas/+git/maas-release-tools\",\n12:     \"default_branch\": \"refs/heads/main\",\n13:     \"private\": false\n14:   },\n15:   \"refs\": {\n16:     \"start\": 0,\n17:     \"total_size\": 1,\n18:     \"entries\": [\n19:       {\n20:         \"self_link\": \"https://api.launchpad.net/1.0/~maas-committers/maas/+git/maas-release-tools/+ref/main\",\n21:         \"web_link\": \"https://code.launchpad.net/~maas-committers/maas/+git/maas-release-tools/+ref/main\",\n22:         \"resource_type_link\": \"https://api.launchpad.net/1.0/#git_ref\",\n23:         \"path\": \"refs/heads/main\",\n24:         \"commit_sha1\": \"c5d4272a64ae9ec9bb57723b403d33bef07704f5\"\n25:       }\n26:     ]\n27:   },\n28:   \"bug_tasks\": {\n29:     \"entries\": [\n30:       {\n31:         \"self_link\": \"https://api.launchpad.net/1.0/maas/+bug/2132663\",\n32:         \"web_link\": \"https://bugs.launchpad.net/maas/+bug/2132663\",\n33:         \"resource_type_link\": \"https://api.launchpad.net/1.0/#bug_task\",\n34:         \"bug_link\": \"https://api.launchpad.net/1.0/bugs/2132663\",\n35:         \"milestone_link\": \"https://api.launchpad.net/1.0/maas/+milestone/3.8.0\",\n36:         \"status\": \"Fix Committed\",\n37:         \"importance\": \"Critical\",\n38:         \"assignee_link\": \"https://api.launchpad.net/1.0/~r00ta\",\n39:         \"bug_target_display_name\": \"MAAS\",\n40:         \"bug_target_name\": \"maas\",\n41:         \"date_created\": \"2025-11-25T18:10:13.313995+00:00\",\n42:         \"date_fix_committed\": \"2025-12-01T15:32:17.159158+00:00\",\n43:         \"owner_link\": \"https://api.launchpad.net/1.0/~pgdg99\",\n44:         \"title\": \"Bug #2132663 in MAAS: \\\"Custom images fail to deploy in memory\\\"\"\n45:       }\n46:     ]\n47:   },\n48:   \"merge_proposals\": {\n49:     \"entries\": [\n50:       {\n51:         \"self_link\": \"https://api.launchpad.net/1.0/~alexsander-souza/maas/+git/maas-test-db/+merge/505857\",\n52:         \"web_link\": \"https://code.launchpad.net/~alexsander-souza/maas/+git/maas-test-db/+merge/505857\",\n53:         \"resource_type_link\": \"https://api.launchpad.net/1.0/#branch_merge_proposal\",\n54:         \"source_git_path\": \"refs/heads/fips\",\n55:         \"target_git_path\": \"refs/heads/main\",\n56:         \"registrant_link\": \"https://api.launchpad.net/1.0/~alexsander-souza\",\n57:         \"queue_status\": \"Needs review\",\n58:         \"commit_message\": \"feat: add FIPS compliance for PostgreSQL\",\n59:         \"date_merged\": null,\n60:         \"date_created\": \"2026-06-02T20:10:58.742967+00:00\",\n61:         \"date_review_requested\": \"2026-06-02T20:10:58.742967+00:00\",\n62:         \"all_comments_collection_link\": \"https://api.launchpad.net/1.0/~alexsander-souza/maas/+git/maas-test-db/+merge/505857/all_comments\",\n63:         \"votes_collection_link\": \"https://api.launchpad.net/1.0/~alexsander-souza/maas/+git/maas-test-db/+merge/505857/votes\"\n64:       }\n65:     ]\n66:   },\n67:   \"vote_references\": {\n68:     \"entries\": [\n69:       {\n70:         \"self_link\": \"https://api.launchpad.net/1.0/~alexsander-souza/maas/+git/maas-test-db/+merge/505857/+review/763699\",\n71:         \"web_link\": \"https://code.launchpad.net/~alexsander-souza/maas/+git/maas-test-db/+merge/505857/+review/763699\",\n72:         \"resource_type_link\": \"https://api.launchpad.net/1.0/#code_review_vote_reference\",\n73:         \"date_created\": \"2026-06-02T20:10:58.742967+00:00\",\n74:         \"registrant_link\": \"https://api.launchpad.net/1.0/~alexsander-souza\",\n75:         \"reviewer_link\": \"https://api.launchpad.net/1.0/~maas-committers\",\n76:         \"is_pending\": true\n77:       }\n78:     ]\n79:   },\n80:   \"code_review_comments\": {\n81:     \"entries\": [\n82:       {\n83:         \"id\": \"comment-1\",\n84:         \"date_created\": \"2026-06-03T10:00:00+00:00\",\n85:         \"owner_link\": \"https://api.launchpad.net/1.0/~maas-committers\",\n86:         \"vote\": \"Approve\",\n87:         \"content\": \"Looks good.\"\n88:       }\n89:     ]\n90:   },\n91:   \"person\": {\n92:     \"self_link\": \"https://api.launchpad.net/1.0/~ack\",\n93:     \"web_link\": \"https://launchpad.net/~ack\",\n94:     \"resource_type_link\": \"https://api.launchpad.net/1.0/#person\",\n95:     \"name\": \"ack\",\n96:     \"display_name\": \"Alberto Donato\",\n97:     \"is_team\": false\n98:   },\n99:   \"team\": {\n100:     \"self_link\": \"https://api.launchpad.net/1.0/~maas-committers\",\n101:     \"web_link\": \"https://launchpad.net/~maas-committers\",\n102:     \"resource_type_link\": \"https://api.launchpad.net/1.0/#team\",\n103:     \"name\": \"maas-committers\",\n104:     \"display_name\": \"MAAS Committers\",\n105:     \"is_team\": true\n106:   }\n107: }\n\n(End of file - total 107 lines)\n</content>",
+            "metadata": {
+              "preview": "{\n  \"repository\": {\n    \"self_link\": \"https://api.launchpad.net/1.0/~maas-committers/maas/+git/maas-release-tools\",\n    \"web_link\": \"https://code.launchpad.net/~maas-committers/maas/+git/maas-release-tools\",\n    \"resource_type_link\": \"https://api.launchpad.net/1.0/#git_repository\",\n    \"owner_link\": \"https://api.launchpad.net/1.0/~maas-committers\",\n    \"name\": \"maas-release-tools\",\n    \"information_type\": \"Public\",\n    \"unique_name\": \"~maas-committers/maas/+git/maas-release-tools\",\n    \"display_name\": \"lp:~maas-committers/maas/+git/maas-release-tools\",\n    \"git_https_url\": \"https://git.launchpad.net/~maas-committers/maas/+git/maas-release-tools\",\n    \"default_branch\": \"refs/heads/main\",\n    \"private\": false\n  },\n  \"refs\": {\n    \"start\": 0,\n    \"total_size\": 1,\n    \"entries\": [\n      {\n        \"self_link\": \"https://api.launchpad.net/1.0/~maas-committers/maas/+git/maas-release-tools/+ref/main\",",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "tests/cassettes/launchpad_public.json",
+            "time": {
+              "start": 1782747972179,
+              "end": 1782747972187
+            }
+          },
+          "id": "prt_f140f41f3001L9AWqyETV2a27f",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f36f0001wSQ4pPjJTe617y"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "tooluse_udiXn9lV28TpRAyDpxIhNL",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/project/tests/test_launchpad_provider.py",
+              "offset": 370,
+              "limit": 40
+            },
+            "output": "<path>/project/tests/test_launchpad_provider.py</path>\n<type>file</type>\n<content>\n370: \n371: \n372: def test_public_launchpad_cassette_shapes_normalize():\n373:     cassette = json.loads(Path(\"tests/cassettes/launchpad_public.json\").read_text())\n374:     repo = LaunchpadRepositoryConfig.model_validate(cassette[\"repository\"][\"unique_name\"])\n375:     bug_task = cassette[\"bug_tasks\"][\"entries\"][0]\n376:     proposal = cassette[\"merge_proposals\"][\"entries\"][0]\n377:     vote = cassette[\"vote_references\"][\"entries\"][0]\n378:     comment = cassette[\"code_review_comments\"][\"entries\"][0]\n379: \n380:     bug_event = _bug_task_event(\"maas\", bug_task)\n381:     mp_event = _merge_proposal_event(repo, proposal)\n382:     request_event = _vote_reference_event(repo, proposal, vote)\n383:     decision_event = _review_decision_event(repo, proposal, comment)\n384:     comment_event = _review_comment_event(repo, proposal, comment)\n385: \n386:     assert cassette[\"repository\"][\"private\"] is False\n387:     assert cassette[\"refs\"][\"entries\"][0][\"commit_sha1\"]\n388:     assert bug_event is not None\n389:     assert bug_event.data[\"completed_contribution\"] is True\n390:     assert mp_event is not None\n391:     assert mp_event.data[\"capabilities\"][\"review_requests\"] is True\n392:     assert request_event is not None\n393:     assert request_event.actor == \"~maas-committers\"\n394:     assert decision_event is not None\n395:     assert decision_event.data[\"normalized_state\"] == \"approved\"\n396:     assert comment_event is not None\n397:     assert comment_event.data[\"body\"] == \"Looks good.\"\n398:     assert cassette[\"person\"][\"display_name\"] == \"Alberto Donato\"\n399:     assert cassette[\"team\"][\"display_name\"] == \"MAAS Committers\"\n\n(End of file - total 399 lines)\n</content>",
+            "metadata": {
+              "preview": "\n\ndef test_public_launchpad_cassette_shapes_normalize():\n    cassette = json.loads(Path(\"tests/cassettes/launchpad_public.json\").read_text())\n    repo = LaunchpadRepositoryConfig.model_validate(cassette[\"repository\"][\"unique_name\"])\n    bug_task = cassette[\"bug_tasks\"][\"entries\"][0]\n    proposal = cassette[\"merge_proposals\"][\"entries\"][0]\n    vote = cassette[\"vote_references\"][\"entries\"][0]\n    comment = cassette[\"code_review_comments\"][\"entries\"][0]\n\n    bug_event = _bug_task_event(\"maas\", bug_task)\n    mp_event = _merge_proposal_event(repo, proposal)\n    request_event = _vote_reference_event(repo, proposal, vote)\n    decision_event = _review_decision_event(repo, proposal, comment)\n    comment_event = _review_comment_event(repo, proposal, comment)\n\n    assert cassette[\"repository\"][\"private\"] is False\n    assert cassette[\"refs\"][\"entries\"][0][\"commit_sha1\"]\n    assert bug_event is not None\n    assert bug_event.data[\"completed_contribution\"] is True",
+              "truncated": false,
+              "loaded": []
+            },
+            "title": "tests/test_launchpad_provider.py",
+            "time": {
+              "start": 1782747972801,
+              "end": 1782747972808
+            }
+          },
+          "id": "prt_f140f4255001WGHCM62Tddi3Qf",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f36f0001wSQ4pPjJTe617y"
+        },
+        {
+          "reason": "tool-calls",
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-finish",
+          "tokens": {
+            "total": 5945,
+            "input": 945,
+            "output": 148,
+            "reasoning": 0,
+            "cache": {
+              "write": 0,
+              "read": 4852
+            }
+          },
+          "cost": 0.010851,
+          "id": "prt_f140f44d0001uz8o9jFa7IrC30",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f36f0001wSQ4pPjJTe617y"
+        }
+      ]
+    },
+    {
+      "info": {
+        "parentID": "msg_f140f1531001jyLvb4IviN7ARu",
+        "role": "assistant",
+        "mode": "explore",
+        "agent": "explore",
+        "path": {
+          "cwd": "/project",
+          "root": "/project"
+        },
+        "cost": 0.035088,
+        "tokens": {
+          "total": 9398,
+          "input": 2893,
+          "output": 709,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 5796
+          }
+        },
+        "modelID": "claude-opus-4.6",
+        "providerID": "github-copilot",
+        "time": {
+          "created": 1782747972838,
+          "completed": 1782747986630
+        },
+        "finish": "stop",
+        "id": "msg_f140f44e6001y9yQHwjRXt1LfU",
+        "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M"
+      },
+      "parts": [
+        {
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-start",
+          "id": "prt_f140f4e38001GRDYk6XSSQIW4P",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f44e6001y9yQHwjRXt1LfU"
+        },
+        {
+          "type": "reasoning",
+          "text": "Now I have all the information needed to provide a comprehensive answer. Let me also quickly check if there are any other personal names or usernames in the cassette that might be of interest.",
+          "time": {
+            "start": 1782747975225,
+            "end": 1782747975787
+          },
+          "metadata": {
+            "copilot": {
+              "reasoningOpaque": "REDACTED/REDACTED/REDACTED//JMEBc7MHf073KENwOtIa3M/REDACTED/Bg5iMFjJhn6UahkGprGb2d4/FvA7XwRyqs8TiZATWlJid9yMM6h879wJt/REDACTED/TmUWLs/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED"
+            }
+          },
+          "id": "prt_f140f4e39002UN71a7SUe4aqJG",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f44e6001y9yQHwjRXt1LfU"
+        },
+        {
+          "type": "text",
+          "text": "Here are the complete findings:\n\n---\n\n## 1. Cassette Files\n\nThere is exactly **one** cassette file in the project:\n\n- `/project/tests/cassettes/launchpad_public.json`\n\n---\n\n## 2. Test Files Using Cassettes\n\nOnly one test file references cassettes:\n\n**`/project/tests/test_launchpad_provider.py`** (lines 372-399)\n\nThe function `test_public_launchpad_cassette_shapes_normalize()` uses the cassette by:\n- Loading it directly with `json.loads(Path(\"tests/cassettes/launchpad_public.json\").read_text())`\n- Validating the structure/shape of all response sections (repository, refs, bug_tasks, merge_proposals, vote_references, code_review_comments, person, team)\n- Running those sections through normalizer helper functions and asserting the output matches expected domain-model shapes\n\nThere is **no use of `vcr`, `pytest_recording`, or any cassette-replay framework** -- the cassette is used as a static fixture of recorded Launchpad API shapes, loaded with plain `json.loads`.\n\n---\n\n## 3. Personal Names Found in the Cassettes\n\nThe following real-looking personal names/identifiers appear in `/project/tests/cassettes/launchpad_public.json`:\n\n| Line | Field | Value | Context |\n|------|-------|-------|---------|\n| 96 | `person.display_name` | **Alberto Donato** | Launchpad person entity (username `ack`) |\n| 38 | `bug_tasks[0].assignee_link` | **~r00ta** | Bug task assignee (Launchpad username) |\n| 43 | `bug_tasks[0].owner_link` | **~pgdg99** | Bug task owner (Launchpad username) |\n| 51 | `merge_proposals[0].self_link` | **~alexsander-souza** | Merge proposal author |\n| 56 | `merge_proposals[0].registrant_link` | **~alexsander-souza** | Same person as registrant |\n| 74 | `vote_references[0].registrant_link` | **~alexsander-souza** | Vote registrant |\n\nThe test at line 398 explicitly asserts on the personal name:\n```python\nassert cassette[\"person\"][\"display_name\"] == \"Alberto Donato\"\n```\n\n**Summary:** \"Alberto Donato\" is the only full real-looking personal name present. The other identifiers (`r00ta`, `pgdg99`, `alexsander-souza`) are Launchpad usernames embedded in API links. All appear to be from a publicly accessible Launchpad project (MAAS).",
+          "time": {
+            "start": 1782747975789,
+            "end": 1782747986600
+          },
+          "metadata": {
+            "copilot": {
+              "reasoningOpaque": "REDACTED/REDACTED/REDACTED//JMEBc7MHf073KENwOtIa3M/REDACTED/Bg5iMFjJhn6UahkGprGb2d4/FvA7XwRyqs8TiZATWlJid9yMM6h879wJt/REDACTED/TmUWLs/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED/REDACTED"
+            }
+          },
+          "id": "prt_f140f506d0015Y3JfMjbcT5iQ8",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f44e6001y9yQHwjRXt1LfU"
+        },
+        {
+          "reason": "stop",
+          "snapshot": "624ce1f8f6591a3ac41d4395f65aef7b0b494065",
+          "type": "step-finish",
+          "tokens": {
+            "total": 9398,
+            "input": 2893,
+            "output": 709,
+            "reasoning": 0,
+            "cache": {
+              "write": 0,
+              "read": 5796
+            }
+          },
+          "cost": 0.035088,
+          "id": "prt_f140f7ab8001Bv7oOc1NV7pqqt",
+          "sessionID": "ses_0ebf0ead3ffeDhxGuyYxR8j66M",
+          "messageID": "msg_f140f44e6001y9yQHwjRXt1LfU"
+        }
+      ]
+    }
+  ]
+}
