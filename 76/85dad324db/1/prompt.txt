@@ -1,0 +1,11 @@
+Search the codebase thoroughly for all Launchpad-related code. I need to find:
+1. Launchpad client/API code
+2. Launchpad data models
+3. How Launchpad Merge Proposals (MPs) are handled
+4. Any mapping between Launchpad MPs and a unified/abstract model
+5. Tests for Launchpad integration
+6. Any sync/fetch logic for Launchpad data
+
+Search for patterns like: "launchpad", "merge_proposal", "MP", "lp_", "LaunchpadClient"
+
+Return all file paths and key code sections found.
