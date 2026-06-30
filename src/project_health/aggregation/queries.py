@@ -459,6 +459,20 @@ class AggregationQueries:
             stats["reviews"] += 1
             stats["comments"] += row["comment_count"]
 
+        # Resolve display names for all actors (reviewers + authors)
+        all_actors: set[str] = set()
+        for reviewer, authors_map in matrix.items():
+            all_actors.add(reviewer)
+            all_actors.update(authors_map.keys())
+
+        display_name_map = await self._resolve_actor_display_names(all_actors)
+
+        # Ensure all actors have per_person entries with display_name
+        for actor in all_actors:
+            entry = per_person.setdefault(actor, {"reviews": 0, "comments": 0})
+            if actor in display_name_map:
+                entry["display_name"] = display_name_map[actor]
+
         return {"review_matrix": matrix, "per_person": per_person}
 
     async def sprint_burndown(self, sprint_id: str) -> dict[str, Any]:
@@ -950,6 +964,22 @@ class AggregationQueries:
             for row in result.mappings().all()
         ]
         return {"bucket_size": bucket_size, "data": data}
+
+    async def _resolve_actor_display_names(self, actors: set[str]) -> dict[str, str]:
+        """Resolve raw actor IDs to configured person display names via person_identities."""
+        if not actors:
+            return {}
+        params = {f"a_{i}": a for i, a in enumerate(actors)}
+        placeholders = ", ".join(f":a_{i}" for i in range(len(actors)))
+        sql = f"""
+            SELECT pi.external_id, p.display_name
+            FROM person_identities pi
+            JOIN persons p ON p.id = pi.person_id
+            WHERE pi.external_id IN ({placeholders})
+            AND p.active = 1
+        """
+        result = await self._session.execute(text(sql), params)
+        return {row["external_id"]: row["display_name"] for row in result.mappings().all()}
 
     def _bot_filter(self) -> tuple[str, dict[str, str]]:
         if not self._bots:

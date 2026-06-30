@@ -30,10 +30,11 @@ export default function PersonDetailPage() {
 
   const { data: contributions, isLoading: cLoading, error: cError } = usePersonContributions(personId ?? '', query)
 
-  // Extract GitHub actor for time-series filtering
-  const githubIdentity = contributions?.identities?.find((i: Identity) => i.source === 'github')
-  const githubLogin = githubIdentity?.external_id as string | undefined
-  const tsQuery = githubLogin ? { ...tsBase, actors: [githubLogin] } : null
+  // Extract all actor identities for time-series filtering (person-focused, not source-specific)
+  const allActors: string[] = (contributions?.identities ?? [])
+    .map((i: Identity) => i.external_id)
+    .filter(Boolean)
+  const tsQuery = allActors.length > 0 ? { ...tsBase, actors: allActors } : null
 
   // Time-series data (only fetched when we have a GitHub identity)
   const { data: volumeTs, isLoading: vtLoading } = useContributionVolumeTs(tsQuery ?? {})
@@ -92,7 +93,7 @@ export default function PersonDetailPage() {
     reviews: p.value.reviews,
   }))
 
-  const noCharts = !githubLogin
+  const noCharts = allActors.length === 0
 
   return (
     <div>
@@ -130,7 +131,7 @@ export default function PersonDetailPage() {
 
       {noCharts ? (
         <div className="rounded-md bg-amber-50 border border-amber-200 text-amber-700 text-sm px-4 py-3">
-          Chart data not available — no GitHub identity linked to this person.
+          Chart data not available — no source identities linked to this person.
         </div>
       ) : (
         <>

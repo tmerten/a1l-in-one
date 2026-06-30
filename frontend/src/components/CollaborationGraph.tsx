@@ -108,11 +108,15 @@ export default function CollaborationGraph({ reviewMatrix, perPerson }: Collabor
 
   const showEdgeTooltip = useCallback((e: React.MouseEvent, link: SimLink) => {
     const pt = getSvgPoint(e)
+    const sourceNode = nodes.find(n => n.id === link.sourceId)
+    const targetNode = nodes.find(n => n.id === link.targetId)
+    const sourceLabel = sourceNode?.label ?? link.sourceId
+    const targetLabel = targetNode?.label ?? link.targetId
     const label = link.directed
-      ? `${link.sourceId} → ${link.targetId}: ${link.weight}`
+      ? `${sourceLabel} → ${targetLabel}: ${link.weight}`
       : `${link.weight} reviews`
     setTooltip({ x: pt.x, y: pt.y - 20, text: label })
-  }, [getSvgPoint])
+  }, [getSvgPoint, nodes])
 
   const hideTooltip = useCallback(() => setTooltip(null), [])
 

@@ -53,7 +53,10 @@ export interface paths {
         };
         /**
          * List Sprints
-         * @description List sprints for a project. Returns active + completed from last 90 days.
+         * @description List sprints for a project.
+         *
+         *     Returns all active/future sprints plus the most recent closed ones,
+         *     up to *limit* total entries (default 20).
          */
         get: operations["list_sprints_api_sprints__get"];
         put?: never;
@@ -825,6 +828,7 @@ export interface operations {
         parameters: {
             query?: {
                 project?: string | null;
+                limit?: number;
             };
             header?: never;
             path?: never;

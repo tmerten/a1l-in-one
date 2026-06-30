@@ -71,11 +71,26 @@ describe('PersonDetailPage', () => {
     expect(screen.getByText('Collaboration over time')).toBeInTheDocument()
   })
 
-  it('shows fallback message when no GitHub identity', () => {
+  it('renders charts when only non-GitHub identity is present', () => {
     vi.spyOn(hooks, 'usePersonContributions').mockReturnValue({
       data: {
         display_name: 'Bob (Jira only)',
         identities: [{ source: 'jira', external_id: '557058:abc' }],
+        contributions: [],
+      },
+      isLoading: false, error: null,
+    } as ReturnType<typeof hooks.usePersonContributions>)
+    renderPage()
+    expect(screen.getByText('Contribution Volume over time')).toBeInTheDocument()
+    expect(screen.getByText('Velocity over time')).toBeInTheDocument()
+    expect(screen.getByText('Collaboration over time')).toBeInTheDocument()
+  })
+
+  it('shows fallback message when no identities are linked', () => {
+    vi.spyOn(hooks, 'usePersonContributions').mockReturnValue({
+      data: {
+        display_name: 'Orphan Person',
+        identities: [],
         contributions: [],
       },
       isLoading: false, error: null,
