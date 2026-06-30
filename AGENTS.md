@@ -15,3 +15,5 @@ Tokens and secrets live in environment variables and are read only by the app's 
 - The agent must never read, print, or echo environment variables — no `echo $TOKEN`, no `env | grep`, no `printenv`, no scripts that inspect `os.environ` for diagnostic purposes.
 - Never include token values in logs, exception messages, stack traces, HTTP error reports, or anything written to disk. Error messages may reference the env var *name* but never its value.
 - Never ask the user to paste a token value into the conversation. If a token appears invalid, report the symptom (e.g. "Jira health check returned 401") and let the user inspect their own environment.
+
+Use openspec from `node_modules/.bin/openspec`
