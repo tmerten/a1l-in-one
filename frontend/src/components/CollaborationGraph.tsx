@@ -15,11 +15,12 @@ interface CollaborationGraphProps {
   perPerson: PerPerson | undefined
 }
 
-const GRAPH_HEIGHT = 220
+const GRAPH_HEIGHT = 440
 const NODE_RADIUS = 18
 
 export default function CollaborationGraph({ reviewMatrix, perPerson }: CollaborationGraphProps) {
   const [directed, setDirected] = useState(false)
+  const [fullscreen, setFullscreen] = useState(false)
   const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(400)
@@ -38,6 +39,18 @@ export default function CollaborationGraph({ reviewMatrix, perPerson }: Collabor
     return () => observer.disconnect()
   }, [])
 
+  // Close fullscreen on Escape
+  useEffect(() => {
+    if (!fullscreen) return
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFullscreen(false)
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [fullscreen])
+
+  const graphHeight = fullscreen ? window.innerHeight - 80 : GRAPH_HEIGHT
+
   // Build graph data
   const graphData = useMemo(() => {
     if (!reviewMatrix || Object.keys(reviewMatrix).length === 0) {
@@ -52,7 +65,7 @@ export default function CollaborationGraph({ reviewMatrix, perPerson }: Collabor
   const { nodes, links, onDragStart, onDrag, onDragEnd } = useForceGraph(
     graphData.nodes,
     graphData.edges,
-    { width, height: GRAPH_HEIGHT },
+    { width, height: graphHeight },
   )
 
   const weightRange = useMemo(() => getWeightRange(graphData.edges), [graphData.edges])
@@ -106,15 +119,21 @@ export default function CollaborationGraph({ reviewMatrix, perPerson }: Collabor
   // Empty state
   if (!reviewMatrix || Object.keys(reviewMatrix).length === 0) {
     return (
-      <div className="flex items-center justify-center h-[220px] text-sm text-gray-500">
+      <div className="flex items-center justify-center h-[440px] text-sm text-gray-500">
         No collaboration data for this period
       </div>
     )
   }
 
   return (
-    <div ref={containerRef} className="relative">
-      {/* Directed/Undirected toggle */}
+    <div
+      ref={containerRef}
+      className={fullscreen
+        ? 'fixed inset-0 z-50 bg-white p-4 flex flex-col'
+        : 'relative'
+      }
+    >
+      {/* Controls row */}
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xs text-gray-500">Mode:</span>
         <button
@@ -137,14 +156,24 @@ export default function CollaborationGraph({ reviewMatrix, perPerson }: Collabor
         >
           Directed
         </button>
+
+        <div className="ml-auto">
+          <button
+            onClick={() => setFullscreen(!fullscreen)}
+            className="px-2 py-0.5 text-xs rounded border border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
+            title={fullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}
+          >
+            {fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          </button>
+        </div>
       </div>
 
       {/* SVG Graph */}
       <svg
         ref={svgRef}
         width={width}
-        height={GRAPH_HEIGHT}
-        className="border border-gray-200 rounded-md bg-gray-50"
+        height={graphHeight}
+        className={`border border-gray-200 rounded-md bg-gray-50 ${fullscreen ? 'flex-1' : ''}`}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => { handleMouseUp(); hideTooltip() }}
