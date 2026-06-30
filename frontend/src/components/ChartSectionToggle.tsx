@@ -1,12 +1,18 @@
-type Props = {
-  value: 'cards' | 'charts'
-  onChange: (v: 'cards' | 'charts') => void
+type Props<T extends string = 'cards' | 'charts'> = {
+  value: T
+  onChange: (v: T) => void
+  options?: readonly T[]
 }
 
-export default function ChartSectionToggle({ value, onChange }: Props) {
+export default function ChartSectionToggle<T extends string = 'cards' | 'charts'>({
+  value,
+  onChange,
+  options,
+}: Props<T>) {
+  const opts = (options ?? ['cards', 'charts']) as readonly T[]
   return (
     <div className="flex rounded-md border border-gray-200 overflow-hidden text-xs">
-      {(['cards', 'charts'] as const).map(opt => (
+      {opts.map(opt => (
         <button
           key={opt}
           onClick={() => onChange(opt)}

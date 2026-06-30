@@ -9,6 +9,7 @@ import SettingsPanel, { useSettings } from '../components/SettingsPanel'
 import ChartSectionToggle from '../components/ChartSectionToggle'
 import StackedBarChart from '../components/StackedBarChart'
 import MultiLineChart from '../components/MultiLineChart'
+import CollaborationGraph from '../components/CollaborationGraph'
 
 const CHART_SKELETON = (
   <div className="h-[220px] rounded-md bg-gray-100 animate-pulse" />
@@ -31,7 +32,7 @@ export default function ProjectsPage() {
   // section view toggles
   const [volumeView, setVolumeView] = useState<'cards' | 'charts'>('cards')
   const [velocityView, setVelocityView] = useState<'cards' | 'charts'>('cards')
-  const [collabView, setCollabView] = useState<'cards' | 'charts'>('cards')
+  const [collabView, setCollabView] = useState<'cards' | 'charts' | 'graph'>('cards')
 
   // series toggles
   const [volumeSeries, setVolumeSeries] = useState({ commits: true, prs: true, issues: true })
@@ -185,7 +186,11 @@ export default function ProjectsPage() {
         <section>
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-700">Collaboration</h3>
-            <ChartSectionToggle value={collabView} onChange={setCollabView} />
+            <ChartSectionToggle
+              value={collabView}
+              onChange={setCollabView}
+              options={['cards', 'charts', 'graph'] as const}
+            />
           </div>
           {collabView === 'cards' ? (
             <MetricCard
@@ -194,6 +199,13 @@ export default function ProjectsPage() {
               loading={colLoading}
               error={colError?.message}
             />
+          ) : collabView === 'graph' ? (
+            colLoading ? CHART_SKELETON : (
+              <CollaborationGraph
+                reviewMatrix={collaboration?.review_matrix}
+                perPerson={collaboration?.per_person}
+              />
+            )
           ) : coltLoading ? CHART_SKELETON : (
             <StackedBarChart
               data={collabChartData}
