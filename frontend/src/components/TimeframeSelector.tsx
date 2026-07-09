@@ -36,8 +36,7 @@ function applyPreset(p: typeof RELATIVE_PRESETS[number]): { from: string; to: st
 
 export default function TimeframeSelector() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const project = searchParams.get('project') ?? undefined
-  const { data: sprints } = useSprints(project)
+  const { data: sprints } = useSprints()
 
   const fromParam = searchParams.get('from')
   const toParam = searchParams.get('to')
@@ -53,6 +52,18 @@ export default function TimeframeSelector() {
         })
         return matched ? presetValue(matched) : (fromParam ? 'custom' : 'preset-30')
       })()
+
+  // Derive displayed dates: sprint dates take precedence when a sprint is active
+  const activeSprint = sprintId && sprints
+    ? (sprints as Array<{ id: string; start_date: string; end_date: string }>)
+        .find(s => s.id === sprintId)
+    : undefined
+  const displayFrom = activeSprint
+    ? activeSprint.start_date.split('T')[0]
+    : fromParam
+  const displayTo = activeSprint
+    ? activeSprint.end_date.split('T')[0]
+    : toParam
 
   const setPreset = useCallback((p: typeof RELATIVE_PRESETS[number]) => {
     const { from, to } = applyPreset(p)
@@ -97,7 +108,7 @@ export default function TimeframeSelector() {
           {RELATIVE_PRESETS.map(p => (
             <option key={presetValue(p)} value={presetValue(p)}>{p.label}</option>
           ))}
-          {fromParam && <option value="custom">Custom range</option>}
+          <option value="custom">Custom range</option>
         </optgroup>
         {sprints && sprints.length > 0 && (
           <optgroup label="Sprints">
@@ -118,23 +129,21 @@ export default function TimeframeSelector() {
           </optgroup>
         )}
       </select>
-      {!sprintId && (
-        <div className="flex items-center gap-1">
-          <input
-            type="date"
-            className="text-sm border border-gray-300 rounded-md px-2 py-1"
-            value={fromParam || ''}
-            onChange={e => setRange(e.target.value, toParam || '')}
-          />
-          <span className="text-gray-400">→</span>
-          <input
-            type="date"
-            className="text-sm border border-gray-300 rounded-md px-2 py-1"
-            value={toParam || ''}
-            onChange={e => setRange(fromParam || '', e.target.value)}
-          />
-        </div>
-      )}
+      <div className="flex items-center gap-1">
+        <input
+          type="date"
+          className="text-sm border border-gray-300 rounded-md px-2 py-1"
+          value={displayFrom || ''}
+          onChange={e => setRange(e.target.value, displayTo || '')}
+        />
+        <span className="text-gray-400">→</span>
+        <input
+          type="date"
+          className="text-sm border border-gray-300 rounded-md px-2 py-1"
+          value={displayTo || ''}
+          onChange={e => setRange(displayFrom || '', e.target.value)}
+        />
+      </div>
     </div>
   )
 }
