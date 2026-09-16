@@ -1,0 +1,1 @@
+How can I inspect if the project is syncing new data? The UI shows 'syncing' but I'm not sure if I trust it or if there is a bug as it does not seem to stop.
