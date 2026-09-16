@@ -20,12 +20,12 @@ def build_app(config_path: Path) -> FastAPI:
     """Build the FastAPI application with lifespan management."""
 
     config = load_config(config_path)
-    scheduler = SchedulerManager(config)
 
     @contextlib.asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         registry = await build_registry(config)
         app.state.registry = registry
+        scheduler = SchedulerManager(config, registry)
 
         maker = get_session_maker()
         async with maker() as session:

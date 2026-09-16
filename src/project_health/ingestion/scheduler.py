@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy import select
@@ -13,8 +15,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from project_health.config.loader import Config
 from project_health.db.models import IngestionRun
 from project_health.db.session import get_session_maker
+from project_health.ingestion.events import EVENT_REGISTRY
 from project_health.ingestion.writer import EventWriter
-from project_health.providers.protocol import DataSourceProvider
+from project_health.providers.protocol import DataSourceProvider, EventType
+from project_health.providers.registry import DataSourceRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +33,7 @@ class IngestionRunner:
     async def run(
         self,
         provider: DataSourceProvider,
-        event_type: str,
+        event_type: EventType,
         trigger: str,
         force_since: datetime | None = None,
     ) -> IngestionRun:
@@ -64,8 +68,9 @@ class IngestionRunner:
             since = since.replace(tzinfo=UTC)
 
         try:
-            events = await self._fetch_with_retry(provider, event_type, since)
-            count = await self._write_events(source, event_type, events)
+            definition = EVENT_REGISTRY[event_type]
+            events = await self._fetch_with_retry(provider, definition.fetch, since)
+            count = await definition.write(self._writer, source, events)
             run.status = "success"
             run.events_count = count
         except Exception as exc:
@@ -78,7 +83,7 @@ class IngestionRunner:
 
         return run
 
-    async def _derive_since(self, source: str, event_type: str) -> datetime:
+    async def _derive_since(self, source: str, event_type: EventType) -> datetime:
         """Derive `since` from the most recent successful run."""
         result = await self._session.execute(
             select(IngestionRun)
@@ -99,32 +104,14 @@ class IngestionRunner:
     async def _fetch_with_retry(
         self,
         provider: DataSourceProvider,
-        event_type: str,
+        fetch: Callable[[DataSourceProvider, datetime], Awaitable[list[Any]]],
         since: datetime,
-    ) -> list:
+    ) -> list[Any]:
         """Fetch events with exponential backoff on transient failures."""
         max_retries = 3
         for attempt in range(max_retries):
             try:
-                if event_type == "commit":
-                    return await provider.fetch_commits(since)
-                if event_type == "pull_request":
-                    return await provider.fetch_pull_requests(since)
-                if event_type == "change_request":
-                    return await provider.fetch_change_requests(since)
-                if event_type == "pull_request_review":
-                    return await provider.fetch_pull_request_reviews(since)
-                if event_type == "review_request":
-                    return await provider.fetch_review_requests(since)
-                if event_type == "review_decision":
-                    return await provider.fetch_review_decisions(since)
-                if event_type == "review_comment":
-                    return await provider.fetch_review_comments(since)
-                if event_type == "issue":
-                    return await provider.fetch_issues(since)
-                if event_type == "sprint":
-                    return await provider.fetch_sprints()
-                return []
+                return await fetch(provider, since)
             except RuntimeError as exc:
                 # Auth errors are RuntimeError from providers — fail fast
                 if "auth error" in str(exc).lower() or str(exc).startswith("GitHub auth"):
@@ -134,7 +121,7 @@ class IngestionRunner:
                     logger.warning(
                         "Transient error fetching %s/%s (attempt %d/%d), retrying in %ds: %s",
                         provider.id,
-                        event_type,
+                        fetch.__name__,
                         attempt + 1,
                         max_retries,
                         delay,
@@ -143,53 +130,15 @@ class IngestionRunner:
                     await asyncio.sleep(delay)
                 else:
                     raise
-        return []
-
-    async def _write_events(
-        self, source: str, event_type: str, events: list
-    ) -> int:
-        if event_type == "commit":
-            return await self._writer.write_commits(source, events)
-        if event_type == "pull_request":
-            return await self._writer.write_pull_requests(source, events)
-        if event_type == "change_request":
-            return await self._writer.write_change_requests(source, events)
-        if event_type == "pull_request_review":
-            return await self._writer.write_pull_request_reviews(source, events)
-        if event_type == "review_request":
-            return await self._writer.write_review_requests(source, events)
-        if event_type == "review_decision":
-            return await self._writer.write_review_decisions(source, events)
-        if event_type == "review_comment":
-            return await self._writer.write_review_comments(source, events)
-        if event_type == "issue":
-            return await self._writer.write_issues(source, events)
-        if event_type == "sprint":
-            # Sprint definitions are written to sprints table via dedicated method
-            from project_health.db.models import Sprint
-            count = 0
-            for sp in events:
-                await self._session.merge(
-                    Sprint(
-                        id=sp.id,
-                        name=sp.name,
-                        project=sp.project,
-                        start_date=sp.start_date,
-                        end_date=sp.end_date,
-                        state=sp.state,
-                    )
-                )
-                count += 1
-            await self._session.commit()
-            return count
-        return 0
+        raise RuntimeError("Ingestion fetch retry loop exited unexpectedly")
 
 
 class SchedulerManager:
     """Manages APScheduler jobs for ingestion."""
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, registry: DataSourceRegistry) -> None:
         self._config = config
+        self._registry = registry
         self._scheduler: AsyncIOScheduler | None = None
         self._locks: dict[str, asyncio.Lock] = {}
 
@@ -197,52 +146,29 @@ class SchedulerManager:
         self._scheduler = AsyncIOScheduler()
         self._scheduler.start()
 
-        # Register one job per (provider, event_type)
-        event_types = [
-            "commit",
-            "pull_request",
-            "change_request",
-            "pull_request_review",
-            "review_request",
-            "review_decision",
-            "review_comment",
-            "issue",
-            "sprint",
-        ]
         interval = max(self._config.ingestion.interval_minutes, 1)
+        from project_health.ingestion.service import IngestionService
 
-        # Build providers list
-        providers: list[DataSourceProvider] = []
-        if self._config.projects.github:
-            from project_health.providers.github import GitHubProvider
-            providers.append(GitHubProvider(self._config))
-        if self._config.projects.jira:
-            from project_health.providers.jira import JiraProvider
-            providers.append(JiraProvider(self._config))
-        if self._config.launchpad_bugs or self._config.launchpad_repos:
-            from project_health.providers.launchpad import LaunchpadProvider
-            providers.append(LaunchpadProvider(self._config))
-
-        for provider in providers:
-            for et in event_types:
-                lock_key = f"{provider.id}:{et}"
-                self._locks[lock_key] = asyncio.Lock()
-                job_id = f"{provider.id}:{et}"
-                self._scheduler.add_job(
-                    self._run_job,
-                    "interval",
-                    minutes=interval,
-                    id=job_id,
-                    replace_existing=True,
-                    args=[provider, et],
-                )
-                logger.info("Scheduled job %s every %d minutes", job_id, interval)
+        service = IngestionService()
+        for provider, event_type in service.targets_for(self._registry.all()):
+            lock_key = f"{provider.id}:{event_type}"
+            self._locks[lock_key] = asyncio.Lock()
+            job_id = f"{provider.id}:{event_type}"
+            self._scheduler.add_job(
+                self._run_job,
+                "interval",
+                minutes=interval,
+                id=job_id,
+                replace_existing=True,
+                args=[provider, event_type],
+            )
+            logger.info("Scheduled job %s every %d minutes", job_id, interval)
 
     def shutdown(self) -> None:
         if self._scheduler:
             self._scheduler.shutdown(wait=False)
 
-    async def _run_job(self, provider: DataSourceProvider, event_type: str) -> None:
+    async def _run_job(self, provider: DataSourceProvider, event_type: EventType) -> None:
         lock_key = f"{provider.id}:{event_type}"
         lock = self._locks.get(lock_key)
         if lock is None:
@@ -266,24 +192,25 @@ class SchedulerManager:
             return
 
         async with lock:
-            maker = get_session_maker()
-            async with maker() as session:
-                runner = IngestionRunner(session)
-                try:
-                    result = await runner.run(provider, event_type, trigger="scheduled")
-                    if result.status == "success":
-                        logger.info(
-                            "Ingestion success %s/%s: %d events",
-                            provider.id,
-                            event_type,
-                            result.events_count or 0,
-                        )
-                    elif result.status == "failure":
-                        logger.error(
-                            "Ingestion failure %s/%s: %s",
-                            provider.id,
-                            event_type,
-                            result.error_message,
-                        )
-                except Exception:
-                    logger.exception("Unhandled error in ingestion job %s/%s", provider.id, event_type)
+            from project_health.ingestion.service import IngestionService
+
+            try:
+                result = await IngestionService().run_target(
+                    provider, event_type, trigger="scheduled"
+                )
+                if result.status == "success":
+                    logger.info(
+                        "Ingestion success %s/%s: %d events",
+                        provider.id,
+                        event_type,
+                        result.events_count or 0,
+                    )
+                elif result.status == "failure":
+                    logger.error(
+                        "Ingestion failure %s/%s: %s",
+                        provider.id,
+                        event_type,
+                        result.error_message,
+                    )
+            except Exception:
+                logger.exception("Unhandled error in ingestion job %s/%s", provider.id, event_type)

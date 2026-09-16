@@ -4,19 +4,27 @@ from datetime import UTC, datetime
 
 import pytest
 import pytest_asyncio
-from sqlalchemy import select
+from fastapi import HTTPException
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from project_health.aggregation.cache import AggregationCache
-from project_health.db.models import Base, PersonIdentity, RawEvent
+from project_health.api.routes.sync import sync_run
+from project_health.config.loader import Config
+from project_health.db.models import Base, IngestionRun, PersonIdentity, RawEvent
+from project_health.ingestion.events import EVENT_REGISTRY
+from project_health.ingestion.scheduler import SchedulerManager
+from project_health.ingestion.service import IngestionService, UnsupportedEventTypeError
 from project_health.ingestion.writer import EventWriter
 from project_health.providers.protocol import (
+    EventType,
     RawChangeRequestEvent,
     RawIssueEvent,
     RawPREvent,
     RawReviewDecisionEvent,
 )
+from project_health.providers.registry import DataSourceRegistry
 
 
 @pytest_asyncio.fixture
@@ -28,6 +36,139 @@ async def db_session():
     async with async_session() as session:
         yield session
     await engine.dispose()
+
+
+@pytest_asyncio.fixture
+async def db_session_maker():
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    yield maker
+    await engine.dispose()
+
+
+class IssueOnlyProvider:
+    id = "issue-only"
+    capabilities = frozenset({EventType.ISSUE})
+
+    async def fetch_issues(self, _since: datetime) -> list[RawIssueEvent]:
+        return [
+            RawIssueEvent(
+                external_id="ISSUE-1",
+                timestamp=datetime.now(UTC),
+                actor="alice",
+                project="PROJ",
+                data={"title": "Issue"},
+            )
+        ]
+
+
+class FailingIssueProvider(IssueOnlyProvider):
+    async def fetch_issues(self, _since: datetime) -> list[RawIssueEvent]:
+        raise RuntimeError("GitHub auth error test failure")
+
+
+def test_event_registry_covers_all_event_types():
+    assert set(EVENT_REGISTRY) == set(EventType)
+
+
+def test_ingestion_service_filters_provider_capabilities(db_session_maker):
+    service = IngestionService(db_session_maker)
+    provider = IssueOnlyProvider()
+
+    assert service.event_types_for(provider) == (EventType.ISSUE,)
+    with pytest.raises(UnsupportedEventTypeError):
+        service.event_types_for(provider, EventType.COMMIT)
+
+    assert service.targets_for([provider], EventType.COMMIT) == ()
+    with pytest.raises(UnsupportedEventTypeError):
+        service.targets_for(
+            [provider],
+            EventType.COMMIT,
+            reject_unsupported=True,
+        )
+
+
+@pytest.mark.asyncio
+async def test_ingestion_service_records_supported_run(db_session_maker):
+    service = IngestionService(db_session_maker)
+
+    results = await service.run_provider(IssueOnlyProvider(), trigger="manual")
+
+    assert len(results) == 1
+    assert results[0].status == "success"
+    assert results[0].event_type == EventType.ISSUE
+    async with db_session_maker() as session:
+        event_count = await session.scalar(select(func.count()).select_from(RawEvent))
+        run_count = await session.scalar(select(func.count()).select_from(IngestionRun))
+    assert event_count == 1
+    assert run_count == 1
+
+
+@pytest.mark.asyncio
+async def test_ingestion_service_records_failed_run(db_session_maker):
+    service = IngestionService(db_session_maker)
+
+    results = await service.run_provider(FailingIssueProvider(), trigger="backfill")
+
+    assert len(results) == 1
+    assert results[0].status == "failure"
+    assert results[0].error_message == "GitHub auth error test failure"
+    async with db_session_maker() as session:
+        run = await session.scalar(select(IngestionRun))
+    assert run is not None
+    assert run.status == "failure"
+
+
+@pytest.mark.asyncio
+async def test_sync_rejects_unsupported_event_without_run(
+    db_session_maker, monkeypatch
+):
+    provider = IssueOnlyProvider()
+    registry = DataSourceRegistry([provider], [])
+    monkeypatch.setattr(
+        "project_health.api.routes.sync.get_session_maker",
+        lambda: db_session_maker,
+    )
+
+    with pytest.raises(HTTPException) as exc_info:
+        await sync_run(
+            source=provider.id,
+            event_type=EventType.COMMIT,
+            registry=registry,
+        )
+
+    assert exc_info.value.status_code == 400
+    async with db_session_maker() as session:
+        run_count = await session.scalar(select(func.count()).select_from(IngestionRun))
+    assert run_count == 0
+
+
+def test_scheduler_registers_only_supported_targets(monkeypatch):
+    jobs = []
+
+    class FakeScheduler:
+        def start(self):
+            pass
+
+        def add_job(self, *args, **kwargs):
+            jobs.append(kwargs["id"])
+
+        def shutdown(self, wait):
+            pass
+
+    monkeypatch.setattr(
+        "project_health.ingestion.scheduler.AsyncIOScheduler",
+        FakeScheduler,
+    )
+    config = Config.model_validate({"credentials": {"github_token": "test"}})
+    registry = DataSourceRegistry([IssueOnlyProvider()], [])
+
+    scheduler = SchedulerManager(config, registry)
+    scheduler.start()
+
+    assert jobs == ["issue-only:issue"]
 
 
 @pytest.mark.asyncio
