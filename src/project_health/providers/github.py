@@ -10,6 +10,7 @@ import httpx
 from project_health.config.loader import Config
 from project_health.providers.protocol import (
     REVIEW_CAPABILITIES,
+    SOURCE_CAPABILITIES,
     RawChangeRequestEvent,
     RawCommitEvent,
     RawIssueEvent,
@@ -26,6 +27,7 @@ class GitHubProvider:
     """GitHub REST API provider for commits, PRs, PR reviews, and issues."""
 
     id = "github"
+    capabilities = SOURCE_CAPABILITIES[id]
 
     def __init__(self, config: Config) -> None:
         self._token = config.credentials.github_token

@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from project_health.db.models import PersonIdentity, RawEvent
+from project_health.db.models import PersonIdentity, RawEvent, Sprint
 from project_health.providers.protocol import (
     RawChangeRequestEvent,
     RawCommitEvent,
@@ -67,6 +67,21 @@ class EventWriter:
         self, source: str, events: list[RawIssueEvent]
     ) -> int:
         return await self._upsert_events(source, "issue", events)
+
+    async def write_sprints(self, _source: str, events: list) -> int:
+        for sprint in events:
+            await self._session.merge(
+                Sprint(
+                    id=sprint.id,
+                    name=sprint.name,
+                    project=sprint.project,
+                    start_date=sprint.start_date,
+                    end_date=sprint.end_date,
+                    state=sprint.state,
+                )
+            )
+        await self._session.commit()
+        return len(events)
 
     async def _upsert_events(
         self,

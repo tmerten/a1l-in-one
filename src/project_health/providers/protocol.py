@@ -14,6 +14,18 @@ class DatasourceRole(StrEnum):
     CODE = "code"
 
 
+class EventType(StrEnum):
+    COMMIT = "commit"
+    PULL_REQUEST = "pull_request"
+    CHANGE_REQUEST = "change_request"
+    PULL_REQUEST_REVIEW = "pull_request_review"
+    REVIEW_REQUEST = "review_request"
+    REVIEW_DECISION = "review_decision"
+    REVIEW_COMMENT = "review_comment"
+    ISSUE = "issue"
+    SPRINT = "sprint"
+
+
 class Datasource(BaseModel):
     id: str
     role: DatasourceRole
@@ -24,28 +36,32 @@ class Datasource(BaseModel):
     is_configured: bool = False
 
 
-SOURCE_CAPABILITIES: dict[str, set[str]] = {
-    "github": {
-        "commit",
-        "pull_request",
-        "pull_request_review",
-        "issue",
-        "change_request",
-        "review_request",
-        "review_decision",
-        "review_comment",
-    },
-    "jira": {"issue", "sprint"},
-    "launchpad": {
-        "pull_request",
-        "pull_request_review",
-        "commit",
-        "issue",
-        "change_request",
-        "review_request",
-        "review_decision",
-        "review_comment",
-    },
+SOURCE_CAPABILITIES: dict[str, frozenset[EventType]] = {
+    "github": frozenset(
+        {
+            EventType.COMMIT,
+            EventType.PULL_REQUEST,
+            EventType.PULL_REQUEST_REVIEW,
+            EventType.ISSUE,
+            EventType.CHANGE_REQUEST,
+            EventType.REVIEW_REQUEST,
+            EventType.REVIEW_DECISION,
+            EventType.REVIEW_COMMENT,
+        }
+    ),
+    "jira": frozenset({EventType.ISSUE, EventType.SPRINT}),
+    "launchpad": frozenset(
+        {
+            EventType.PULL_REQUEST,
+            EventType.PULL_REQUEST_REVIEW,
+            EventType.COMMIT,
+            EventType.ISSUE,
+            EventType.CHANGE_REQUEST,
+            EventType.REVIEW_REQUEST,
+            EventType.REVIEW_DECISION,
+            EventType.REVIEW_COMMENT,
+        }
+    ),
 }
 
 
@@ -71,7 +87,7 @@ def sources_for_event_type(event_type: str, configured_sources: set[str]) -> set
     return {
         source
         for source in configured_sources
-        if event_type in SOURCE_CAPABILITIES.get(source, set())
+        if event_type in SOURCE_CAPABILITIES.get(source, frozenset())
     }
 
 
@@ -171,6 +187,7 @@ class DataSourceProvider(Protocol):
     """Protocol for data source providers (GitHub, Jira, Launchpad)."""
 
     id: str  # "github", "jira", "launchpad"
+    capabilities: frozenset[EventType]
 
     async def fetch_commits(self, since: datetime) -> list[RawCommitEvent]:
         """Fetch commits created/updated since `since`."""

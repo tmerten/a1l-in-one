@@ -12,6 +12,7 @@ from project_health.config.loader import Config, LaunchpadRepositoryConfig
 from project_health.providers.launchpad_oauth import LaunchpadOAuthCredentials, signed_headers
 from project_health.providers.protocol import (
     REVIEW_CAPABILITIES,
+    SOURCE_CAPABILITIES,
     RawChangeRequestEvent,
     RawCommitEvent,
     RawIssueEvent,
@@ -164,6 +165,7 @@ class LaunchpadProvider:
     """Launchpad provider for bug targets and repository targets."""
 
     id = "launchpad"
+    capabilities = SOURCE_CAPABILITIES[id]
 
     def __init__(self, config: Config) -> None:
         self._bug_targets = config.all_launchpad_bug_targets

@@ -9,6 +9,7 @@ import httpx
 
 from project_health.config.loader import Config
 from project_health.providers.protocol import (
+    SOURCE_CAPABILITIES,
     RawChangeRequestEvent,
     RawCommitEvent,
     RawIssueEvent,
@@ -25,6 +26,7 @@ class JiraProvider:
     """Jira REST API provider for issues and sprints."""
 
     id = "jira"
+    capabilities = SOURCE_CAPABILITIES[id]
 
     def __init__(self, config: Config) -> None:
         self._creds = config.credentials.jira

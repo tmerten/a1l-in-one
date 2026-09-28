@@ -9,12 +9,11 @@ from pydantic import BaseModel
 from sqlalchemy import func, select
 
 from project_health.aggregation.cache import cache
-from project_health.api.deps import get_config
-from project_health.config.loader import Config
+from project_health.api.deps import get_registry
 from project_health.db.models import IngestionRun
 from project_health.db.session import get_session_maker
-from project_health.ingestion.scheduler import IngestionRunner
-from project_health.providers.registry import build_registry
+from project_health.ingestion.service import IngestionService, UnsupportedEventTypeError
+from project_health.providers.registry import DataSourceRegistry
 
 router = APIRouter()
 
@@ -46,42 +45,38 @@ class SyncStatusResponse(BaseModel):
 async def sync_run(
     source: str | None = Query(None),
     event_type: str | None = Query(None),
-    config: Config = Depends(get_config),
+    registry: DataSourceRegistry = Depends(get_registry),
 ) -> list[SyncRunResponse]:
     """Trigger an immediate ingestion run for all providers (or a specific one)."""
-    registry = await build_registry(config)
-
-    event_types = [
-        "commit",
-        "pull_request",
-        "change_request",
-        "pull_request_review",
-        "review_request",
-        "review_decision",
-        "review_comment",
-        "issue",
-        "sprint",
-    ]
-    targets: list[tuple] = []
+    providers = registry.all()
     if source:
         provider = registry.get(source)
         if provider is None:
             raise HTTPException(status_code=404, detail=f"Source '{source}' not found")
-        targets.append((provider, event_type or "issue"))
-    else:
-        for prov in registry.all():
-            for et in event_types:
-                targets.append((prov, et))
+        providers = [provider]
 
     responses: list[SyncRunResponse] = []
     maker = get_session_maker()
+    service = IngestionService(maker)
 
-    for prov, et in targets:
+    try:
+        targets = service.targets_for(
+            providers,
+            requested=event_type,
+            reject_unsupported=source is not None,
+        )
+    except UnsupportedEventTypeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    checked_sources: set[str] = set()
+    for provider, _event_type in targets:
+        if provider.id in checked_sources:
+            continue
         async with maker() as session:
             inflight = await session.execute(
                 select(IngestionRun)
                 .where(
-                    IngestionRun.source == prov.id,
+                    IngestionRun.source == provider.id,
                     IngestionRun.status == "running",
                 )
                 .limit(1)
@@ -91,20 +86,26 @@ async def sync_run(
                 raise HTTPException(
                     status_code=409,
                     detail={
-                        "message": f"Provider {prov.id} is busy",
+                        "message": f"Provider {provider.id} is busy",
                         "run_id": existing.id,
                     },
                 )
-            runner = IngestionRunner(session)
-            result = await runner.run(prov, et, trigger="manual")
-            responses.append(
-                SyncRunResponse(
-                    run_id=result.id,
-                    source=prov.id,
-                    event_type=et,
-                    status=result.status,
-                )
+        checked_sources.add(provider.id)
+
+    for provider, selected_event_type in targets:
+        result = await service.run_target(
+            provider,
+            selected_event_type,
+            trigger="manual",
+        )
+        responses.append(
+            SyncRunResponse(
+                run_id=result.id,
+                source=provider.id,
+                event_type=result.event_type,
+                status=result.status,
             )
+        )
 
     return responses
 

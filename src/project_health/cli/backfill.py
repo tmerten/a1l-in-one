@@ -9,8 +9,7 @@ from pathlib import Path
 import typer
 
 from project_health.config.loader import load_config
-from project_health.db.session import get_session_maker
-from project_health.ingestion.scheduler import IngestionRunner
+from project_health.ingestion.service import IngestionService
 from project_health.providers.registry import build_registry
 
 
@@ -50,43 +49,29 @@ async def run_backfill(
         providers = [provider]
 
     any_failure = False
-    event_types = [
-        "commit",
-        "pull_request",
-        "change_request",
-        "pull_request_review",
-        "review_request",
-        "review_decision",
-        "review_comment",
-        "issue",
-        "sprint",
-    ]
-
-    maker = get_session_maker()
+    service = IngestionService()
     for provider in providers:
         typer.echo(f"\n→ Backfilling {provider.id} ...")
         start_time = time.time()
         total_events = 0
 
-        for et in event_types:
-            async with maker() as session:
-                runner = IngestionRunner(session)
-                try:
-                    result = await runner.run(
-                        provider, et, trigger="backfill", force_since=since
-                    )
-                    if result.status == "success":
-                        count = result.events_count or 0
-                        total_events += count
-                        typer.echo(f"  {et}: {count} events")
-                    else:
-                        any_failure = True
-                        typer.echo(
-                            f"  {et}: FAILED — {result.error_message}", err=True
-                        )
-                except Exception as exc:
+        for et in service.event_types_for(provider):
+            try:
+                result = await service.run_target(
+                    provider, et, trigger="backfill", force_since=since
+                )
+                if result.status == "success":
+                    count = result.events_count or 0
+                    total_events += count
+                    typer.echo(f"  {et}: {count} events")
+                else:
                     any_failure = True
-                    typer.echo(f"  {et}: FAILED — {exc}", err=True)
+                    typer.echo(
+                        f"  {et}: FAILED — {result.error_message}", err=True
+                    )
+            except Exception as exc:
+                any_failure = True
+                typer.echo(f"  {et}: FAILED — {exc}", err=True)
 
         elapsed = time.time() - start_time
         typer.echo(f"  Total: {total_events} events in {elapsed:.1f}s")
